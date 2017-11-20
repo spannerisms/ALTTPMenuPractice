@@ -10,8 +10,8 @@ public class ScoreTableModel extends AbstractTableModel {
 	String[] columnNames = { "Turn",
 			"Score",
 			"Moves",
-			"<html>Optimal<br />path</html>",
-			"Time",
+			"<html><div style=\"font-size:95%;\">Optimal<br />path</div></html>",
+			"Time (ms)",
 			"<html>Wrong<br />starts</html>" };
 	ArrayList<int[]> data = new ArrayList<int[]>();
 

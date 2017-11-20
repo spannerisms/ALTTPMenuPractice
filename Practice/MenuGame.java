@@ -94,11 +94,10 @@ public class MenuGame extends Container {
 	 */
 	private static void addToPattern(int p, int l, int m) {
 		for (int i = 0; i < 4; i++) {
-			int pattern = p | (MOVES[i]<< (2 * (l - 1)));
+			int pattern = p | (MOVES[i] << (2 * (l - 1)));
 			if (l == 1) { // bottom level, just add
 				pattern |= m << COUNT_OFFSET; // add number of moves
 				ALL_POSSIBLE_MOVES.add(pattern);
-				System.out.println(Integer.toBinaryString(pattern));
 			} else { // recursion
 				addToPattern(pattern, l-1, m);
 			}
@@ -109,7 +108,6 @@ public class MenuGame extends Container {
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
 	private int loc;
-	private int minMoves = 3;
 
 	private ScoreCard ref = new ScoreCard(0);
 
@@ -552,14 +550,14 @@ public class MenuGame extends Container {
 			this.minMoves = minMoves;
 			startPresses = 0;
 			moves = 0;
-			startTime = System.nanoTime();
+			startTime = System.currentTimeMillis();
 		}
 
 		int calcScore() {
 			// score for how long it took
-			endTime = System.nanoTime(); // calculate end time on score request
+			endTime = System.currentTimeMillis(); // calculate end time on score request
 			long timeDiff = endTime - startTime;
-			int finalTime = (int) (timeDiff / 10);
+			finalTime = (int) (timeDiff);
 			int timeScore = (2000 - finalTime);
 
 			// difference between moves made and optimal moves
