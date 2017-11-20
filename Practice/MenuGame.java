@@ -1,10 +1,12 @@
 package Practice;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -15,14 +17,18 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import static Practice.Item.ITEM_COUNT;
 
+// TODO: https://github.com/snes9xgit/snes9x
 public class MenuGame extends Container {
 	private static final long serialVersionUID = 1L;
 
@@ -235,7 +241,7 @@ public class MenuGame extends Container {
 
 		fireTurnEvent(prevRef);
 		repaint();
-		this.requestFocus();
+		this.requestFocusInWindow();
 	}
 
 	public ItemSlot getTarget() {
@@ -321,6 +327,7 @@ public class MenuGame extends Container {
 		final Dimension d2 = new Dimension(300, 300);
 		final JFrame frame = new JFrame("Menu Simulator 2K17");
 
+		final Font consolas = new Font("Consolas", Font.PLAIN, 12);
 		final Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
@@ -349,18 +356,35 @@ public class MenuGame extends Container {
 		JTable scores = new JTable();
 		ScoreTableModel model = new ScoreTableModel();
 		scores.setModel(model);
-		
+
 		// scroll pane for score
+
 		JScrollPane scoreScroll = new JScrollPane(scores,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scoreScroll.setFocusable(false);
 		scoreScroll.setViewportBorder(null);
 		scoreScroll.setBorder(null);
 		scoreScroll.getViewport().setBorder(null);
+
 		scores.setBorder(null);
-		scores.setFont(new Font("Consolas", Font.PLAIN, 12));
+		scores.setFont(consolas);
 		scores.setBackground(null);
 		scores.setFocusable(false);
+
+		JLabel scoreTotal = new JLabel("Total score:", SwingConstants.RIGHT);
+		JLabel hiscore = new JLabel("0", SwingConstants.RIGHT);
+		hiscore.setFont(consolas);
+
+		l.putConstraint(SpringLayout.WEST, scoreTotal, 0,
+				SpringLayout.HORIZONTAL_CENTER, scoreScroll);
+		l.putConstraint(SpringLayout.SOUTH, scoreTotal, -5,
+				SpringLayout.SOUTH, wrap);
+		wrap.add(scoreTotal);
+		l.putConstraint(SpringLayout.EAST, hiscore, -10,
+				SpringLayout.EAST, scoreScroll);
+		l.putConstraint(SpringLayout.VERTICAL_CENTER, hiscore, 0,
+				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		wrap.add(hiscore);
 
 		l.putConstraint(SpringLayout.WEST, scoreScroll, -370,
 				SpringLayout.EAST, wrap);
@@ -369,7 +393,7 @@ public class MenuGame extends Container {
 		l.putConstraint(SpringLayout.NORTH, scoreScroll, 5,
 				SpringLayout.NORTH, wrap);
 		l.putConstraint(SpringLayout.SOUTH, scoreScroll, -5,
-				SpringLayout.SOUTH, wrap);
+				SpringLayout.NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
 		frame.setSize(d);
@@ -405,6 +429,7 @@ public class MenuGame extends Container {
 								tempRef.startPresses - 1
 						});
 						totalScore.add(tempScore);
+						hiscore.setText(Integer.toString(totalScore.val));
 					}
 					turn.increment();
 			});

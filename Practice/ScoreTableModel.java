@@ -21,7 +21,7 @@ public class ScoreTableModel extends AbstractTableModel {
 
 	public void addRow(int[] data) {
 		int l = this.data.size();
-		this.data.add(data);
+		this.data.add(0, data);
 		this.fireTableRowsInserted(l, l);
 	}
 
@@ -37,7 +37,7 @@ public class ScoreTableModel extends AbstractTableModel {
 		return data.size();
 	}
 
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return getValueAt(0, c).getClass();
 	}
 
