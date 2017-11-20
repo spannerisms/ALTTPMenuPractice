@@ -24,7 +24,7 @@ class ImageNamePair {
 	}
 
 	private static BufferedImage readImage(String n) throws IOException {
-		String filename = "/Practice/images/icon-" + n + ".png";
+		String filename = "/Practice/Images/icon-" + n + ".png";
 		BufferedImage img = ImageIO.read(ImageNamePair.class.getResourceAsStream(filename));
 		return img;
 	}

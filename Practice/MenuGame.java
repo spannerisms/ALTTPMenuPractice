@@ -2,6 +2,7 @@ package Practice;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -19,7 +20,6 @@ import javax.swing.JTable;
 import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.table.DefaultTableModel;
 
 import static Practice.Item.ITEM_COUNT;
 
@@ -46,14 +46,14 @@ public class MenuGame extends Container {
 	static {
 		BufferedImage temp;
 		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/images/menu background.png"));
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/menu background.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		BACKGROUND = temp;
 
 		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/images/menu cursor.png"));
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/menu cursor.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
 		}
@@ -65,7 +65,7 @@ public class MenuGame extends Container {
 	private int target;
 	private int loc;
 
-	private ScoreCard ref;
+	private ScoreCard ref = new ScoreCard(0);
 
 	// draw size
 	private int zoom = 2;
@@ -231,7 +231,7 @@ public class MenuGame extends Container {
 
 		ScoreCard prevRef = ref;
 
-		ref = new ScoreCard();
+		ref = new ScoreCard(calcMinMoves());
 
 		fireTurnEvent(prevRef);
 		repaint();
@@ -267,6 +267,7 @@ public class MenuGame extends Container {
 	}
 
 	private synchronized void fireTurnEvent(ScoreCard ref) {
+		ref.calcScore();
 		TurnEvent te = new TurnEvent(this, ref);
 		Iterator<TurnListener> listening = turnListen.iterator();
 		while(listening.hasNext()) {
@@ -316,7 +317,7 @@ public class MenuGame extends Container {
 		final IntHolder totalScore = new IntHolder();
 
 		// main window
-		final Dimension d = new Dimension(700, 300);
+		final Dimension d = new Dimension(800, 300);
 		final Dimension d2 = new Dimension(300, 300);
 		final JFrame frame = new JFrame("Menu Simulator 2K17");
 
@@ -346,15 +347,22 @@ public class MenuGame extends Container {
 
 		// scores
 		JTable scores = new JTable();
-		DefaultTableModel model = new DefaultTableModel(
-				new String[]{ "Turn", "Moves", "Time", "Wrong starts" },
-				0);
+		ScoreTableModel model = new ScoreTableModel();
 		scores.setModel(model);
+		
+		// scroll pane for score
 		JScrollPane scoreScroll = new JScrollPane(scores,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scoreScroll.setFocusable(false);
+		scoreScroll.setViewportBorder(null);
+		scoreScroll.setBorder(null);
+		scoreScroll.getViewport().setBorder(null);
+		scores.setBorder(null);
+		scores.setFont(new Font("Consolas", Font.PLAIN, 12));
 		scores.setBackground(null);
 		scores.setFocusable(false);
-		l.putConstraint(SpringLayout.WEST, scoreScroll, -250,
+
+		l.putConstraint(SpringLayout.WEST, scoreScroll, -370,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
 				SpringLayout.EAST, wrap);
@@ -388,9 +396,11 @@ public class MenuGame extends Container {
 					if (turn.val > 0) {
 						ScoreCard tempRef = arg0.score;
 						int tempScore = tempRef.finalScore;
-						model.addRow(new Integer[] {
+						model.addRow(new int[] {
 								turn.val,
+								tempScore,
 								tempRef.moves,
+								tempRef.minMoves,
 								tempRef.finalTime,
 								tempRef.startPresses - 1
 						});
@@ -440,18 +450,20 @@ public class MenuGame extends Container {
 		long endTime;
 		int finalScore;
 		int finalTime;
+		final int minMoves;
 
-		public ScoreCard() {
+		public ScoreCard(int minMoves) {
+			this.minMoves = minMoves;
 			startPresses = 0;
 			moves = 0;
 			startTime = System.nanoTime();
 		}
 
-		int calcScore(int minMoves) {
+		int calcScore() {
 			// score for how long it took
 			endTime = System.nanoTime(); // calculate end time on score request
 			long timeDiff = endTime - startTime;
-			int finalTime = (int) (timeDiff / 1000);
+			int finalTime = (int) (timeDiff / 10);
 			int timeScore = (2000 - finalTime);
 
 			// difference between moves made and optimal moves
@@ -463,6 +475,7 @@ public class MenuGame extends Container {
 			if (startPresses > 1) {
 				startPenalty = startPresses * 500;
 			}
+
 			finalScore = 0 + diffScore + moveBonus - startPenalty;
 			return finalScore;
 		}
