@@ -66,6 +66,50 @@ public class MenuGame extends Container {
 		CURSOR = temp;
 	}
 
+	// all possible moves
+	private static final ArrayList<Integer> ALL_POSSIBLE_MOVES = new ArrayList<Integer>();
+
+	// how this works
+	// each int holds 14 possible moves:
+	private static final byte MOVE_UP = 0b00;
+	private static final byte MOVE_DOWN = 0b01;
+	private static final byte MOVE_RIGHT = 0b10;
+	private static final byte MOVE_LEFT = 0b11;
+	private static final byte[] MOVES = { MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT };
+
+	// the first 4 bits are the number of moves in this set
+	private static final int COUNT_OFFSET = 28;
+
+	// starting from the least significant bit
+	// every 2 bits form the token for a single move
+	// the moves are counted from right to left
+
+	static {
+		// do all 1 move patterns
+		for (int i = 1; i < 6; i++) {
+			addToPattern(0, i, i);
+		}
+	}
+
+	/**
+	 * @param p - pattern
+	 * @param l - current nest level
+	 * @param m - number of moves
+	 */
+	private static void addToPattern(int p, int l, int m) {
+		for (int i = 0; i < 4; i++) {
+			int pattern = p << 2; // shift over
+			pattern |= MOVES[i];
+			if (l == 1) { // bottom level, just add
+				pattern |= m << COUNT_OFFSET; // add number of moves
+				ALL_POSSIBLE_MOVES.add(pattern);
+				System.out.println(Integer.toBinaryString(pattern));
+			} else { // recursion
+				addToPattern(pattern, l-1, m);
+			}
+		}
+	}
+
 	// local vars
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
