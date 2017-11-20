@@ -15,7 +15,6 @@ class ImageNamePair {
 			temp = readImage(img);
 		} catch (Exception e) {
 			temp = new BufferedImage(16, 16, BufferedImage.TYPE_4BYTE_ABGR);
-			e.printStackTrace();
 		}
 		this.img = temp;
 	}

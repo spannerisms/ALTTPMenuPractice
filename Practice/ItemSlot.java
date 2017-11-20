@@ -9,7 +9,6 @@ public class ItemSlot extends JComponent {
 
 	private final Item mine;
 	private ImageNamePair i;
-	private boolean enabled = false;
 
 	ItemSlot(Item item) {
 		this.setSize(MenuGame.BLOCK_D);
@@ -24,12 +23,8 @@ public class ItemSlot extends JComponent {
 	}
 
 	public void paint(Graphics g) {
-		if (enabled) {
+		if (isEnabled()) {
 			g.drawImage(i.img, 0, 0, null);
 		}
-	}
-	
-	public void setEnabled(boolean e) {
-		enabled = e;
 	}
 }

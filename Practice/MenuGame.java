@@ -4,7 +4,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -12,7 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
@@ -58,17 +59,28 @@ public class MenuGame extends Container {
 	}
 
 	// local vars
-	private ItemSlot[][] matrix = new ItemSlot[4][5];
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
 	private int loc;
 
-	public static int CURRENT_SCALE = 2;
+	// draw size
+	private int zoom = 2;
+
+	// key presses
+	private int pressUp;
+	private int pressDown;
+	private int pressRight;
+	private int pressLeft;
+	private int pressStart;
 
 	public MenuGame() {
 		initialize();
 		addKeys();
 		randomize();
+		pressUp = KeyEvent.VK_UP;
+		pressDown = KeyEvent.VK_DOWN;
+		pressRight = KeyEvent.VK_RIGHT;
+		pressLeft = KeyEvent.VK_LEFT;
 	}
 
 	private final void initialize() {
@@ -78,7 +90,6 @@ public class MenuGame extends Container {
 			list[i] = temp;
 			int r = i / 5;
 			int c = i % 5;
-			matrix[r][c] = temp;
 
 			// add to container
 			temp.setBounds(ITEM_ORIGIN_X + (c * BLOCK_SIZE),
@@ -90,18 +101,65 @@ public class MenuGame extends Container {
 
 	private final void addKeys() {
 		this.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent arg0) {}
+			public void keyTyped(KeyEvent arg0) {}
 			public void keyReleased(KeyEvent arg0) {}
 
-			public void keyTyped(KeyEvent arg0) {
+			public void keyPressed(KeyEvent arg0) {
 				switch (arg0.getExtendedKeyCode() ) {
-				
+					case KeyEvent.VK_UP :
+						loc = moveUp(loc);
+						break;
+					case KeyEvent.VK_DOWN :
+						loc = moveDown(loc);
+						break;
+					case KeyEvent.VK_RIGHT :
+						loc = moveRight(loc);
+						break;
+					case KeyEvent.VK_LEFT :
+						loc = moveLeft(loc);
+						break;
 				}
-				
+				repaint();
 			}
 			
 		});
 	}
+
+	/*
+	 * Movement
+	 */
+	private int moveUp(int s) {
+		int newLoc = (s + 15) % 20;
+		if (!list[newLoc].isEnabled()) {
+			return moveUp(newLoc);
+		}
+		return newLoc;
+	}
+
+	private int moveDown(int s) {
+		int newLoc = (s + 5) % 20;
+		if (!list[newLoc].isEnabled()) {
+			return moveDown(newLoc);
+		}
+		return newLoc;
+	}
+	
+	private int moveRight(int s) {
+		int newLoc = (s + 1) % 20;
+		if (!list[newLoc].isEnabled()) {
+			return moveRight(newLoc);
+		}
+		return newLoc;
+	}
+	
+	private int moveLeft(int s) {
+		int newLoc = (s + 19) % 20;
+		if (!list[newLoc].isEnabled()) {
+			return moveLeft(newLoc);
+		}
+		return newLoc;
+	}
+
 	/**
 	 * Forumala used to determine if an item is on
 	 * @return
@@ -155,11 +213,14 @@ public class MenuGame extends Container {
 
 		randomIndex = (int) (Math.random() * pickFrom.size());
 		target = pickFrom.remove(randomIndex);
+		
+		repaint();
+		this.requestFocus();
 	}
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.scale(2, 2);
+		g2.scale(zoom, zoom);
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		this.paintComponents(g2);
 		ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
@@ -196,16 +257,41 @@ public class MenuGame extends Container {
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE); // 596:31:23.647
 
 		// main window
-		final Dimension d = new Dimension(300,400);
+		final Dimension d = new Dimension(400, 300);
+		final Dimension d2 = new Dimension(300, 300);
 		final JFrame frame = new JFrame("Menu Simulator 2K17");
 
+		final Container wrap = frame.getContentPane();
+		SpringLayout l = new SpringLayout();
+		wrap.setLayout(l);
+
+		// game
 		MenuGame instance = new MenuGame();
-		instance.setSize(d);
+
+		l.putConstraint(SpringLayout.WEST, instance, 5,
+				SpringLayout.WEST, wrap);
+		l.putConstraint(SpringLayout.NORTH, instance, 5,
+				SpringLayout.NORTH, wrap);
 		frame.add(instance);
+		instance.setSize(d2);
+		instance.setPreferredSize(d2);
+
+		// reset
+		JButton reset = new JButton("New set");
+		l.putConstraint(SpringLayout.WEST, reset, 5,
+				SpringLayout.EAST, instance);
+		l.putConstraint(SpringLayout.NORTH, reset, 5,
+				SpringLayout.NORTH, instance);
+		wrap.add(reset);
+
+		reset.addActionListener(arg0 -> instance.randomize() );
 		frame.setSize(d);
+		frame.setMinimumSize(d);
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		frame.setVisible(true);
+		instance.requestFocus();
 	}
 
 	private static enum ItemPoint {
@@ -219,16 +305,16 @@ public class MenuGame extends Container {
 		SLOT_7 (7),
 		SLOT_8 (8),
 		SLOT_9 (9),
-		SLOT_10 (0),
-		SLOT_11 (1),
-		SLOT_12 (2),
-		SLOT_13 (3),
-		SLOT_14 (4),
-		SLOT_15 (5),
-		SLOT_16 (6),
-		SLOT_17 (7),
-		SLOT_18 (8),
-		SLOT_19 (9);
+		SLOT_10 (10),
+		SLOT_11 (11),
+		SLOT_12 (12),
+		SLOT_13 (13),
+		SLOT_14 (14),
+		SLOT_15 (15),
+		SLOT_16 (16),
+		SLOT_17 (17),
+		SLOT_18 (18),
+		SLOT_19 (19);
 
 		public final int x;
 		public final int y;
