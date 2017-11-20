@@ -98,8 +98,7 @@ public class MenuGame extends Container {
 	 */
 	private static void addToPattern(int p, int l, int m) {
 		for (int i = 0; i < 4; i++) {
-			int pattern = p << 2; // shift over
-			pattern |= MOVES[i];
+			int pattern = p | (MOVES[i]<< (2 * (l - 1)));
 			if (l == 1) { // bottom level, just add
 				pattern |= m << COUNT_OFFSET; // add number of moves
 				ALL_POSSIBLE_MOVES.add(pattern);
