@@ -1,12 +1,10 @@
 package Practice;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -17,8 +15,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
@@ -113,6 +109,7 @@ public class MenuGame extends Container {
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
 	private int loc;
+	private int minMoves = 3;
 
 	private ScoreCard ref = new ScoreCard(0);
 
@@ -277,7 +274,6 @@ public class MenuGame extends Container {
 
 		randomIndex = (int) (Math.random() * pickFrom.size());
 		target = pickFrom.remove(randomIndex);
-
 		ScoreCard prevRef = ref;
 
 		ref = new ScoreCard(calcMinMoves());
@@ -304,7 +300,39 @@ public class MenuGame extends Container {
 	}
 
 	private int calcMinMoves() {
-		return 3;
+		for (int pattern : ALL_POSSIBLE_MOVES) {
+			int moves = pattern >> COUNT_OFFSET;
+			int pos = loc;
+			for (int i = 0; i < moves; i++) {
+				int moveToken = (pattern >> (i * 2)) & 0b11;
+				int newPos;
+
+				switch (moveToken) {
+					case MOVE_UP :
+						newPos = moveUp(pos);
+						break;
+					case MOVE_DOWN :
+						newPos = moveDown(pos);
+						break;
+					case MOVE_RIGHT :
+						newPos = moveRight(pos);
+						break;
+					case MOVE_LEFT :
+						newPos = moveLeft(pos);
+						break;
+					default :
+						newPos = pos;
+						break;
+				}
+
+				pos = newPos;
+				if (pos == target) {
+					return moves;
+				}
+			}
+		}
+		// failure, just in case
+		return -1;
 	}
 
 	/*
