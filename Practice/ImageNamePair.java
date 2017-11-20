@@ -13,7 +13,7 @@ class ImageNamePair {
 		BufferedImage temp;
 		try {
 			temp = readImage(img);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			temp = new BufferedImage(16, 16, BufferedImage.TYPE_4BYTE_ABGR);
 			e.printStackTrace();
 		}
@@ -23,9 +23,10 @@ class ImageNamePair {
 	ImageNamePair(String name) {
 		this(name, name.toLowerCase());
 	}
+
 	private static BufferedImage readImage(String n) throws IOException {
-		String bgFilename = "/Practice/images/icon-" + n + ".png";
-		BufferedImage img = ImageIO.read(ImageNamePair.class.getResourceAsStream(bgFilename));
+		String filename = "/Practice/images/icon-" + n + ".png";
+		BufferedImage img = ImageIO.read(ImageNamePair.class.getResourceAsStream(filename));
 		return img;
 	}
 }
