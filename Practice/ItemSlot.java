@@ -27,4 +27,8 @@ public class ItemSlot extends JComponent {
 			g.drawImage(i.img, 0, 0, null);
 		}
 	}
+
+	public String getCurrentItem() {
+		return i.name;
+	}
 }

@@ -7,15 +7,19 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 import static Practice.Item.ITEM_COUNT;
 
@@ -43,17 +47,15 @@ public class MenuGame extends Container {
 		BufferedImage temp;
 		try {
 			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/images/menu background.png"));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-			e.printStackTrace();
 		}
 		BACKGROUND = temp;
 
 		try {
 			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/images/menu cursor.png"));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
-			e.printStackTrace();
 		}
 		CURSOR = temp;
 	}
@@ -63,24 +65,15 @@ public class MenuGame extends Container {
 	private int target;
 	private int loc;
 
+	private ScoreCard ref;
+
 	// draw size
 	private int zoom = 2;
-
-	// key presses
-	private int pressUp;
-	private int pressDown;
-	private int pressRight;
-	private int pressLeft;
-	private int pressStart;
 
 	public MenuGame() {
 		initialize();
 		addKeys();
 		randomize();
-		pressUp = KeyEvent.VK_UP;
-		pressDown = KeyEvent.VK_DOWN;
-		pressRight = KeyEvent.VK_RIGHT;
-		pressLeft = KeyEvent.VK_LEFT;
 	}
 
 	private final void initialize() {
@@ -108,21 +101,43 @@ public class MenuGame extends Container {
 				switch (arg0.getExtendedKeyCode() ) {
 					case KeyEvent.VK_UP :
 						loc = moveUp(loc);
+						ref.moves++;
+						fireInputEvent(InputEvent.SNES_UP);
 						break;
 					case KeyEvent.VK_DOWN :
 						loc = moveDown(loc);
+						ref.moves++;
+						fireInputEvent(InputEvent.SNES_DOWN);
 						break;
 					case KeyEvent.VK_RIGHT :
 						loc = moveRight(loc);
+						ref.moves++;
+						fireInputEvent(InputEvent.SNES_RIGHT);
 						break;
 					case KeyEvent.VK_LEFT :
 						loc = moveLeft(loc);
+						ref.moves++;
+						fireInputEvent(InputEvent.SNES_LEFT);
+						break;
+					case KeyEvent.VK_D :
+						pressStart();
+						fireInputEvent(InputEvent.SNES_START);
 						break;
 				}
 				repaint();
 			}
 			
 		});
+	}
+
+	private void pressStart() {
+		ref.startPresses++;
+		if (target == loc) {
+			//win();
+			randomize();
+		} else {
+			
+		}
 	}
 
 	/*
@@ -143,7 +158,7 @@ public class MenuGame extends Container {
 		}
 		return newLoc;
 	}
-	
+
 	private int moveRight(int s) {
 		int newLoc = (s + 1) % 20;
 		if (!list[newLoc].isEnabled()) {
@@ -151,7 +166,7 @@ public class MenuGame extends Container {
 		}
 		return newLoc;
 	}
-	
+
 	private int moveLeft(int s) {
 		int newLoc = (s + 19) % 20;
 		if (!list[newLoc].isEnabled()) {
@@ -213,9 +228,18 @@ public class MenuGame extends Container {
 
 		randomIndex = (int) (Math.random() * pickFrom.size());
 		target = pickFrom.remove(randomIndex);
-		
+
+		ScoreCard prevRef = ref;
+
+		ref = new ScoreCard();
+
+		fireTurnEvent(prevRef);
 		repaint();
 		this.requestFocus();
+	}
+
+	public ItemSlot getTarget() {
+		return list[target];
 	}
 
 	public void paint(Graphics g) {
@@ -232,6 +256,38 @@ public class MenuGame extends Container {
 
 	private int calcMinMoves() {
 		return 3;
+	}
+
+	/*
+	 * Events for turn changes
+	 */
+	private List<TurnListener> turnListen = new ArrayList<TurnListener>();
+	public synchronized void addTurnListener(TurnListener s) {
+		turnListen.add(s);
+	}
+
+	private synchronized void fireTurnEvent(ScoreCard ref) {
+		TurnEvent te = new TurnEvent(this, ref);
+		Iterator<TurnListener> listening = turnListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Events for snes inputs
+	 */
+	private List<InputListener> targListen = new ArrayList<InputListener>();
+	public synchronized void addInputListener(InputListener s) {
+		targListen.add(s);
+	}
+
+	private synchronized void fireInputEvent(int button) {
+		InputEvent te = new InputEvent(this, button);
+		Iterator<InputListener> listening = targListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
 	}
 
 	// main
@@ -256,8 +312,11 @@ public class MenuGame extends Container {
 		ToolTipManager.sharedInstance().setInitialDelay(100);
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE); // 596:31:23.647
 
+		final IntHolder turn = new IntHolder();
+		final IntHolder totalScore = new IntHolder();
+
 		// main window
-		final Dimension d = new Dimension(400, 300);
+		final Dimension d = new Dimension(700, 300);
 		final Dimension d2 = new Dimension(300, 300);
 		final JFrame frame = new JFrame("Menu Simulator 2K17");
 
@@ -276,22 +335,72 @@ public class MenuGame extends Container {
 		instance.setSize(d2);
 		instance.setPreferredSize(d2);
 
-		// reset
-		JButton reset = new JButton("New set");
-		l.putConstraint(SpringLayout.WEST, reset, 5,
+		// target
+		JLabel targ = new JLabel("--");
+		targ.setFocusable(false);
+		l.putConstraint(SpringLayout.WEST, targ, 5,
 				SpringLayout.EAST, instance);
-		l.putConstraint(SpringLayout.NORTH, reset, 5,
+		l.putConstraint(SpringLayout.NORTH, targ, 5,
 				SpringLayout.NORTH, instance);
-		wrap.add(reset);
+		wrap.add(targ);
 
-		reset.addActionListener(arg0 -> instance.randomize() );
+		// scores
+		JTable scores = new JTable();
+		DefaultTableModel model = new DefaultTableModel(
+				new String[]{ "Turn", "Moves", "Time", "Wrong starts" },
+				0);
+		scores.setModel(model);
+		JScrollPane scoreScroll = new JScrollPane(scores,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scores.setBackground(null);
+		scores.setFocusable(false);
+		l.putConstraint(SpringLayout.WEST, scoreScroll, -250,
+				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
+				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.NORTH, scoreScroll, 5,
+				SpringLayout.NORTH, wrap);
+		l.putConstraint(SpringLayout.SOUTH, scoreScroll, -5,
+				SpringLayout.SOUTH, wrap);
+		wrap.add(scoreScroll);
+
 		frame.setSize(d);
 		frame.setMinimumSize(d);
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
+		frame.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				instance.dispatchEvent(e);
+			}
+
+			public void keyReleased(KeyEvent e) {
+				instance.dispatchEvent(e);
+			}
+
+			public void keyTyped(KeyEvent e) {
+				instance.dispatchEvent(e);
+			}});
+
+		instance.addTurnListener(
+			arg0 -> {
+					targ.setText(instance.getTarget().getCurrentItem());
+					if (turn.val > 0) {
+						ScoreCard tempRef = arg0.score;
+						int tempScore = tempRef.finalScore;
+						model.addRow(new Integer[] {
+								turn.val,
+								tempRef.moves,
+								tempRef.finalTime,
+								tempRef.startPresses - 1
+						});
+						totalScore.add(tempScore);
+					}
+					turn.increment();
+			});
+
+		instance.randomize();
 		frame.setVisible(true);
-		instance.requestFocus();
 	}
 
 	private static enum ItemPoint {
@@ -321,6 +430,57 @@ public class MenuGame extends Container {
 		ItemPoint(int l) {
 			x = (l % 5) * BLOCK_SIZE;
 			y = (l / 5) * BLOCK_SIZE;
+		}
+	}
+
+	public static class ScoreCard {
+		int startPresses;
+		int moves;
+		final long startTime;
+		long endTime;
+		int finalScore;
+		int finalTime;
+
+		public ScoreCard() {
+			startPresses = 0;
+			moves = 0;
+			startTime = System.nanoTime();
+		}
+
+		int calcScore(int minMoves) {
+			// score for how long it took
+			endTime = System.nanoTime(); // calculate end time on score request
+			long timeDiff = endTime - startTime;
+			int finalTime = (int) (timeDiff / 1000);
+			int timeScore = (2000 - finalTime);
+
+			// difference between moves made and optimal moves
+			int diffScore = ( 500 * ( (minMoves + 1) - moves) );
+			int moveBonus = (moves == minMoves) ? 1000 : 0; // bonus for being optimal
+
+			// penalty for pressing start on the wrong item
+			int startPenalty = 0;
+			if (startPresses > 1) {
+				startPenalty = startPresses * 500;
+			}
+			finalScore = 0 + diffScore + moveBonus - startPenalty;
+			return finalScore;
+		}
+	}
+
+	static class IntHolder {
+		int val;
+
+		IntHolder() {
+			val = 0;
+		}
+
+		void add(int a) {
+			val += a;
+		}
+
+		void increment() {
+			val++;
 		}
 	}
 }

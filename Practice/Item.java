@@ -80,9 +80,6 @@ public enum Item {
 		),
 	MIRROR (19,
 			new ImageNamePair("Magic mirror", "mirror")
-		),
-	NOTHING (-1, // this should never actually be seen
-			new ImageNamePair("Why do you see this?") // don't need a real image, will default to an empty block
 		);
 
 	// number of slots
