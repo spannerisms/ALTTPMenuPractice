@@ -19,8 +19,13 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
-public class MenuPractice {
-	// main
+class MenuPractice {
+	static final String VERSION = "v0.5";
+
+	static final Dimension d = new Dimension(800, 350);
+	static final Dimension d2 = new Dimension(300, 300);
+	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
+
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -46,11 +51,8 @@ public class MenuPractice {
 		final IntHolder totalScore = new IntHolder();
 
 		// main window
-		final Dimension d = new Dimension(800, 350);
-		final Dimension d2 = new Dimension(300, 300);
-		final JFrame frame = new JFrame("Menu Simulator 2K17");
+		final JFrame frame = new JFrame("Menu Simulator 2K17 " + VERSION);
 
-		final Font consolas = new Font("Consolas", Font.PLAIN, 12);
 		final Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
@@ -90,13 +92,13 @@ public class MenuPractice {
 		scoreScroll.getViewport().setBorder(null);
 
 		scores.setBorder(null);
-		scores.setFont(consolas);
+		scores.setFont(CONSOLAS);
 		scores.setBackground(null);
 		scores.setFocusable(false);
 
 		JLabel scoreTotal = new JLabel("Total score:", SwingConstants.RIGHT);
 		JLabel hiscore = new JLabel("0", SwingConstants.RIGHT);
-		hiscore.setFont(consolas);
+		hiscore.setFont(CONSOLAS);
 
 		l.putConstraint(SpringLayout.WEST, scoreTotal, 0,
 				SpringLayout.HORIZONTAL_CENTER, scoreScroll);

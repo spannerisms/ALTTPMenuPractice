@@ -1,6 +1,6 @@
 package Practice;
 
-public enum Item {
+enum Item {
 	BOW (0,
 		new ImageNamePair[] {
 			new ImageNamePair("Bow", "bow-empty"),

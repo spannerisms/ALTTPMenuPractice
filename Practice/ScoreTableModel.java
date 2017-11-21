@@ -1,18 +1,17 @@
 package Practice;
 
 import java.util.ArrayList;
-
 import javax.swing.table.AbstractTableModel;
 
-public class ScoreTableModel extends AbstractTableModel {
+class ScoreTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5841696898807444151L;
 
 	String[] columnNames = { "Turn",
 			"Score",
 			"Moves",
-			"<html><div style=\"font-size:95%;\">Optimal<br />path</div></html>",
+			"Optimal",
 			"Time (ms)",
-			"<html>Wrong<br />starts</html>" };
+			"Penalties" };
 	ArrayList<int[]> data = new ArrayList<int[]>();
 
 	public ScoreTableModel() {

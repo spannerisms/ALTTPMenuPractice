@@ -1,6 +1,6 @@
 package Practice;
 
-public enum ItemPoint {
+enum ItemPoint {
 	SLOT_0 (0),
 	SLOT_1 (1),
 	SLOT_2 (2),
@@ -24,6 +24,7 @@ public enum ItemPoint {
 
 	public final int x;
 	public final int y;
+
 	ItemPoint(int l) {
 		x = (l % 5) * MenuGame.BLOCK_SIZE;
 		y = (l / 5) * MenuGame.BLOCK_SIZE;

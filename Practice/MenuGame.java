@@ -104,32 +104,10 @@ public class MenuGame extends Container {
 	private ScoreCard ref = new ScoreCard(0);
 
 	// gameplay
-	// enumerate difficulties
-	enum Difficulty {
-		EASY ("Easy", 15);
-
-		final String diffName; // difficulty name
-		final int menuLength; // number of item rounds per menu
-		Difficulty(String name, int menuLength) {
-			this.diffName = name;
-			this.menuLength = menuLength;
-		}
-	}
-
-	// enumerate game modes
-	enum GameMode {
-		STUDY ("Study mode");
-
-		final String modeName;
-		GameMode (String name) {
-			modeName = name;
-		}
-	}
-
 	GameMode mode; // current game mode
 	Difficulty dif; // current difficulty
 	int currentTurn; // current turn, based on difficulty
-	
+
 	// end gameplay
 	// draw size
 	private int zoom = 2;
@@ -192,7 +170,7 @@ public class MenuGame extends Container {
 				}
 				repaint();
 			}
-			
+
 		});
 	}
 
@@ -209,7 +187,7 @@ public class MenuGame extends Container {
 		if (target == loc) {
 			win();
 		} else {
-			
+
 		}
 	}
 

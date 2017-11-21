@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.JComponent;
 
-public class ItemSlot extends JComponent {
+class ItemSlot extends JComponent {
 	private static final long serialVersionUID = -4130293452712063127L;
 
 	private final Item mine;
