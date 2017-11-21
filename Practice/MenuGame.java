@@ -3,7 +3,6 @@ package Practice;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,7 @@ public class MenuGame extends Container {
 	static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
 	static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
 	static final int ITEM_SIZE = 16; // size of the image itself
-	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
+	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE * 2, BLOCK_SIZE * 2);
 
 	static final Item[] ALL_ITEMS = Item.values(); // for easy access
 	static final int MIN_ITEMS = 4;
@@ -38,6 +37,7 @@ public class MenuGame extends Container {
 	static final BufferedImage TARGET_CURSOR;
 	static final int BG_WIDTH = 152;
 	static final int BG_HEIGHT = 120;
+	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH, BG_HEIGHT);
 
 	static {
 		BufferedImage temp;
@@ -124,7 +124,7 @@ public class MenuGame extends Container {
 	private int loc;
 	private ArrayList<Integer> pickFrom;
 
-	private ScoreCard ref = new ScoreCard(0);
+	private ScoreCard ref;
 
 	// gameplay
 	final GameMode mode; // current game mode
@@ -138,10 +138,14 @@ public class MenuGame extends Container {
 		mode = gameMode;
 		dif = difficulty;
 		addKeys();
+	}
+
+	public void start() {
 		randomizeMenu();
 	}
 
 	private final void initialize() {
+		this.setPreferredSize(MENU_SIZE);
 		this.setLayout(null);
 		for (int i = 0; i < ITEM_COUNT; i++) {
 			ItemSlot temp = new ItemSlot(ALL_ITEMS[i]);
@@ -325,20 +329,18 @@ public class MenuGame extends Container {
 	}
 
 	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-
-		g2.drawImage(BACKGROUND, 0, 0, null);
-		this.paintComponents(g2);
+		g.drawImage(BACKGROUND, 0, 0, null);
+		this.paintComponents(g);
 
 		ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
-		g2.drawImage(CURSOR,
+		g.drawImage(CURSOR,
 				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 				null);
 
 		if (dif.showTargetCursor) {
 			cursorLoc = ItemPoint.valueOf("SLOT_" + target);
-			g2.drawImage(TARGET_CURSOR,
+			g.drawImage(TARGET_CURSOR,
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);
@@ -390,7 +392,7 @@ public class MenuGame extends Container {
 	}
 
 	private synchronized void fireTurnEvent(ScoreCard ref) {
-		ref.calcScore();
+		if (ref != null) ref.calcScore();
 		TurnEvent te = new TurnEvent(this, ref);
 		Iterator<TurnListener> listening = turnListen.iterator();
 		while(listening.hasNext()) {
@@ -418,6 +420,22 @@ public class MenuGame extends Container {
 	private synchronized void fireInputEvent(int button) {
 		InputEvent te = new InputEvent(this, button);
 		Iterator<InputListener> listening = snesListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Events for being done
+	 */
+	private List<GameOverListener> doneListen = new ArrayList<GameOverListener>();
+	public synchronized void addGameOverListener(GameOverListener s) {
+		doneListen.add(s);
+	}
+
+	private synchronized void fireGameOverEvent() {
+		GameOverEvent te = new GameOverEvent(this);
+		Iterator<GameOverListener> listening = doneListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
 		}

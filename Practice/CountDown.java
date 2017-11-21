@@ -1,8 +1,6 @@
 package Practice;
 
-import java.awt.Container;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,10 +8,11 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 
 import Practice.Listeners.*;
 
-public class CountDown extends Container {
+public class CountDown extends JComponent {
 	private static final long serialVersionUID = 6892347930158631859L;
 
 	static final int BG_WIDTH = MenuGame.BG_WIDTH;
@@ -39,39 +38,60 @@ public class CountDown extends Container {
 	// local vars
 	OpTask counting;
 	Timer tick = new Timer();
-
-	static final int COUNTS = 4;
+	Task count;
+	static final int COUNTS = 3;
 	int curCount;
+
 	public CountDown() {
-		counting = new OpTask(()-> {
+		this.setPreferredSize(MenuGame.MENU_SIZE);
+		count = () -> {
 			curCount--;
 			switch (curCount) {
-				case 0 : // for the count down, continue counting and make a new background
-				case 1 :
-				case 2 :
-				case 3 :
-					tick.schedule(counting, COUNT_DOWN_WAIT);
-					break;
 				case -1 :
 					CountDown.this.fireGameOverEvent();
 					break;
-			}
-		});
+				// for the count down, continue counting and make a new background
+				case 0 : // make GO appear briefly
+					tick.schedule(new OpTask(count), COUNT_DOWN_WAIT / 4);
+					fireTurnEvent();
+					break;
+				case 1 :
+				case 2 :
+				case 3 :
+					tick.schedule(new OpTask(count), COUNT_DOWN_WAIT);
+					fireTurnEvent();
+					break;
+				}
+		};
 	}
 
 	public void newGame() {
 		curCount = COUNTS;
-		
+		tick.schedule(new OpTask(count), COUNT_DOWN_WAIT);
 	}
 
 	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(COUNT_DOWN_BG[curCount], 0, 0, null);
-		this.paintComponents(g2);
+		g.drawImage(COUNT_DOWN_BG[curCount], 0, 0, null);
 	}
 
 	/*
-	 * Events for snes inputs
+	 * Events for turn changes
+	 */
+	private List<TurnListener> turnListen = new ArrayList<TurnListener>();
+	public synchronized void addTurnListener(TurnListener s) {
+		turnListen.add(s);
+	}
+
+	private synchronized void fireTurnEvent() {
+		TurnEvent te = new TurnEvent(this, null);
+		Iterator<TurnListener> listening = turnListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Events for being done
 	 */
 	private List<GameOverListener> doneListen = new ArrayList<GameOverListener>();
 	public synchronized void addGameOverListener(GameOverListener s) {

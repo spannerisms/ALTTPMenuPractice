@@ -25,7 +25,7 @@ class ItemSlot extends JComponent {
 	}
 
 	public void paint(Graphics g) {
-		if (isEnabled()) {
+		if (isEnabled() && i != null) {
 			g.drawImage(i.img, 0, 0, null);
 		}
 	}

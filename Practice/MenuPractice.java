@@ -3,8 +3,6 @@ package Practice;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -48,6 +46,7 @@ class MenuPractice {
 		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE); // 596:31:23.647
 
 		final IntHolder turn = new IntHolder();
+		turn.increment();
 		final IntHolder totalScore = new IntHolder();
 
 		// main window
@@ -58,23 +57,23 @@ class MenuPractice {
 		wrap.setLayout(l);
 
 		// game
-		MenuGame instance = new MenuGame(GameMode.STUDY, Difficulty.EASY);
+		GameContainer gamePlayer = new GameContainer();
 
-		l.putConstraint(SpringLayout.WEST, instance, 5,
+		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.NORTH, instance, 5,
+		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
-		frame.add(instance);
-		instance.setSize(d2);
-		instance.setPreferredSize(d2);
+		frame.add(gamePlayer);
+		gamePlayer.setSize(d2);
+		gamePlayer.setPreferredSize(d2);
 
 		// target
 		JLabel targ = new JLabel("--");
 		targ.setFocusable(false);
 		l.putConstraint(SpringLayout.WEST, targ, 5,
-				SpringLayout.EAST, instance);
+				SpringLayout.EAST, gamePlayer);
 		l.putConstraint(SpringLayout.NORTH, targ, 5,
-				SpringLayout.NORTH, instance);
+				SpringLayout.NORTH, gamePlayer);
 		wrap.add(targ);
 
 		// scores
@@ -144,23 +143,10 @@ class MenuPractice {
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				instance.dispatchEvent(e);
-			}
-
-			public void keyReleased(KeyEvent e) {
-				instance.dispatchEvent(e);
-			}
-
-			public void keyTyped(KeyEvent e) {
-				instance.dispatchEvent(e);
-			}});
-
-		instance.addTurnListener(
+		gamePlayer.addTurnListener(
 			arg0 -> {
-					targ.setText(instance.getTarget().getCurrentItem());
 					ScoreCard tempRef = arg0.score;
+					targ.setText(gamePlayer.getInstance().getTarget().getCurrentItem());
 					if (tempRef != null) {
 						int tempScore = tempRef.finalScore;
 						model.addRow(new int[] {
@@ -177,7 +163,6 @@ class MenuPractice {
 					}
 			});
 
-		instance.refresh();
 		frame.setVisible(true);
 	}
 
