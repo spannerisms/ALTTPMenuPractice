@@ -27,7 +27,7 @@ public class MenuGame extends Container {
 	static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
 	static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
 	static final int ITEM_SIZE = 16; // size of the image itself
-	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE * 2, BLOCK_SIZE * 2);
+	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE * 2 + 5, BLOCK_SIZE * 2 + 5);
 
 	static final Item[] ALL_ITEMS = Item.values(); // for easy access
 	static final int MIN_ITEMS = 4;
@@ -193,7 +193,6 @@ public class MenuGame extends Container {
 						fireInputEvent(InputEvent.SNES_START);
 						break;
 				}
-				repaint();
 			}
 
 		});
@@ -304,8 +303,7 @@ public class MenuGame extends Container {
 	private void randomizeGoal() {
 		int randomIndex;
 		if (dif.randomizeStart // check to see if we're changing start location each time
-				|| currentTurn == dif.studyRoundLength) // also randomize on the first turn
-		{
+				|| currentTurn == dif.studyRoundLength) { // also randomize on the first turn
 			randomIndex = (int) (Math.random() * pickFrom.size());
 			loc = pickFrom.get(randomIndex);
 		}
@@ -320,7 +318,6 @@ public class MenuGame extends Container {
 		ref = new ScoreCard(calcMinMoves());
 
 		fireTurnEvent(prevRef);
-		repaint();
 		this.requestFocusInWindow();
 	}
 

@@ -61,11 +61,13 @@ class MenuPractice {
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
+		l.putConstraint(SpringLayout.EAST, gamePlayer, 0,
+				SpringLayout.HORIZONTAL_CENTER, wrap);
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
+		l.putConstraint(SpringLayout.SOUTH, gamePlayer, -5,
+				SpringLayout.SOUTH, wrap);
 		frame.add(gamePlayer);
-		gamePlayer.setSize(d2);
-		gamePlayer.setPreferredSize(d2);
 
 		// target
 		JLabel targ = new JLabel("--");
@@ -104,6 +106,7 @@ class MenuPractice {
 		l.putConstraint(SpringLayout.SOUTH, scoreTotal, -5,
 				SpringLayout.SOUTH, wrap);
 		wrap.add(scoreTotal);
+
 		l.putConstraint(SpringLayout.EAST, hiscore, -10,
 				SpringLayout.EAST, scoreScroll);
 		l.putConstraint(SpringLayout.VERTICAL_CENTER, hiscore, 0,

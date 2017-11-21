@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SpringLayout;
 
 import Practice.Listeners.TurnEvent;
 import Practice.Listeners.TurnListener;
@@ -26,14 +27,13 @@ public class GameContainer extends Container {
 			arg0 -> {
 				holder.remove(counter);
 				holder.add(playing);
-				holder.revalidate();
 				playing.start();
 				playing.requestFocusInWindow();
+				GameContainer.this.repaint();
 			});
-		counter.addTurnListener(arg0 -> repaint());
-		holder.setPreferredSize(MenuGame.MENU_SIZE);
-		holder.setSize(MenuGame.MENU_SIZE);
+		counter.addTurnListener(arg0 -> GameContainer.this.repaint());
 		initialize();
+		newGame();
 	}
 
 	public void paint(Graphics g) {
@@ -43,24 +43,32 @@ public class GameContainer extends Container {
 	}
 
 	private final void initialize() {
+		SpringLayout l = new SpringLayout();
+		this.setLayout(l);
+		
+		holder.setPreferredSize(MenuGame.MENU_SIZE);
+		holder.setSize(MenuGame.MENU_SIZE);
+
+		l.putConstraint(SpringLayout.NORTH, holder, 0,
+				SpringLayout.NORTH, this);
+		l.putConstraint(SpringLayout.SOUTH, holder, MenuGame.BG_HEIGHT * 2 + 10,
+				SpringLayout.NORTH, this);
 		this.add(holder);
-		newGame();
+		revalidate();
 	}
 
 	public void newGame() {
+		playing = new MenuGame(GameMode.STUDY, Difficulty.EASY);
 		counter.newGame();
 		holder.add(counter);
-		playing = new MenuGame(GameMode.STUDY, Difficulty.EASY);
 		playing.addGameOverListener(
 				arg0 -> {
 					holder.remove(playing);
-					holder.revalidate();
+					GameContainer.this.repaint();
 					playing.transferFocus();
 				});
-		playing.addTurnListener(
-				arg0 -> {
-					fireTurnEvent(arg0); // just relay it to MenuPractice
-				});
+		playing.addTurnListener(arg0 -> GameContainer.this.fireTurnEvent(arg0) ); // just relay it to MenuPractice
+		playing.addInputListener(arg0 -> GameContainer.this.repaint() );
 	}
 
 	public MenuGame getInstance() {
