@@ -33,6 +33,7 @@ public class MenuGame extends Container {
 
 	static final BufferedImage BACKGROUND;
 	static final BufferedImage CURSOR;
+	static final BufferedImage TARGET_CURSOR;
 	static final int BG_WIDTH = 152;
 	static final int BG_HEIGHT = 120;
 
@@ -51,6 +52,13 @@ public class MenuGame extends Container {
 			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		CURSOR = temp;
+
+		try {
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/target cursor.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		TARGET_CURSOR = temp;
 	}
 
 	// all possible moves
@@ -194,9 +202,16 @@ public class MenuGame extends Container {
 	private void win() {
 		switch (mode) {
 			case STUDY :
+				currentTurn--;
+				if (currentTurn == 0) {
+					randomizeMenu();
+				} else {
+					randomizeGoal();
+				}
 				break;
 		}
 	}
+
 	/*
 	 * Movement
 	 */
@@ -244,6 +259,8 @@ public class MenuGame extends Container {
 	private void randomizeMenu() {
 		boolean[] chosen = new boolean[20];
 
+		currentTurn = dif.menuLength;
+
 		// we need at least this many items
 		int itemsChosen = 0;
 		boolean notEnoughItems = true;
@@ -284,11 +301,19 @@ public class MenuGame extends Container {
 	}
 
 	private void randomizeGoal() {
-		int randomIndex = (int) (Math.random() * pickFrom.size());
-		loc = pickFrom.remove(randomIndex);
+		int randomIndex;
+		if (dif.randomizeStart // check to see if we're changing start location each time
+				|| currentTurn == dif.menuLength) // also randomize on the first turn
+		{
+			randomIndex = (int) (Math.random() * pickFrom.size());
+			loc = pickFrom.get(randomIndex);
+		}
 
-		randomIndex = (int) (Math.random() * pickFrom.size());
-		target = pickFrom.remove(randomIndex);
+		do {
+			randomIndex = (int) (Math.random() * pickFrom.size());
+			target = pickFrom.get(randomIndex);
+		} while (target == loc);
+
 		ScoreCard prevRef = ref;
 
 		ref = new ScoreCard(calcMinMoves());
@@ -307,11 +332,20 @@ public class MenuGame extends Container {
 		g2.scale(zoom, zoom);
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		this.paintComponents(g2);
+
 		ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
 		g2.drawImage(CURSOR,
 				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 				null);
+
+		if (dif.showTargetCursor) {
+			cursorLoc = ItemPoint.valueOf("SLOT_" + target);
+			g2.drawImage(TARGET_CURSOR,
+					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
+					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
+					null);
+		}
 	}
 
 	private int calcMinMoves() {
@@ -367,6 +401,14 @@ public class MenuGame extends Container {
 		}
 	}
 
+	// for the first initialization
+	synchronized void refresh() {
+		TurnEvent te = new TurnEvent(this, null);
+		Iterator<TurnListener> listening = turnListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
 	/*
 	 * Events for snes inputs
 	 */

@@ -177,6 +177,7 @@ class MenuPractice {
 					turn.increment();
 			});
 
+		instance.refresh();
 		frame.setVisible(true);
 	}
 
