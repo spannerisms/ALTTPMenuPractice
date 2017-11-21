@@ -19,7 +19,7 @@ import static Practice.Item.ITEM_COUNT;
 
 // TODO: https://github.com/snes9xgit/snes9x
 public class MenuGame extends Container {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4474643068621537992L;
 
 	// location within the menu image to start for calculating
 	static final int ITEM_ORIGIN_X = 24;
@@ -132,8 +132,6 @@ public class MenuGame extends Container {
 	int currentTurn; // current turn, based on difficulty
 
 	// end gameplay
-	// draw size
-	private int zoom = 2;
 
 	public MenuGame(GameMode gameMode, Difficulty difficulty) {
 		initialize();
@@ -328,7 +326,7 @@ public class MenuGame extends Container {
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.scale(zoom, zoom);
+
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		this.paintComponents(g2);
 
@@ -408,17 +406,18 @@ public class MenuGame extends Container {
 			(listening.next()).eventReceived(te);
 		}
 	}
+
 	/*
 	 * Events for snes inputs
 	 */
-	private List<InputListener> targListen = new ArrayList<InputListener>();
+	private List<InputListener> snesListen = new ArrayList<InputListener>();
 	public synchronized void addInputListener(InputListener s) {
-		targListen.add(s);
+		snesListen.add(s);
 	}
 
 	private synchronized void fireInputEvent(int button) {
 		InputEvent te = new InputEvent(this, button);
-		Iterator<InputListener> listening = targListen.iterator();
+		Iterator<InputListener> listening = snesListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
 		}
