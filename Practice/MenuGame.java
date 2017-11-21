@@ -103,6 +103,19 @@ public class MenuGame extends Container {
 		}
 	}
 
+	// list of items with repeats to give some items higher chance of appearing
+	// only needs to be defined once
+	private static final ArrayList<Integer> ITEM_CHOOSER = new ArrayList<Integer>();
+
+	static {
+		for (Item i : Item.values()) { // for each item
+			int tag = i.index;
+			for (int j = 0; j < i.weight; j++) { // add X times based on weight
+				ITEM_CHOOSER.add(tag);
+			}
+		}
+	}
+
 	// local vars
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
@@ -112,18 +125,18 @@ public class MenuGame extends Container {
 	private ScoreCard ref = new ScoreCard(0);
 
 	// gameplay
-	GameMode mode; // current game mode
-	Difficulty dif; // current difficulty
+	final GameMode mode; // current game mode
+	final Difficulty dif; // current difficulty
 	int currentTurn; // current turn, based on difficulty
 
 	// end gameplay
 	// draw size
 	private int zoom = 2;
 
-	public MenuGame() {
+	public MenuGame(GameMode gameMode, Difficulty difficulty) {
 		initialize();
-		setGameMode(GameMode.STUDY);
-		setDifficulty(Difficulty.EASY);
+		mode = gameMode;
+		dif = difficulty;
 		addKeys();
 		randomizeMenu();
 	}
@@ -180,14 +193,6 @@ public class MenuGame extends Container {
 			}
 
 		});
-	}
-
-	private final void setDifficulty(Difficulty difficulty) {
-		dif = difficulty;
-	}
-
-	private final void setGameMode(GameMode mode) {
-		this.mode = mode;
 	}
 
 	private void pressStart() {
@@ -247,40 +252,32 @@ public class MenuGame extends Container {
 		return newLoc;
 	}
 
-	/**
-	 * Forumala used to determine if an item is on
-	 * @return
-	 */
-	private boolean chooseOn() {
-		int x = (int) (Math.random() * 3);
-		return x == 0;
-	}
-
 	private void randomizeMenu() {
-		boolean[] chosen = new boolean[20];
+		boolean[] chosen = new boolean[Item.ITEM_COUNT];
 
-		currentTurn = dif.menuLength;
+		currentTurn = dif.studyRoundLength; // only used in study mode
 
 		// we need at least this many items
-		int itemsChosen = 0;
-		boolean notEnoughItems = true;
+		final int itemsWanted = 4 + (int) (Math.random() * 17); // choose between 4 and 20 for item count #blazeit
+		int chooserSize = ITEM_CHOOSER.size();
+
+		boolean tooMany = itemsWanted >= 15; // if we have 15+ items, start with a full list and remove
+		if (tooMany) {
+			for (int i = 0; i < Item.ITEM_COUNT; i++) {
+				chosen[i] = true; // inverse selection
+			}
+		}
+		int itemsChosen = tooMany ? 20 : 0;
 
 		// choose slots to use
-		while (notEnoughItems) {
-			for (int i = 0; i < ITEM_COUNT; i++) {
-				if (chosen[i]) {
-					continue;
-				}
-
-				if (chooseOn()) {
-					chosen[i] = true;
-					itemsChosen++;
-
-					if (itemsChosen >= MIN_ITEMS) {
-						notEnoughItems = false;
-					}
-				}
-			} // end for
+		while (itemsChosen != itemsWanted) {
+			int rand = (int) (Math.random() * chooserSize);
+			int toAdd = ITEM_CHOOSER.get(rand);
+			if (chosen[toAdd] == !tooMany) { // reuse this var for whether we want off or on
+				continue;
+			}
+			chosen[toAdd] = !tooMany;
+			itemsChosen += tooMany ? -1 : 1; // direction to count
 		} // end while
 
 		// add items to lists
@@ -303,7 +300,7 @@ public class MenuGame extends Container {
 	private void randomizeGoal() {
 		int randomIndex;
 		if (dif.randomizeStart // check to see if we're changing start location each time
-				|| currentTurn == dif.menuLength) // also randomize on the first turn
+				|| currentTurn == dif.studyRoundLength) // also randomize on the first turn
 		{
 			randomIndex = (int) (Math.random() * pickFrom.size());
 			loc = pickFrom.get(randomIndex);

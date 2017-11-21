@@ -58,7 +58,7 @@ class MenuPractice {
 		wrap.setLayout(l);
 
 		// game
-		MenuGame instance = new MenuGame();
+		MenuGame instance = new MenuGame(GameMode.STUDY, Difficulty.EASY);
 
 		l.putConstraint(SpringLayout.WEST, instance, 5,
 				SpringLayout.WEST, wrap);
@@ -160,8 +160,8 @@ class MenuPractice {
 		instance.addTurnListener(
 			arg0 -> {
 					targ.setText(instance.getTarget().getCurrentItem());
-					if (turn.val > 0) {
-						ScoreCard tempRef = arg0.score;
+					ScoreCard tempRef = arg0.score;
+					if (tempRef != null) {
 						int tempScore = tempRef.finalScore;
 						model.addRow(new int[] {
 								turn.val,
@@ -173,8 +173,8 @@ class MenuPractice {
 						});
 						totalScore.add(tempScore);
 						hiscore.setText(Integer.toString(totalScore.val));
+						turn.increment();
 					}
-					turn.increment();
 			});
 
 		instance.refresh();

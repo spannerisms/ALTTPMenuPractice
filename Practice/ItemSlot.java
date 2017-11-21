@@ -9,6 +9,7 @@ class ItemSlot extends JComponent {
 
 	private final Item mine;
 	private ImageNamePair i;
+	public final int weight;
 
 	ItemSlot(Item item) {
 		this.setSize(MenuGame.BLOCK_D);
@@ -16,6 +17,7 @@ class ItemSlot extends JComponent {
 		this.setMaximumSize(MenuGame.BLOCK_D);
 		this.setPreferredSize(MenuGame.BLOCK_D);
 		this.mine = item;
+		weight = item.weight;
 	}
 
 	public void setRandomItem() {
