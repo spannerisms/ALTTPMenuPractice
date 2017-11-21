@@ -10,7 +10,7 @@ enum Difficulty {
 	// 6 : 
 	// 7 : show a blue cursor over the target item in addition to the name
 	// 8 : randomize location of starting cursor each round
-	EASY ("Easy", 15, 20, (byte) 0b00000010),
+	EASY ("Easy", 2, 20, (byte) 0b00000010),
 	MEDIUM ("Medium", 10, 30, (byte) 0b00000001);
 
 	// local vars

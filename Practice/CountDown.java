@@ -1,6 +1,7 @@
 package Practice;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +38,7 @@ public class CountDown extends JComponent {
 
 	// local vars
 	OpTask counting;
-	Timer tick = new Timer();
+	Timer tick;
 	Task count;
 	static final int COUNTS = 3;
 	int curCount;
@@ -48,7 +49,8 @@ public class CountDown extends JComponent {
 			curCount--;
 			switch (curCount) {
 				case -1 :
-					CountDown.this.fireGameOverEvent();
+					tick.cancel();
+					fireGameOverEvent();
 					break;
 				// for the count down, continue counting and make a new background
 				case 0 : // make GO appear briefly
@@ -66,12 +68,18 @@ public class CountDown extends JComponent {
 	}
 
 	public void newGame() {
+		tick = new Timer();
 		curCount = COUNTS;
 		tick.schedule(new OpTask(count), COUNT_DOWN_WAIT);
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(COUNT_DOWN_BG[curCount], 0, 0, null);
+		if (curCount == -1) {
+			return;
+		}
+		Graphics2D g2 = (Graphics2D) g;
+		g2.scale(GameContainer.ZOOM, GameContainer.ZOOM);
+		g2.drawImage(COUNT_DOWN_BG[curCount], 0, 0, null);
 	}
 
 	/*

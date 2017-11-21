@@ -3,6 +3,7 @@ package Practice;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -27,7 +28,7 @@ public class MenuGame extends Container {
 	static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
 	static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
 	static final int ITEM_SIZE = 16; // size of the image itself
-	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE * 2 + 5, BLOCK_SIZE * 2 + 5);
+	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
 
 	static final Item[] ALL_ITEMS = Item.values(); // for easy access
 	static final int MIN_ITEMS = 4;
@@ -37,7 +38,7 @@ public class MenuGame extends Container {
 	static final BufferedImage TARGET_CURSOR;
 	static final int BG_WIDTH = 152;
 	static final int BG_HEIGHT = 120;
-	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH, BG_HEIGHT);
+	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
 
 	static {
 		BufferedImage temp;
@@ -130,11 +131,12 @@ public class MenuGame extends Container {
 	final GameMode mode; // current game mode
 	final Difficulty dif; // current difficulty
 	int currentTurn; // current turn, based on difficulty
-
+	int round;
 	// end gameplay
 
-	public MenuGame(GameMode gameMode, Difficulty difficulty) {
+	public MenuGame(GameMode gameMode, Difficulty difficulty, int rounds) {
 		initialize();
+		round = rounds;
 		mode = gameMode;
 		dif = difficulty;
 		addKeys();
@@ -194,7 +196,6 @@ public class MenuGame extends Container {
 						break;
 				}
 			}
-
 		});
 	}
 
@@ -256,6 +257,12 @@ public class MenuGame extends Container {
 	}
 
 	private void randomizeMenu() {
+		if (round == 0) {
+			fireTurnEvent(ref);
+			fireGameOverEvent();
+			return;
+		}
+		round--;
 		boolean[] chosen = new boolean[Item.ITEM_COUNT];
 
 		currentTurn = dif.studyRoundLength; // only used in study mode
@@ -298,6 +305,7 @@ public class MenuGame extends Container {
 
 		// choose begin item and target item
 		randomizeGoal();
+		repaint();
 	}
 
 	private void randomizeGoal() {
@@ -318,7 +326,6 @@ public class MenuGame extends Container {
 		ref = new ScoreCard(calcMinMoves());
 
 		fireTurnEvent(prevRef);
-		this.requestFocusInWindow();
 	}
 
 	public ItemSlot getTarget() {
@@ -326,18 +333,20 @@ public class MenuGame extends Container {
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(BACKGROUND, 0, 0, null);
-		this.paintComponents(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.scale(GameContainer.ZOOM, GameContainer.ZOOM);
+		g2.drawImage(BACKGROUND, 0, 0, null);
+		paintComponents(g2);
 
 		ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
-		g.drawImage(CURSOR,
+		g2.drawImage(CURSOR,
 				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 				null);
 
 		if (dif.showTargetCursor) {
 			cursorLoc = ItemPoint.valueOf("SLOT_" + target);
-			g.drawImage(TARGET_CURSOR,
+			g2.drawImage(TARGET_CURSOR,
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);

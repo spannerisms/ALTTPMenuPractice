@@ -20,8 +20,7 @@ import javax.swing.UIManager;
 class MenuPractice {
 	static final String VERSION = "v0.5";
 
-	static final Dimension d = new Dimension(800, 350);
-	static final Dimension d2 = new Dimension(300, 300);
+	static final Dimension d = new Dimension(800, 450);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
 
 	public static void main(String[] args) {
@@ -65,18 +64,12 @@ class MenuPractice {
 				SpringLayout.HORIZONTAL_CENTER, wrap);
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.SOUTH, gamePlayer, -5,
+		l.putConstraint(SpringLayout.SOUTH, gamePlayer, -50,
 				SpringLayout.SOUTH, wrap);
 		frame.add(gamePlayer);
 
 		// target
-		JLabel targ = new JLabel("--");
-		targ.setFocusable(false);
-		l.putConstraint(SpringLayout.WEST, targ, 5,
-				SpringLayout.EAST, gamePlayer);
-		l.putConstraint(SpringLayout.NORTH, targ, 5,
-				SpringLayout.NORTH, gamePlayer);
-		wrap.add(targ);
+
 
 		// scores
 		JTable scores = new JTable();
@@ -113,7 +106,7 @@ class MenuPractice {
 				SpringLayout.VERTICAL_CENTER, scoreTotal);
 		wrap.add(hiscore);
 
-		l.putConstraint(SpringLayout.WEST, scoreScroll, -370,
+		l.putConstraint(SpringLayout.WEST, scoreScroll, -300,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
 				SpringLayout.EAST, wrap);
@@ -149,7 +142,6 @@ class MenuPractice {
 		gamePlayer.addTurnListener(
 			arg0 -> {
 					ScoreCard tempRef = arg0.score;
-					targ.setText(gamePlayer.getInstance().getTarget().getCurrentItem());
 					if (tempRef != null) {
 						int tempScore = tempRef.finalScore;
 						model.addRow(new int[] {
@@ -164,8 +156,8 @@ class MenuPractice {
 						hiscore.setText(Integer.toString(totalScore.val));
 						turn.increment();
 					}
+					gamePlayer.repaint();
 			});
-
 		frame.setVisible(true);
 	}
 

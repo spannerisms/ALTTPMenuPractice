@@ -1,7 +1,7 @@
 package Practice;
 
 enum GameMode {
-	STUDY ("Study mode");
+	STUDY ("Study");
 
 	final String modeName;
 	GameMode (String name) {
