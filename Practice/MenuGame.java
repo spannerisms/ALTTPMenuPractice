@@ -13,8 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
@@ -108,16 +112,47 @@ public class MenuGame extends Container {
 	private ItemSlot[] list = new ItemSlot[20];
 	private int target;
 	private int loc;
+	private ArrayList<Integer> pickFrom;
 
 	private ScoreCard ref = new ScoreCard(0);
 
+	// gameplay
+	// enumerate difficulties
+	enum Difficulty {
+		EASY ("Easy", 15);
+
+		final String diffName; // difficulty name
+		final int menuLength; // number of item rounds per menu
+		Difficulty(String name, int menuLength) {
+			this.diffName = name;
+			this.menuLength = menuLength;
+		}
+	}
+
+	// enumerate game modes
+	enum GameMode {
+		STUDY ("Study mode");
+
+		final String modeName;
+		GameMode (String name) {
+			modeName = name;
+		}
+	}
+
+	GameMode mode; // current game mode
+	Difficulty dif; // current difficulty
+	int currentTurn; // current turn, based on difficulty
+	
+	// end gameplay
 	// draw size
 	private int zoom = 2;
 
 	public MenuGame() {
 		initialize();
+		setGameMode(GameMode.STUDY);
+		setDifficulty(Difficulty.EASY);
 		addKeys();
-		randomize();
+		randomizeMenu();
 	}
 
 	private final void initialize() {
@@ -174,16 +209,29 @@ public class MenuGame extends Container {
 		});
 	}
 
+	private final void setDifficulty(Difficulty difficulty) {
+		dif = difficulty;
+	}
+
+	private final void setGameMode(GameMode mode) {
+		this.mode = mode;
+	}
+
 	private void pressStart() {
 		ref.startPresses++;
 		if (target == loc) {
-			//win();
-			randomize();
+			win();
 		} else {
 			
 		}
 	}
 
+	private void win() {
+		switch (mode) {
+			case STUDY :
+				break;
+		}
+	}
 	/*
 	 * Movement
 	 */
@@ -228,7 +276,7 @@ public class MenuGame extends Container {
 		return x == 0;
 	}
 
-	private void randomize() {
+	private void randomizeMenu() {
 		boolean[] chosen = new boolean[20];
 
 		// we need at least this many items
@@ -254,7 +302,7 @@ public class MenuGame extends Container {
 		} // end while
 
 		// add items to lists
-		ArrayList<Integer> pickFrom = new ArrayList<Integer>();
+		pickFrom = new ArrayList<Integer>();
 
 		for (int i = 0; i < ITEM_COUNT; i++) {
 			if (chosen[i]) {
@@ -267,6 +315,10 @@ public class MenuGame extends Container {
 		}
 
 		// choose begin item and target item
+		randomizeGoal();
+	}
+
+	private void randomizeGoal() {
 		int randomIndex = (int) (Math.random() * pickFrom.size());
 		loc = pickFrom.remove(randomIndex);
 
@@ -375,6 +427,7 @@ public class MenuGame extends Container {
 		});
 	}
 
+	// TODO : I should move this to a new file..........
 	// GUI
 	public static void doTheGUI() {
 		// try to set LaF
@@ -392,7 +445,7 @@ public class MenuGame extends Container {
 		final IntHolder totalScore = new IntHolder();
 
 		// main window
-		final Dimension d = new Dimension(800, 300);
+		final Dimension d = new Dimension(800, 350);
 		final Dimension d2 = new Dimension(300, 300);
 		final JFrame frame = new JFrame("Menu Simulator 2K17");
 
@@ -465,6 +518,24 @@ public class MenuGame extends Container {
 				SpringLayout.NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
+		// menu
+		final JMenuBar menu = new JMenuBar();
+		frame.setJMenuBar(menu);
+
+		// file menu
+		final JMenu fileMenu = new JMenu("File");
+		menu.add(fileMenu);
+
+		// exit
+		final JMenuItem exit = new JMenuItem("Exit");
+		ImageIcon mirror = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/mirror.png")
+			);
+		exit.setIcon(mirror);
+		fileMenu.add(exit);
+		exit.addActionListener(arg0 -> System.exit(0));
+
+		// frame display
 		frame.setSize(d);
 		frame.setMinimumSize(d);
 		frame.setLocation(150, 150);
@@ -503,7 +574,6 @@ public class MenuGame extends Container {
 					turn.increment();
 			});
 
-		instance.randomize();
 		frame.setVisible(true);
 	}
 
@@ -558,7 +628,7 @@ public class MenuGame extends Container {
 			endTime = System.currentTimeMillis(); // calculate end time on score request
 			long timeDiff = endTime - startTime;
 			finalTime = (int) (timeDiff);
-			int timeScore = (2000 - finalTime);
+			int timeScore = (4000 - finalTime);
 
 			// difference between moves made and optimal moves
 			int diffScore = ( 500 * ( (minMoves + 1) - moves) );
@@ -567,10 +637,10 @@ public class MenuGame extends Container {
 			// penalty for pressing start on the wrong item
 			int startPenalty = 0;
 			if (startPresses > 1) {
-				startPenalty = startPresses * 500;
+				startPenalty = startPresses * 1000;
 			}
 
-			finalScore = 0 + diffScore + moveBonus - startPenalty;
+			finalScore = timeScore + diffScore + moveBonus - startPenalty;
 			return finalScore;
 		}
 	}
