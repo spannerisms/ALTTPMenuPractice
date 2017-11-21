@@ -1,6 +1,6 @@
 package Practice;
 
-class ScoreCard {
+public class ScoreCard {
 	int startPresses;
 	int moves;
 	final long startTime;
