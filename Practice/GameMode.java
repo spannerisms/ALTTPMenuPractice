@@ -1,7 +1,9 @@
 package Practice;
 
 enum GameMode {
-	STUDY ("Study");
+	STUDY ("Study"),
+	BLITZ ("Blitz"),
+	COLLECT ("Collections");
 
 	final String modeName;
 	GameMode (String name) {

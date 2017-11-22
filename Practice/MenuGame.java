@@ -131,19 +131,31 @@ public class MenuGame extends Container {
 	final GameMode mode; // current game mode
 	final Difficulty dif; // current difficulty
 	int currentTurn; // current turn, based on difficulty
-	int round;
+	int currentRound;
+	final int maxTurn;
+	final int maxRound;
+	final boolean randoAllStarts;
+	ItemLister chosen; // list of chosen items
+
 	// end gameplay
 
 	public MenuGame(GameMode gameMode, Difficulty difficulty, int rounds) {
 		initialize();
-		round = rounds;
 		mode = gameMode;
 		dif = difficulty;
+		maxTurn = dif.roundLength(mode);
+		currentRound = dif.roundCount(rounds, mode);
+		maxRound = currentRound;
+		currentTurn = maxTurn;
+		randoAllStarts = dif.randomizesStart(mode);
 		addKeys();
 	}
 
 	public void start() {
 		randomizeMenu();
+		randomizeGoal();
+		fireTurnEvent(null);
+		ref = new ScoreCard(calcMinMoves());
 	}
 
 	private final void initialize() {
@@ -202,21 +214,52 @@ public class MenuGame extends Container {
 	private void pressStart() {
 		ref.startPresses++;
 		if (target == loc) {
-			win();
+			nextTurn();
 		} else {
 
 		}
 	}
 
-	private void win() {
+	private void nextTurn() {
+		currentTurn--;
+		System.out.println("Turn : " + currentTurn + " | Round : " + currentRound);
+		if (currentTurn == 0) {
+			nextRound();
+		}
 		switch (mode) {
 			case STUDY :
-				currentTurn--;
-				if (currentTurn == 0) {
-					randomizeMenu();
-				} else {
-					randomizeGoal();
-				}
+				randomizeGoal();
+				break;
+			case BLITZ :
+				randomizeGoal();
+				break;
+			case COLLECT :
+				randomizeGoal();
+				break;
+		}
+		ScoreCard prevRef = ref;
+
+		ref = new ScoreCard(calcMinMoves());
+		fireTurnEvent(prevRef);
+	}
+
+	private void nextRound() {
+		currentRound--;
+		if (currentRound == 0) {
+			fireTurnEvent(ref);
+			fireGameOverEvent();
+			return;
+		}
+		currentTurn = maxTurn;
+		switch (mode) {
+			case STUDY :
+				randomizeMenu();
+				break;
+			case BLITZ :
+				randomizeMenu();
+				break;
+			case COLLECT :
+				addToMenu();
 				break;
 		}
 	}
@@ -257,44 +300,43 @@ public class MenuGame extends Container {
 	}
 
 	private void randomizeMenu() {
-		if (round == 0) {
-			fireTurnEvent(ref);
-			fireGameOverEvent();
-			return;
-		}
-		round--;
-		boolean[] chosen = new boolean[Item.ITEM_COUNT];
+		chosen = new ItemLister();
 
-		currentTurn = dif.studyRoundLength; // only used in study mode
+		switch (mode) {
+			case STUDY :
+				currentTurn = dif.studyRoundLength;
+				break;
+			case COLLECT :
+				currentTurn = dif.collectionRoundLength;
+				break;
+			default :
+				currentTurn = 1;
+				break;
+		}
 
 		// we need at least this many items
-		final int itemsWanted = 4 + (int) (Math.random() * 17); // choose between 4 and 20 for item count #blazeit
-		int chooserSize = ITEM_CHOOSER.size();
+		final int itemsWanted;
 
-		boolean tooMany = itemsWanted >= 15; // if we have 15+ items, start with a full list and remove
-		if (tooMany) {
-			for (int i = 0; i < Item.ITEM_COUNT; i++) {
-				chosen[i] = true; // inverse selection
-			}
+		switch (mode) {
+			case STUDY :
+			case BLITZ :
+			default :
+				itemsWanted = (int) (Math.random() * 17); // choose between 0 and 16 items to add
+				chosen.addRandomItems(itemsWanted);
+				break;
+			case COLLECT :
+				// do nothing
+				break;
 		}
-		int itemsChosen = tooMany ? 20 : 0;
 
 		// choose slots to use
-		while (itemsChosen != itemsWanted) {
-			int rand = (int) (Math.random() * chooserSize);
-			int toAdd = ITEM_CHOOSER.get(rand);
-			if (chosen[toAdd] == !tooMany) { // reuse this var for whether we want off or on
-				continue;
-			}
-			chosen[toAdd] = !tooMany;
-			itemsChosen += tooMany ? -1 : 1; // direction to count
-		} // end while
+
 
 		// add items to lists
 		pickFrom = new ArrayList<Integer>();
 
 		for (int i = 0; i < ITEM_COUNT; i++) {
-			if (chosen[i]) {
+			if (chosen.get(i)) {
 				list[i].setRandomItem();
 				list[i].setEnabled(true);
 				pickFrom.add(i);
@@ -302,16 +344,32 @@ public class MenuGame extends Container {
 				list[i].setEnabled(false);
 			}
 		}
+	}
 
-		// choose begin item and target item
-		randomizeGoal();
-		repaint();
+	/**
+	 * Adds a single item to the menu
+	 */
+	private void addToMenu() {
+		int i = chosen.addOneItem();
+		list[i].setRandomItem();
+		list[i].setEnabled(true);
+		pickFrom.add(i);
 	}
 
 	private void randomizeGoal() {
 		int randomIndex;
-		if (dif.randomizeStart // check to see if we're changing start location each time
-				|| currentTurn == dif.studyRoundLength) { // also randomize on the first turn
+		if (
+				randoAllStarts // check to see if we're changing start location each time
+				// also randomize on the first turn, 
+				|| (
+					(currentTurn == maxTurn) &&
+						(
+						// when we're on the first turn of the first round, which should always randomize the goal
+								(currentRound == maxRound) ||
+						// or the first turn of a round not in collections
+								(mode != GameMode.COLLECT) )
+						)
+			) {
 			randomIndex = (int) (Math.random() * pickFrom.size());
 			loc = pickFrom.get(randomIndex);
 		}
@@ -320,12 +378,6 @@ public class MenuGame extends Container {
 			randomIndex = (int) (Math.random() * pickFrom.size());
 			target = pickFrom.get(randomIndex);
 		} while (target == loc);
-
-		ScoreCard prevRef = ref;
-
-		ref = new ScoreCard(calcMinMoves());
-
-		fireTurnEvent(prevRef);
 	}
 
 	public ItemSlot getTarget() {
@@ -444,6 +496,58 @@ public class MenuGame extends Container {
 		Iterator<GameOverListener> listening = doneListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
+		}
+	}
+
+	static class ItemLister {
+		final boolean[] list = new boolean[20];
+		int count = 0;
+		int itemsChosen = 0;
+		static final int C_SIZE = ITEM_CHOOSER.size();
+		public ItemLister() {
+			addRandomItems(4);
+		}
+
+		/**
+		 * Adds items
+		 * @param x
+		 * @return Number of items actually added; will be less on overflows
+		 */
+		public int addRandomItems(int x) {
+			int itemsWanted = itemsChosen + x;
+			int i = 0;
+			while (itemsChosen != itemsWanted) {
+				if (itemsChosen == 20) {
+					break;
+				}
+				addOneItem();
+				i++;
+			}
+			return i;
+		}
+
+		/**
+		 * Adds 1 item
+		 * @return Index of item added
+		 */
+		public int addOneItem() {
+			if (itemsChosen == 20) {
+				return -1;
+			}
+
+			int rand;
+			int toAdd;
+			do {
+				rand = (int) (Math.random() * C_SIZE);
+				toAdd = ITEM_CHOOSER.get(rand);				
+			} while (list[toAdd] == true);
+
+			list[toAdd] = true;
+			itemsChosen++;
+			return toAdd;
+		}
+		public boolean get(int x) {
+			return list[x];
 		}
 	}
 }

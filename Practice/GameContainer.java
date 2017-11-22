@@ -15,6 +15,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 
 import Practice.Listeners.TurnEvent;
@@ -136,14 +139,28 @@ public class GameContainer extends Container {
 		JButton play = new JButton("Play");
 		c.gridy = 0;
 		c.gridx++;
+		c.gridwidth = 2;
 		controls.add(play, c);
-		play.addActionListener(
-			arg0 -> {
-				Difficulty d = Difficulty.valueOf(difficultyGroup.getSelection().getActionCommand());
-				GameMode m = GameMode.valueOf(gameModeGroup.getSelection().getActionCommand());
-				newGame(m, d, 2);
-			});
 
+		// round number
+
+		SpinnerModel roundModel = new SpinnerNumberModel(1,1,20,1);
+		JSpinner roundSpinner = new JSpinner(roundModel);
+		roundSpinner.setFocusable(false);
+		c.gridwidth = 1;
+		c.gridy++;
+		JLabel roundLabel = new JLabel("Rounds:");
+		controls.add(roundLabel, c);
+		c.gridx++;
+		controls.add(roundSpinner, c);
+		
+		play.addActionListener(
+				arg0 -> {
+					Difficulty d = Difficulty.valueOf(difficultyGroup.getSelection().getActionCommand());
+					GameMode m = GameMode.valueOf(gameModeGroup.getSelection().getActionCommand());
+					int rounds = (int) roundModel.getValue();
+					newGame(m, d, rounds);
+				});
 		setLower(controls);
 
 		revalidate();
@@ -178,6 +195,7 @@ public class GameContainer extends Container {
 		lower.add(c);
 		revalidate();
 	}
+
 	public synchronized void newGame(GameMode g, Difficulty d, int rounds) {
 		playing = new MenuGame(g, d, rounds);
 		playing.addTurnListener(
