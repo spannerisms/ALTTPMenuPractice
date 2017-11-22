@@ -30,7 +30,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
-class MenuPractice {
+public class MenuPractice {
 	static final String VERSION = "v0.5-beta";
 
 	static final Dimension d = new Dimension(800, 550);
@@ -137,8 +137,8 @@ class MenuPractice {
 				SpringLayout.VERTICAL_CENTER, scoreTotal);
 		wrap.add(hiscore);
 
-		l.putConstraint(SpringLayout.WEST, scoreScroll, -300,
-				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.WEST, scoreScroll, 10,
+				SpringLayout.EAST, gamePlayer);
 		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, scoreScroll, 5,
