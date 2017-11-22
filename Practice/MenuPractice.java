@@ -31,7 +31,7 @@ import javax.swing.text.html.StyleSheet;
 
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
 class MenuPractice {
-	static final String VERSION = "v0.5";
+	static final String VERSION = "v0.5-beta";
 
 	static final Dimension d = new Dimension(800, 550);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
@@ -147,12 +147,10 @@ class MenuPractice {
 				SpringLayout.NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
-		
 		// HTML in java is dumb
 		StyleSheet styleSheet = new StyleSheet();
 		HTMLDocument htmlDocument;
 		HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
-		//styleSheet.addRule("body { vertical-align: top;}");
 		styleSheet.addRule(HOW_TO_PLAY);
 
 		htmlEditorKit.setStyleSheet(styleSheet);
@@ -202,7 +200,7 @@ class MenuPractice {
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/mirror.png")
+				MenuGame.class.getResource("/Practice/Images/Meta/Mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -214,7 +212,7 @@ class MenuPractice {
 
 		final JMenuItem howToPlay = new JMenuItem("How to play");
 		ImageIcon compass = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/compass.png")
+				MenuGame.class.getResource("/Practice/Images/Meta/Compass.png")
 			);
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
