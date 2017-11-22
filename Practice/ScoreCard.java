@@ -8,8 +8,10 @@ public class ScoreCard {
 	int finalScore;
 	int finalTime;
 	final int minMoves;
+	final Difficulty d;
 
-	public ScoreCard(int minMoves) {
+	public ScoreCard(Difficulty d, int minMoves) {
+		this.d = d;
 		this.minMoves = minMoves;
 		startPresses = 0;
 		moves = 0;
@@ -33,7 +35,7 @@ public class ScoreCard {
 			startPenalty = startPresses * 1000;
 		}
 
-		finalScore = timeScore + diffScore + moveBonus - startPenalty;
+		finalScore = timeScore + diffScore + moveBonus - startPenalty + d.bonus;
 		return finalScore;
 	}
 }

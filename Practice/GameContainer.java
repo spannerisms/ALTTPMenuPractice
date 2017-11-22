@@ -1,17 +1,22 @@
 package Practice;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -19,6 +24,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 import Practice.Listeners.TurnEvent;
 import Practice.Listeners.TurnListener;
@@ -27,8 +33,35 @@ public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
 
 	private static final String NOTHING = "";
-	static final Font SANS = new Font("SANS", Font.BOLD, 10);
-	static final Dimension ffs = new Dimension(100, 20);
+	static final Font SANS = new Font("SANS", Font.PLAIN, 20);
+
+	static final BufferedImage TITLE_SCREEN;
+	static final BufferedImage SCORE_SCREEN;
+	static final BufferedImage NUMBER_SPRITES;
+
+	static {
+		BufferedImage temp;
+		try {
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/title screen.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		TITLE_SCREEN = temp;
+
+		try {
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/score screen.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		SCORE_SCREEN = temp;
+
+		try {
+			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/number sprites.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		NUMBER_SPRITES = temp;
+	}
 
 	// draw size
 	static final int ZOOM = 2;
@@ -60,12 +93,15 @@ public class GameContainer extends Container {
 
 		l.putConstraint(SpringLayout.NORTH, holder, 0,
 				SpringLayout.NORTH, this);
-		l.putConstraint(SpringLayout.SOUTH, holder, MenuGame.BG_HEIGHT * 2 + 5,
+		l.putConstraint(SpringLayout.SOUTH, holder, MenuGame.BG_HEIGHT * 2,
 				SpringLayout.NORTH, this);
 		this.add(holder);
 
+		setHolder(new HoldScreen(TITLE_SCREEN));
 		targ.setFont(SANS);
 		targ.setFocusable(false);
+		targ.setVerticalTextPosition(SwingConstants.TOP);
+		targ.setBackground(Color.BLACK);
 
 		l.putConstraint(SpringLayout.EAST, lower, 0,
 				SpringLayout.EAST, holder);
@@ -190,8 +226,6 @@ public class GameContainer extends Container {
 				SpringLayout.WEST, lower);
 		l.putConstraint(SpringLayout.NORTH, c, 0,
 				SpringLayout.NORTH, lower);
-		l.putConstraint(SpringLayout.SOUTH, c, 0,
-				SpringLayout.SOUTH, lower);
 		lower.add(c);
 		revalidate();
 	}
@@ -200,16 +234,18 @@ public class GameContainer extends Container {
 		playing = new MenuGame(g, d, rounds);
 		playing.addTurnListener(
 			arg0 -> {
-				targ.setText(playing.getTarget().getCurrentItem());
+				targ.setText(playing.getTarget());
 				GameContainer.this.fireTurnEvent(arg0);
 			}); // just relay it to MenuPractice
 		playing.addInputListener(arg0 -> GameContainer.this.repaint() );
 		counter.newGame();
 		setHolder(counter);
+		repaint();
 		playing.addGameOverListener(
 				arg0 -> {
 					targ.setText(NOTHING);
 					setLower(controls);
+					setHolder(new HoldScreen(playing.getScore(), SCORE_SCREEN));
 					GameContainer.this.repaint();
 					playing.transferFocus();
 				});
@@ -221,6 +257,28 @@ public class GameContainer extends Container {
 		return playing;
 	}
 
+	static final String CHARS = "0123456789,";
+	public static BufferedImage makeNumberImage(int i) {
+		String num = "";
+		char[] temp = Integer.toString(i).toCharArray();
+		int pos = 1;
+
+		for (int j = temp.length - 1; j >= 0; j--, pos++ ) {
+			num = temp[j] + num;
+			if ((pos % 3 == 0) && (j != 0)) {
+				num = ',' + num;
+			}
+		}
+		BufferedImage ret = new BufferedImage(num.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
+		temp = num.toCharArray();
+		Graphics g = ret.getGraphics();
+		for (int j = 0; j < temp.length; j++) {
+			int loc = CHARS.indexOf(temp[j]);
+			BufferedImage t = NUMBER_SPRITES.getSubimage(loc * 8, 0, 8, 8);
+			g.drawImage(t, j * 8, 0, null);
+		}
+		return ret;
+	}
 	/*
 	 * Events for turn changes
 	 */
@@ -233,6 +291,40 @@ public class GameContainer extends Container {
 		Iterator<TurnListener> listening = turnListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
+		}
+	}
+
+	@SuppressWarnings("serial")
+	private static class HoldScreen extends JComponent {
+		BufferedImage num;
+		BufferedImage bg;
+		int numOffset = 0;
+
+		HoldScreen(BufferedImage num, BufferedImage bg) {
+			this.num = num;
+			this.bg = bg;
+			if (num != null) {
+				numOffset = (MenuGame.BG_WIDTH - num.getWidth()) / 2;
+			}
+			setPreferredSize(MenuGame.MENU_SIZE);
+			setSize(MenuGame.MENU_SIZE);
+		}
+
+		HoldScreen(int i, BufferedImage bg) {
+			this(makeNumberImage(i), bg);
+		}
+		
+		HoldScreen(BufferedImage bg) {
+			this(null, bg);
+		}
+
+		public void paint(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.scale(ZOOM, ZOOM);
+			g2.drawImage(bg, 0, 0, null);
+			if (num != null) {
+				g2.drawImage(num, numOffset, 50, null);
+			}
 		}
 	}
 }

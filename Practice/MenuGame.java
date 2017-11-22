@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 
@@ -136,6 +137,9 @@ public class MenuGame extends Container {
 	final int maxRound;
 	final boolean randoAllStarts;
 	ItemLister chosen; // list of chosen items
+	final Timer waiter = new Timer();
+	boolean studying = false;
+	int scoreForGame = 0;
 
 	// end gameplay
 
@@ -153,9 +157,27 @@ public class MenuGame extends Container {
 
 	public void start() {
 		randomizeMenu();
-		randomizeGoal();
+		if (mode == GameMode.STUDY) {
+			holdOn();
+		} else {
+			randomizeGoal();
+			fireTurnEvent(null);
+			ref = new ScoreCard(dif, calcMinMoves());
+		}
+	}
+
+	public void holdOn() {
+		ref = null;
+		studying = true;
 		fireTurnEvent(null);
-		ref = new ScoreCard(calcMinMoves());
+		waiter.schedule(new OpTask(
+			() -> {
+					randomizeGoal();
+					studying = false;
+					fireTurnEvent(null);
+					ref = new ScoreCard(dif, calcMinMoves());
+				}),
+			dif.studyTime);
 	}
 
 	private final void initialize() {
@@ -181,6 +203,9 @@ public class MenuGame extends Container {
 			public void keyReleased(KeyEvent arg0) {}
 
 			public void keyPressed(KeyEvent arg0) {
+				if (ref == null) { // don't do anything unless we have a scoring object
+					return;
+				}
 				switch (arg0.getExtendedKeyCode() ) {
 					case KeyEvent.VK_UP :
 						loc = moveUp(loc);
@@ -222,24 +247,18 @@ public class MenuGame extends Container {
 
 	private void nextTurn() {
 		currentTurn--;
-		System.out.println("Turn : " + currentTurn + " | Round : " + currentRound);
 		if (currentTurn == 0) {
 			nextRound();
+			return;
 		}
-		switch (mode) {
-			case STUDY :
-				randomizeGoal();
-				break;
-			case BLITZ :
-				randomizeGoal();
-				break;
-			case COLLECT :
-				randomizeGoal();
-				break;
-		}
+		newTurn();
+	}
+
+	private void newTurn() {
+		randomizeGoal();
 		ScoreCard prevRef = ref;
 
-		ref = new ScoreCard(calcMinMoves());
+		ref = new ScoreCard(dif, calcMinMoves());
 		fireTurnEvent(prevRef);
 	}
 
@@ -254,16 +273,22 @@ public class MenuGame extends Container {
 		switch (mode) {
 			case STUDY :
 				randomizeMenu();
+				holdOn();
 				break;
 			case BLITZ :
 				randomizeMenu();
+				newTurn();
 				break;
 			case COLLECT :
 				addToMenu();
+				newTurn();
 				break;
 		}
 	}
 
+	public int getScore() {
+		return scoreForGame;
+	}
 	/*
 	 * Movement
 	 */
@@ -329,9 +354,6 @@ public class MenuGame extends Container {
 				break;
 		}
 
-		// choose slots to use
-
-
 		// add items to lists
 		pickFrom = new ArrayList<Integer>();
 
@@ -351,6 +373,11 @@ public class MenuGame extends Container {
 	 */
 	private void addToMenu() {
 		int i = chosen.addOneItem();
+		if (i == -1) {
+			randomizeMenu();
+			randomizeGoal();
+			return;
+		}
 		list[i].setRandomItem();
 		list[i].setEnabled(true);
 		pickFrom.add(i);
@@ -360,14 +387,14 @@ public class MenuGame extends Container {
 		int randomIndex;
 		if (
 				randoAllStarts // check to see if we're changing start location each time
-				// also randomize on the first turn, 
+				// also randomize on the first turn
 				|| (
 					(currentTurn == maxTurn) &&
 						(
 						// when we're on the first turn of the first round, which should always randomize the goal
-								(currentRound == maxRound) ||
-						// or the first turn of a round not in collections
-								(mode != GameMode.COLLECT) )
+							(currentRound == maxRound) ||
+						// or the first turn of a round not in collections mode
+							(mode != GameMode.COLLECT) )
 						)
 			) {
 			randomIndex = (int) (Math.random() * pickFrom.size());
@@ -380,8 +407,11 @@ public class MenuGame extends Container {
 		} while (target == loc);
 	}
 
-	public ItemSlot getTarget() {
-		return list[target];
+	public String getTarget() {
+		if (studying) {
+			return "Study the menu";
+		}
+		return list[target].getCurrentItem();
 	}
 
 	public void paint(Graphics g) {
@@ -389,19 +419,20 @@ public class MenuGame extends Container {
 		g2.scale(GameContainer.ZOOM, GameContainer.ZOOM);
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		paintComponents(g2);
-
-		ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
-		g2.drawImage(CURSOR,
-				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
-				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
-				null);
-
-		if (dif.showTargetCursor) {
-			cursorLoc = ItemPoint.valueOf("SLOT_" + target);
-			g2.drawImage(TARGET_CURSOR,
+		if (!studying) {
+			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
+			g2.drawImage(CURSOR,
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);
+	
+			if (dif.showTargetCursor) {
+				cursorLoc = ItemPoint.valueOf("SLOT_" + target);
+				g2.drawImage(TARGET_CURSOR,
+						ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
+						ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
+						null);
+			}
 		}
 	}
 
@@ -450,7 +481,9 @@ public class MenuGame extends Container {
 	}
 
 	private synchronized void fireTurnEvent(ScoreCard ref) {
-		if (ref != null) ref.calcScore();
+		if (ref != null) {
+			scoreForGame += ref.calcScore();
+		}
 		TurnEvent te = new TurnEvent(this, ref);
 		Iterator<TurnListener> listening = turnListen.iterator();
 		while(listening.hasNext()) {

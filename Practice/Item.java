@@ -11,7 +11,7 @@ enum Item {
 	BOOMERANG (1, 2,
 		new ImageNamePair[] {
 				new ImageNamePair("Blue boomerang", "boomerang-blue"),
-				new ImageNamePair("Red boomarang", "boomerang-red")
+				new ImageNamePair("Red boomerang", "boomerang-red")
 		}
 	),
 	HOOKSHOT (2, 1,

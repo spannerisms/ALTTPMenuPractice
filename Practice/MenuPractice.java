@@ -3,10 +3,12 @@ package Practice;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -217,7 +219,18 @@ class MenuPractice {
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
 		howToPlay.addActionListener(arg0 -> howPlayFrame.setVisible(true));
-	
+
+		// set icon
+		ImageIcon ico =
+			new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/ico big.png"));
+		ImageIcon icoTask =
+			new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/ico small.png"));
+
+		ArrayList<Image> icons = new ArrayList<Image>();
+		icons.add(ico.getImage());
+		icons.add(icoTask.getImage());
+		frame.setIconImages(icons);
+
 		// frame display
 		frame.setSize(d);
 		frame.setMinimumSize(d);

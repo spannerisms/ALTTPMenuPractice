@@ -10,23 +10,32 @@ enum Difficulty {
 	// 6 : randomize location of starting cursor each round in collections mode
 	// 7 : show a cursor over the target item in addition to the name
 	// 8 : randomize location of starting cursor each round in study mode
-	EASY ("Easy", 15, 20, 7, (byte) 0b00000010),
-	MEDIUM ("Medium", 10, 30, 5, (byte) 0b00000011),
-	HARD ("Hard", 5, 50, 3, (byte) 0b00000000),
-	EXPERT ("Expert", 2, 100, 1, (byte) 0b00000101);
+	EASY ("Easy", 0, 15, 5000, 20, 7, (byte) 0b00000010),
+	MEDIUM ("Medium", 100, 10, 3000, 30, 5, (byte) 0b00000011),
+	HARD ("Hard", 200, 5, 1000, 50, 3, (byte) 0b00000000),
+	EXPERT ("Expert", 500, 2, 500, 100, 1, (byte) 0b00000101);
 
 	// local vars
 	final String diffName; // difficulty name
+	final int bonus;
 	final int studyRoundLength; // number of item rounds per menu in study mode
+	final int studyTime; // time in milliseconds to study the menu
 	final int burstRounds; // number of rounds in burst mode
 	final int collectionRoundLength;
 	final boolean randomizeStartStudy;
 	final boolean randomizeStartCollections;
 	final boolean showTargetCursor;
 
-	Difficulty(String name, int studyRoundLength, int burstRounds, int collectionRoundLength, byte flags) {
+	Difficulty(String name,
+			int difficultyBonus,
+			int studyRoundLength, int studyTime,
+			int burstRounds,
+			int collectionRoundLength,
+			byte flags) {
 		this.diffName = name;
+		this.bonus = difficultyBonus;
 		this.studyRoundLength = studyRoundLength;
+		this.studyTime = studyTime;
 		this.burstRounds = burstRounds;
 		this.collectionRoundLength = collectionRoundLength;
 		this.randomizeStartStudy = ((flags >> 0) & 1) == 1;
@@ -55,12 +64,17 @@ enum Difficulty {
 		switch (m) {
 			case STUDY :
 				ret = rounds;
+				if (this == HARD) {
+					ret *= 5;
+				} else if (this == EXPERT) {
+					ret *= 10;
+				}
 				break;
 			case BLITZ :
 				ret = rounds * burstRounds;
 				break;
 			case COLLECT :
-				ret = rounds * 20;
+				ret = rounds * 17;
 				break;
 		}
 		return ret;
