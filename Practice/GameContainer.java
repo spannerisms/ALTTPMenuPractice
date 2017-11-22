@@ -323,7 +323,7 @@ public class GameContainer extends Container {
 			g2.scale(ZOOM, ZOOM);
 			g2.drawImage(bg, 0, 0, null);
 			if (num != null) {
-				g2.drawImage(num, numOffset, 50, null);
+				g2.drawImage(num, numOffset, 31, null);
 			}
 		}
 	}

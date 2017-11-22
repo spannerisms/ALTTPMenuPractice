@@ -228,6 +228,7 @@ public class MenuGame extends Container {
 						fireInputEvent(InputEvent.SNES_LEFT);
 						break;
 					case KeyEvent.VK_D :
+					case KeyEvent.VK_SPACE :
 						pressStart();
 						fireInputEvent(InputEvent.SNES_START);
 						break;
