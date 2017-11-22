@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,9 +40,7 @@ public class GameContainer extends Container {
 		counter.addGameOverListener(
 			arg0 -> {
 				playing.start();
-				holder.remove(counter);
-				GameContainer.this.repaint();
-				holder.add(playing);
+				setHolder(playing);
 				playing.requestFocusInWindow();
 				GameContainer.this.repaint();
 			});
@@ -152,7 +149,23 @@ public class GameContainer extends Container {
 		revalidate();
 	}
 
+	void setHolder(Component c) {
+		holder.removeAll();
+		SpringLayout l = (SpringLayout) holder.getLayout();
+		l.putConstraint(SpringLayout.EAST, c, 0,
+				SpringLayout.EAST, holder);
+		l.putConstraint(SpringLayout.WEST, c, 0,
+				SpringLayout.WEST, holder);
+		l.putConstraint(SpringLayout.NORTH, c, 0,
+				SpringLayout.NORTH, holder);
+		l.putConstraint(SpringLayout.SOUTH, c, 0,
+				SpringLayout.SOUTH, holder);
+		holder.add(c);
+		revalidate();
+	}
+
 	void setLower(Component c) {
+		lower.removeAll();
 		SpringLayout l = (SpringLayout) lower.getLayout();
 		l.putConstraint(SpringLayout.EAST, c, 0,
 				SpringLayout.EAST, lower);
@@ -165,9 +178,7 @@ public class GameContainer extends Container {
 		lower.add(c);
 		revalidate();
 	}
-
 	public synchronized void newGame(GameMode g, Difficulty d, int rounds) {
-		holder.removeAll();
 		playing = new MenuGame(g, d, rounds);
 		playing.addTurnListener(
 			arg0 -> {
@@ -176,11 +187,11 @@ public class GameContainer extends Container {
 			}); // just relay it to MenuPractice
 		playing.addInputListener(arg0 -> GameContainer.this.repaint() );
 		counter.newGame();
-		holder.add(counter);
+		setHolder(counter);
 		playing.addGameOverListener(
 				arg0 -> {
-					holder.remove(playing);
 					targ.setText(NOTHING);
+					setLower(controls);
 					GameContainer.this.repaint();
 					playing.transferFocus();
 				});

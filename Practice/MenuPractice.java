@@ -3,8 +3,13 @@ package Practice;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -12,16 +17,43 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
+// TODO: Meme names? Byran; IT'S GOTTA BE; etc
 class MenuPractice {
 	static final String VERSION = "v0.5";
 
-	static final Dimension d = new Dimension(800, 450);
+	static final Dimension d = new Dimension(800, 550);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
+
+	static final String HOW_TO_PLAY;
+	static final String DATA_PATH = "/Practice/howtoplay.html";
+	static {
+		StringBuilder ret = new StringBuilder();
+		try {
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(
+							MenuPractice.class.getResourceAsStream(DATA_PATH),
+							StandardCharsets.UTF_8)
+					);
+			String line;
+			while ((line = br.readLine()) != null) {
+				ret.append(line);
+			}
+			br.close();
+		} catch (Exception e) {
+			ret.append("OOPS");
+		}
+		HOW_TO_PLAY = ret.toString();
+	}
 
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -68,9 +100,6 @@ class MenuPractice {
 				SpringLayout.SOUTH, wrap);
 		frame.add(gamePlayer);
 
-		// target
-
-
 		// scores
 		JTable scores = new JTable();
 		ScoreTableModel model = new ScoreTableModel();
@@ -116,6 +145,50 @@ class MenuPractice {
 				SpringLayout.NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
+		
+		// HTML in java is dumb
+		StyleSheet styleSheet = new StyleSheet();
+		HTMLDocument htmlDocument;
+		HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
+		//styleSheet.addRule("body { vertical-align: top;}");
+		styleSheet.addRule(HOW_TO_PLAY);
+
+		htmlEditorKit.setStyleSheet(styleSheet);
+		htmlDocument = (HTMLDocument) htmlEditorKit.createDefaultDocument();
+		JTextPane helpPane = new JTextPane();
+
+		helpPane.setBackground(null);
+		helpPane.setEditorKit(htmlEditorKit);
+		helpPane.setDocument(htmlDocument);
+		helpPane.setEditable(false);
+
+		try {
+			htmlDocument.insertBeforeEnd(htmlDocument.getRootElements()[0].getElement(0), HOW_TO_PLAY);
+		} catch (BadLocationException | IOException e) {}
+
+		// how to play
+		Dimension helpD = new Dimension(400, 450);
+		JDialog howPlayFrame = new JDialog(frame, "How to play");
+		SpringLayout hhh = new SpringLayout();
+
+		howPlayFrame.setLayout(hhh);
+		howPlayFrame.setPreferredSize(helpD);
+		howPlayFrame.setMinimumSize(helpD);
+		Container howWrap = howPlayFrame.getContentPane();
+
+		JScrollPane helpScroll = new JScrollPane(helpPane,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		hhh.putConstraint(SpringLayout.WEST, helpScroll, 0,
+				SpringLayout.WEST, howWrap);
+		hhh.putConstraint(SpringLayout.EAST, helpScroll, 0,
+				SpringLayout.EAST, howWrap);
+		hhh.putConstraint(SpringLayout.NORTH, helpScroll, 0,
+				SpringLayout.NORTH, howWrap);
+		hhh.putConstraint(SpringLayout.SOUTH, helpScroll, 0,
+				SpringLayout.SOUTH, howWrap);
+		howWrap.add(helpScroll);
+
 		// menu
 		final JMenuBar menu = new JMenuBar();
 		frame.setJMenuBar(menu);
@@ -133,6 +206,18 @@ class MenuPractice {
 		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
 
+		// help menu
+		final JMenu helpMenu = new JMenu("Help");
+		menu.add(helpMenu);
+
+		final JMenuItem howToPlay = new JMenuItem("How to play");
+		ImageIcon compass = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/compass.png")
+			);
+		howToPlay.setIcon(compass);
+		helpMenu.add(howToPlay);
+		howToPlay.addActionListener(arg0 -> howPlayFrame.setVisible(true));
+	
 		// frame display
 		frame.setSize(d);
 		frame.setMinimumSize(d);
