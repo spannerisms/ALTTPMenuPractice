@@ -20,6 +20,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
@@ -170,8 +171,9 @@ public class MenuPractice {
 							scoreScroll.getLocationOnScreen().y);
 				}
 			});
-
-		scores.getSelectionModel().addListSelectionListener(
+		ListSelectionModel scoreSel = scores.getSelectionModel();
+		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scoreSel.addListSelectionListener(
 			arg0 -> {
 				int selectedRow = scores.getSelectedRow();
 				if (selectedRow != -1 && analysis.isVisible()) {

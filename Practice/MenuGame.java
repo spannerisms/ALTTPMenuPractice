@@ -197,7 +197,7 @@ public class MenuGame extends Container {
 	private void nextRound() {
 		currentRound--;
 		if (currentRound == 0) {
-			fireTurnEvent(ref);
+			newTurn();
 			fireGameOverEvent();
 			return;
 		}
@@ -315,6 +315,9 @@ public class MenuGame extends Container {
 		}
 		list[i].setRandomItem();
 		list[i].setEnabled(true);
+		ItemSlot[] temp = new ItemSlot[20];
+		System.arraycopy(listAtTurn, 0, temp, 0, 20);
+		listAtTurn = temp;
 		listAtTurn[i] = list[i].clone();
 		pickFrom.add(i);
 	}
