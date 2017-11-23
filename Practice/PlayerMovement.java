@@ -33,19 +33,7 @@ public class PlayerMovement {
 		BufferedImage ret = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics g = ret.getGraphics();
 		int size = moves.length;
-		ItemPoint cursorLoc;
-		PlayerMovement p = moves[0];
-		// draw start loc first
-		cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
-		g.drawImage(CURSOR,
-				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
-				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
-				null);
-
-		// draw movement
-		for (int i = 0; i < size; i++) {
-			p = moves[i];
-			cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
+		for (int i = 0; i < size; i++) {			PlayerMovement p = moves[i];			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
 			g.drawImage(PLAYER_MOVES[p.MOVEMENT],
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,

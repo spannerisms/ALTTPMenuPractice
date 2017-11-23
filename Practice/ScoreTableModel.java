@@ -18,11 +18,21 @@ class ScoreTableModel extends AbstractTableModel {
 		super();
 	}
 
+	public ScoreCard getRow(int i) {
+		return data.get(i);
+	}
+
 	public void addRow(int turn, ScoreCard s) {
 		int l = this.data.size();
 		s.setTurn(turn);
-		this.data.add(0, s);
+		this.data.add(s);
 		this.fireTableRowsInserted(l, l);
+	}
+
+	public void clear() {
+		int oldLength = data.size();
+		data.clear();
+		this.fireTableRowsDeleted(0, oldLength);
 	}
 
 	public int getColumnCount() {

@@ -56,8 +56,6 @@ public class GameContainer extends Container {
 		SCORE_SCREEN = temp;
 	}
 
-	// draw size
-	static final int ZOOM = 2;
 	CountDown counter = new CountDown();
 	MenuGame playing;
 	final JPanel holder = new JPanel(new SpringLayout());

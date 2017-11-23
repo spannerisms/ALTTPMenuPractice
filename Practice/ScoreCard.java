@@ -70,10 +70,16 @@ public class ScoreCard {
 			}
 			cursorLoc = ItemPoint.valueOf("SLOT_" + pos);
 			g.drawImage(s.getCurrentImage(),
-					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
-					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
+					ITEM_ORIGIN_X + cursorLoc.x,
+					ITEM_ORIGIN_Y + cursorLoc.y,
 					null);
 		}
+		cursorLoc = ItemPoint.valueOf("SLOT_" + yourMoves[0].LOCATION);
+		g.drawImage(CURSOR,
+				ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
+				ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
+				null);
+
 		g.drawImage(PlayerMovement.drawOptimalPath(bestPath, true), 0, 0, null);
 		g.drawImage(PlayerMovement.drawPlayerPath(yourMoves), 0, 0, null);
 

@@ -20,8 +20,6 @@ import static Practice.MenuGameConstants.*;
 public class MenuGame extends Container {
 	private static final long serialVersionUID = -4474643068621537992L;
 
-
-
 	// local vars
 	private ItemSlot[] list = new ItemSlot[20];
 	private ItemSlot[] listAtTurn;
@@ -190,6 +188,7 @@ public class MenuGame extends Container {
 	private void newTurn() {
 		randomizeGoal();
 		ref.setPlayerPath(movesMade.toArray(new PlayerMovement[movesMade.size()]));
+		movesMade.clear();
 		ScoreCard prevRef = ref;
 		fireTurnEvent(prevRef);
 		makeNewCard();
@@ -260,6 +259,7 @@ public class MenuGame extends Container {
 
 	private void randomizeMenu() {
 		chosen = new ItemLister();
+		listAtTurn = new ItemSlot[20];
 
 		switch (mode) {
 			case STUDY :
@@ -295,6 +295,7 @@ public class MenuGame extends Container {
 			if (chosen.get(i)) {
 				list[i].setRandomItem();
 				list[i].setEnabled(true);
+				listAtTurn[i] = list[i].clone();
 				pickFrom.add(i);
 			} else {
 				list[i].setEnabled(false);
@@ -314,6 +315,7 @@ public class MenuGame extends Container {
 		}
 		list[i].setRandomItem();
 		list[i].setEnabled(true);
+		listAtTurn[i] = list[i].clone();
 		pickFrom.add(i);
 	}
 
@@ -350,7 +352,7 @@ public class MenuGame extends Container {
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.scale(GameContainer.ZOOM, GameContainer.ZOOM);
+		g2.scale(ZOOM, ZOOM);
 
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		paintComponents(g2);

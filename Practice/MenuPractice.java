@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -120,6 +121,7 @@ public class MenuPractice {
 		scores.setBackground(null);
 		scores.setFocusable(false);
 
+		// hiscore
 		JLabel scoreTotal = new JLabel("Total score:", SwingConstants.RIGHT);
 		JLabel hiscore = new JLabel("0", SwingConstants.RIGHT);
 		hiscore.setFont(CONSOLAS);
@@ -136,6 +138,54 @@ public class MenuPractice {
 				SpringLayout.VERTICAL_CENTER, scoreTotal);
 		wrap.add(hiscore);
 
+		// clear data
+		JButton clear = new JButton("Reset");
+		clear.setFocusable(false);
+		clear.addActionListener(
+			arg0 -> {
+				hiscore.setText("0");
+				model.clear();
+			});
+
+		l.putConstraint(SpringLayout.EAST, clear, -10,
+				SpringLayout.WEST, scoreTotal);
+		l.putConstraint(SpringLayout.VERTICAL_CENTER, clear, 0,
+				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		wrap.add(clear);
+
+		// analysis
+		TurnAnalyzer analysis = new TurnAnalyzer(frame);
+		JButton analyze = new JButton("Recap");
+
+		analyze.setFocusable(false);
+		analyze.addActionListener(
+			arg0 -> {
+				int selectedRow = scores.getSelectedRow();
+				if (selectedRow != -1) {
+					analysis.setRef(model.getRow(selectedRow));
+				}
+				if (!analysis.isVisible()) {
+					analysis.setVisible(true);
+					analysis.setLocation(hiscore.getLocationOnScreen().x,
+							scoreScroll.getLocationOnScreen().y);
+				}
+			});
+
+		scores.getSelectionModel().addListSelectionListener(
+			arg0 -> {
+				int selectedRow = scores.getSelectedRow();
+				if (selectedRow != -1 && analysis.isVisible()) {
+					analysis.setRef(model.getRow(selectedRow));
+				}
+			});
+
+		l.putConstraint(SpringLayout.EAST, analyze, -10,
+				SpringLayout.WEST, clear);
+		l.putConstraint(SpringLayout.VERTICAL_CENTER, analyze, 0,
+				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		wrap.add(analyze);
+
+		// scores in wrap
 		l.putConstraint(SpringLayout.WEST, scoreScroll, 10,
 				SpringLayout.EAST, gamePlayer);
 		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
@@ -255,6 +305,10 @@ public class MenuPractice {
 
 		IntHolder() {
 			val = 0;
+		}
+
+		void set(int a) {
+			val = a;
 		}
 
 		void add(int a) {

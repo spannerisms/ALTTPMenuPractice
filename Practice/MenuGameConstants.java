@@ -52,6 +52,7 @@ public final class MenuGameConstants {
 	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
 
 	// images
+	static final int ZOOM = 2;
 	static final BufferedImage BACKGROUND;
 	static final BufferedImage CURSOR;
 	static final BufferedImage TARGET_CURSOR;
