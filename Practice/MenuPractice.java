@@ -31,9 +31,9 @@ import javax.swing.text.html.StyleSheet;
 
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
 // TODO: credits
-// feedback: candine
+// feedback: candide
 public class MenuPractice {
-	static final String VERSION = "v0.6-beta";
+	static final String VERSION = "v0.7-beta";
 
 	static final Dimension d = new Dimension(800, 550);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
@@ -173,6 +173,7 @@ public class MenuPractice {
 							scoreScroll.getLocationOnScreen().y);
 				}
 			});
+
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scoreSel.addListSelectionListener(
@@ -242,6 +243,9 @@ public class MenuPractice {
 				SpringLayout.SOUTH, howWrap);
 		howWrap.add(helpScroll);
 
+		// input config
+		ControlMapper remap = new ControlMapper(frame);
+	
 		// menu
 		final JMenuBar menu = new JMenuBar();
 		frame.setJMenuBar(menu);
@@ -249,6 +253,28 @@ public class MenuPractice {
 		// file menu
 		final JMenu fileMenu = new JMenu("File");
 		menu.add(fileMenu);
+
+		// remap keys
+		final JMenuItem mapper = new JMenuItem("Configure keybinds");
+		ImageIcon mitts = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Mitts.png")
+			);
+		mapper.setIcon(mitts);
+		fileMenu.add(mapper);
+
+		mapper.addActionListener(arg0 -> {
+			if (remap.isVisible()) {
+				return;
+			}
+			remap.setLocation(scoreScroll.getLocationOnScreen());
+			remap.setVisible(true);
+		});
+
+		remap.addRemapListener(
+			arg0 -> {
+				gamePlayer.setController(arg0.map);
+				remap.setVisible(false);
+			});
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");

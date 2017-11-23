@@ -245,6 +245,10 @@ public class GameContainer extends Container {
 		revalidate();
 	}
 
+	public void setController(Controller c) {
+		controller = c;
+	}
+
 	public MenuGame getInstance() {
 		return playing;
 	}

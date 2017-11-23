@@ -158,7 +158,7 @@ public class MenuGame extends Container {
 					ref.moves++;
 					fireInputEvent(InputEvent.SNES_LEFT);
 				// start TODO : remove space when controls are added properly
-				} else if (key == KEY_START || key == KeyEvent.VK_SPACE) {
+				} else if (key == KEY_START) {
 					movesMade.add(new PlayerMovement(loc, PRESS_START));
 					pressStart();
 					fireInputEvent(InputEvent.SNES_START);
@@ -496,6 +496,10 @@ public class MenuGame extends Container {
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
 		}
+	}
+
+	public void forfeit() {
+		fireGameOverEvent();
 	}
 
 	static class ItemLister {
