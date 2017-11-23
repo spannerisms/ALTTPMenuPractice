@@ -12,15 +12,16 @@ class ScoreTableModel extends AbstractTableModel {
 			"Optimal",
 			"Time (ms)",
 			"Penalties" };
-	ArrayList<int[]> data = new ArrayList<int[]>();
+	ArrayList<ScoreCard> data = new ArrayList<ScoreCard>();
 
 	public ScoreTableModel() {
 		super();
 	}
 
-	public void addRow(int[] data) {
+	public void addRow(int turn, ScoreCard s) {
 		int l = this.data.size();
-		this.data.add(0, data);
+		s.setTurn(turn);
+		this.data.add(0, s);
 		this.fireTableRowsInserted(l, l);
 	}
 
@@ -41,6 +42,6 @@ class ScoreTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return (int) (data.get(rowIndex)[columnIndex]);
+		return data.get(rowIndex).toArray()[columnIndex];
 	}
 }

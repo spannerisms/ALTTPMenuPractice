@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 
 import Practice.Listeners.TurnEvent;
 import Practice.Listeners.TurnListener;
+import static Practice.MenuGameConstants.*;
 
 public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
@@ -37,30 +38,22 @@ public class GameContainer extends Container {
 
 	static final BufferedImage TITLE_SCREEN;
 	static final BufferedImage SCORE_SCREEN;
-	static final BufferedImage NUMBER_SPRITES;
 
 	static {
 		BufferedImage temp;
 		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/title screen.png"));
+			temp = ImageIO.read(GameContainer.class.getResourceAsStream("/Practice/Images/title screen.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		TITLE_SCREEN = temp;
 
 		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/score screen.png"));
+			temp = ImageIO.read(GameContainer.class.getResourceAsStream("/Practice/Images/score screen.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		SCORE_SCREEN = temp;
-
-		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/number sprites.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(MenuGame.BG_WIDTH, MenuGame.BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		NUMBER_SPRITES = temp;
 	}
 
 	// draw size
@@ -71,6 +64,7 @@ public class GameContainer extends Container {
 	final JPanel lower = new JPanel(new SpringLayout());
 	final JLabel targ = new JLabel(NOTHING);
 	final JPanel controls = new JPanel();
+	Controller controller = new Controller();
 
 	public GameContainer() {
 		counter.addGameOverListener(
@@ -88,12 +82,12 @@ public class GameContainer extends Container {
 		SpringLayout l = new SpringLayout();
 		this.setLayout(l);
 
-		holder.setPreferredSize(MenuGame.MENU_SIZE);
-		holder.setSize(MenuGame.MENU_SIZE);
+		holder.setPreferredSize(MENU_SIZE);
+		holder.setSize(MENU_SIZE);
 
 		l.putConstraint(SpringLayout.NORTH, holder, 0,
 				SpringLayout.NORTH, this);
-		l.putConstraint(SpringLayout.SOUTH, holder, MenuGame.BG_HEIGHT * 2,
+		l.putConstraint(SpringLayout.SOUTH, holder, BG_HEIGHT * 2,
 				SpringLayout.NORTH, this);
 		this.add(holder);
 
@@ -116,8 +110,8 @@ public class GameContainer extends Container {
 		// set control panel stuff
 		controls.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		controls.setPreferredSize(MenuGame.MENU_SIZE);
-		controls.setSize(MenuGame.MENU_SIZE);
+		controls.setPreferredSize(MENU_SIZE);
+		controls.setSize(MENU_SIZE);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = -1;
 
@@ -231,7 +225,7 @@ public class GameContainer extends Container {
 	}
 
 	public synchronized void newGame(GameMode g, Difficulty d, int rounds) {
-		playing = new MenuGame(g, d, rounds);
+		playing = new MenuGame(controller, g, d, rounds);
 		playing.addTurnListener(
 			arg0 -> {
 				targ.setText(playing.getTarget());
@@ -304,10 +298,10 @@ public class GameContainer extends Container {
 			this.num = num;
 			this.bg = bg;
 			if (num != null) {
-				numOffset = (MenuGame.BG_WIDTH - num.getWidth()) / 2;
+				numOffset = (BG_WIDTH - num.getWidth()) / 2;
 			}
-			setPreferredSize(MenuGame.MENU_SIZE);
-			setSize(MenuGame.MENU_SIZE);
+			setPreferredSize(MENU_SIZE);
+			setSize(MENU_SIZE);
 		}
 
 		HoldScreen(int i, BufferedImage bg) {

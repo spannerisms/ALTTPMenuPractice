@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,12 +23,13 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
+// TODO: credits
+// feedback: candine
 public class MenuPractice {
 	static final String VERSION = "v0.5-beta";
 
@@ -108,7 +108,6 @@ public class MenuPractice {
 		scores.setModel(model);
 
 		// scroll pane for score
-
 		JScrollPane scoreScroll = new JScrollPane(scores,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scoreScroll.setFocusable(false);
@@ -147,6 +146,16 @@ public class MenuPractice {
 				SpringLayout.NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
+		// how to play
+		Dimension helpD = new Dimension(400, 450);
+		JDialog howPlayFrame = new JDialog(frame, "How to play");
+		SpringLayout hhh = new SpringLayout();
+
+		howPlayFrame.setLayout(hhh);
+		howPlayFrame.setPreferredSize(helpD);
+		howPlayFrame.setMinimumSize(helpD);
+		Container howWrap = howPlayFrame.getContentPane();
+
 		// HTML in java is dumb
 		StyleSheet styleSheet = new StyleSheet();
 		HTMLDocument htmlDocument;
@@ -164,18 +173,9 @@ public class MenuPractice {
 
 		try {
 			htmlDocument.insertBeforeEnd(htmlDocument.getRootElements()[0].getElement(0), HOW_TO_PLAY);
-		} catch (BadLocationException | IOException e) {}
+		} catch (Exception e) {}
 
-		// how to play
-		Dimension helpD = new Dimension(400, 450);
-		JDialog howPlayFrame = new JDialog(frame, "How to play");
-		SpringLayout hhh = new SpringLayout();
-
-		howPlayFrame.setLayout(hhh);
-		howPlayFrame.setPreferredSize(helpD);
-		howPlayFrame.setMinimumSize(helpD);
-		Container howWrap = howPlayFrame.getContentPane();
-
+		// actual display
 		JScrollPane helpScroll = new JScrollPane(helpPane,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -240,14 +240,7 @@ public class MenuPractice {
 					ScoreCard tempRef = arg0.score;
 					if (tempRef != null) {
 						int tempScore = tempRef.finalScore;
-						model.addRow(new int[] {
-								turn.val,
-								tempScore,
-								tempRef.moves,
-								tempRef.minMoves,
-								tempRef.finalTime,
-								tempRef.startPresses - 1
-						});
+						model.addRow(turn.val, tempRef);
 						totalScore.add(tempScore);
 						hiscore.setText(Integer.toString(totalScore.val));
 						turn.increment();

@@ -12,12 +12,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Practice.Listeners.*;
+import static Practice.MenuGameConstants.*;
 
 public class CountDown extends JComponent {
 	private static final long serialVersionUID = 6892347930158631859L;
-
-	static final int BG_WIDTH = MenuGame.BG_WIDTH;
-	static final int BG_HEIGHT = MenuGame.BG_HEIGHT;
 
 	static final BufferedImage[] COUNT_DOWN_BG = new BufferedImage[4];
 
@@ -44,7 +42,7 @@ public class CountDown extends JComponent {
 	int curCount;
 
 	public CountDown() {
-		this.setPreferredSize(MenuGame.MENU_SIZE);
+		this.setPreferredSize(MENU_SIZE);
 		count = () -> {
 			curCount--;
 			switch (curCount) {

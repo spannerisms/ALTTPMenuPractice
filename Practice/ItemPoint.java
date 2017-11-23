@@ -1,5 +1,7 @@
 package Practice;
 
+import static Practice.MenuGameConstants.BLOCK_SIZE;
+
 enum ItemPoint {
 	SLOT_0 (0),
 	SLOT_1 (1),
@@ -26,7 +28,7 @@ enum ItemPoint {
 	public final int y;
 
 	ItemPoint(int l) {
-		x = (l % 5) * MenuGame.BLOCK_SIZE;
-		y = (l / 5) * MenuGame.BLOCK_SIZE;
+		x = (l % 5) * BLOCK_SIZE;
+		y = (l / 5) * BLOCK_SIZE;
 	}
 }

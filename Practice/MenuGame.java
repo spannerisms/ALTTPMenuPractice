@@ -1,7 +1,6 @@
 package Practice;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -12,116 +11,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 
-import javax.imageio.ImageIO;
-
 import Practice.Listeners.*;
 
 import static Practice.Item.ITEM_COUNT;
+import static Practice.MenuGameConstants.*;
 
 // TODO: https://github.com/snes9xgit/snes9x
 public class MenuGame extends Container {
 	private static final long serialVersionUID = -4474643068621537992L;
 
-	// location within the menu image to start for calculating
-	static final int ITEM_ORIGIN_X = 24;
-	static final int ITEM_ORIGIN_Y = 16;
 
-	static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
-	static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
-	static final int ITEM_SIZE = 16; // size of the image itself
-	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
-
-	static final Item[] ALL_ITEMS = Item.values(); // for easy access
-	static final int MIN_ITEMS = 4;
-
-	static final BufferedImage BACKGROUND;
-	static final BufferedImage CURSOR;
-	static final BufferedImage TARGET_CURSOR;
-	static final int BG_WIDTH = 152;
-	static final int BG_HEIGHT = 120;
-	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
-
-	static {
-		BufferedImage temp;
-		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/menu background.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		BACKGROUND = temp;
-
-		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/menu cursor.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		CURSOR = temp;
-
-		try {
-			temp = ImageIO.read(MenuGame.class.getResourceAsStream("/Practice/Images/target cursor.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		TARGET_CURSOR = temp;
-	}
-
-	// all possible moves
-	private static final ArrayList<Integer> ALL_POSSIBLE_MOVES = new ArrayList<Integer>();
-
-	// how this works
-	// each int holds 14 possible moves:
-	private static final byte MOVE_UP = 0b00;
-	private static final byte MOVE_DOWN = 0b01;
-	private static final byte MOVE_RIGHT = 0b10;
-	private static final byte MOVE_LEFT = 0b11;
-	private static final byte[] MOVES = { MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT };
-
-	// the first 4 bits are the number of moves in this set
-	private static final int COUNT_OFFSET = 28;
-
-	// starting from the least significant bit
-	// every 2 bits form the token for a single move
-	// the moves are counted from right to left
-
-	static {
-		// do all 1 move patterns
-		for (int i = 1; i < 6; i++) {
-			addToPattern(0, i, i);
-		}
-	}
-
-	/**
-	 * @param p - pattern
-	 * @param l - current nest level
-	 * @param m - number of moves
-	 */
-	private static void addToPattern(int p, int l, int m) {
-		for (int i = 0; i < 4; i++) {
-			int pattern = p | (MOVES[i] << (2 * (l - 1)));
-			if (l == 1) { // bottom level, just add
-				pattern |= m << COUNT_OFFSET; // add number of moves
-				ALL_POSSIBLE_MOVES.add(pattern);
-			} else { // recursion
-				addToPattern(pattern, l-1, m);
-			}
-		}
-	}
-
-	// list of items with repeats to give some items higher chance of appearing
-	// only needs to be defined once
-	private static final ArrayList<Integer> ITEM_CHOOSER = new ArrayList<Integer>();
-
-	static {
-		for (Item i : Item.values()) { // for each item
-			int tag = i.index;
-			for (int j = 0; j < i.weight; j++) { // add X times based on weight
-				ITEM_CHOOSER.add(tag);
-			}
-		}
-	}
 
 	// local vars
 	private ItemSlot[] list = new ItemSlot[20];
+	private ItemSlot[] listAtTurn;
 	private int target;
 	private int loc;
 	private ArrayList<Integer> pickFrom;
@@ -135,15 +38,28 @@ public class MenuGame extends Container {
 	int currentRound;
 	final int maxTurn;
 	final int maxRound;
+	int scoreForGame = 0;
+	ArrayList<PlayerMovement> movesMade = new ArrayList<PlayerMovement>();
+	PlayerMovement[] bestMoves;
+
 	final boolean randoAllStarts;
+	final boolean showOpt;
+	BufferedImage minMoveOverlay;
+
 	ItemLister chosen; // list of chosen items
 	final Timer waiter = new Timer();
 	boolean studying = false;
-	int scoreForGame = 0;
+
+	final Controller controls;
+	final int KEY_UP;
+	final int KEY_DOWN;
+	final int KEY_RIGHT;
+	final int KEY_LEFT;
+	final int KEY_START;
 
 	// end gameplay
 
-	public MenuGame(GameMode gameMode, Difficulty difficulty, int rounds) {
+	public MenuGame(Controller controls, GameMode gameMode, Difficulty difficulty, int rounds) {
 		initialize();
 		mode = gameMode;
 		dif = difficulty;
@@ -152,7 +68,19 @@ public class MenuGame extends Container {
 		maxRound = currentRound;
 		currentTurn = maxTurn;
 		randoAllStarts = dif.randomizesStart(mode);
+		showOpt = dif.showOptimalPath;
+		this.controls = controls;
+		KEY_UP = controls.T_UP;
+		KEY_DOWN = controls.T_DOWN;
+		KEY_RIGHT = controls.T_RIGHT;
+		KEY_LEFT = controls.T_LEFT;
+		KEY_START = controls.T_START;
 		addKeys();
+	}
+
+	private void makeNewCard() {
+		int min = calcMinMoves();
+		ref = new ScoreCard(dif, min, bestMoves, listAtTurn);
 	}
 
 	public void start() {
@@ -162,7 +90,7 @@ public class MenuGame extends Container {
 		} else {
 			randomizeGoal();
 			fireTurnEvent(null);
-			ref = new ScoreCard(dif, calcMinMoves());
+			makeNewCard();
 		}
 	}
 
@@ -175,7 +103,7 @@ public class MenuGame extends Container {
 					randomizeGoal();
 					studying = false;
 					fireTurnEvent(null);
-					ref = new ScoreCard(dif, calcMinMoves());
+					makeNewCard();
 				}),
 			dif.studyTime);
 	}
@@ -206,32 +134,36 @@ public class MenuGame extends Container {
 				if (ref == null) { // don't do anything unless we have a scoring object
 					return;
 				}
-				switch (arg0.getExtendedKeyCode() ) {
-					case KeyEvent.VK_UP :
-						loc = moveUp(loc);
-						ref.moves++;
-						fireInputEvent(InputEvent.SNES_UP);
-						break;
-					case KeyEvent.VK_DOWN :
-						loc = moveDown(loc);
-						ref.moves++;
-						fireInputEvent(InputEvent.SNES_DOWN);
-						break;
-					case KeyEvent.VK_RIGHT :
-						loc = moveRight(loc);
-						ref.moves++;
-						fireInputEvent(InputEvent.SNES_RIGHT);
-						break;
-					case KeyEvent.VK_LEFT :
-						loc = moveLeft(loc);
-						ref.moves++;
-						fireInputEvent(InputEvent.SNES_LEFT);
-						break;
-					case KeyEvent.VK_D :
-					case KeyEvent.VK_SPACE :
-						pressStart();
-						fireInputEvent(InputEvent.SNES_START);
-						break;
+				int key = arg0.getExtendedKeyCode();
+				// up
+				if (key == KEY_UP) {
+					movesMade.add(new PlayerMovement(loc, MOVE_UP));
+					loc = moveUp(loc);
+					ref.moves++;
+					fireInputEvent(InputEvent.SNES_UP);
+				// down
+				} else if (key == KEY_DOWN) {
+					movesMade.add(new PlayerMovement(loc, MOVE_DOWN));
+					loc = moveDown(loc);
+					ref.moves++;
+					fireInputEvent(InputEvent.SNES_DOWN);
+				// right
+				} else if (key == KEY_RIGHT) {
+					movesMade.add(new PlayerMovement(loc, MOVE_RIGHT));
+					loc = moveRight(loc);
+					ref.moves++;
+					fireInputEvent(InputEvent.SNES_RIGHT);
+				// left
+				} else if (key == KEY_LEFT) {
+					movesMade.add(new PlayerMovement(loc, MOVE_LEFT));
+					loc = moveLeft(loc);
+					ref.moves++;
+					fireInputEvent(InputEvent.SNES_LEFT);
+				// start
+				} else if (key == KEY_START) {
+					movesMade.add(new PlayerMovement(loc, PRESS_START));
+					pressStart();
+					fireInputEvent(InputEvent.SNES_START);
 				}
 			}
 		});
@@ -257,10 +189,10 @@ public class MenuGame extends Container {
 
 	private void newTurn() {
 		randomizeGoal();
+		ref.setPlayerPath(movesMade.toArray(new PlayerMovement[movesMade.size()]));
 		ScoreCard prevRef = ref;
-
-		ref = new ScoreCard(dif, calcMinMoves());
 		fireTurnEvent(prevRef);
+		makeNewCard();
 	}
 
 	private void nextRound() {
@@ -290,6 +222,7 @@ public class MenuGame extends Container {
 	public int getScore() {
 		return scoreForGame;
 	}
+
 	/*
 	 * Movement
 	 */
@@ -418,8 +351,10 @@ public class MenuGame extends Container {
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.scale(GameContainer.ZOOM, GameContainer.ZOOM);
+
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		paintComponents(g2);
+
 		if (!studying) {
 			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
 			g2.drawImage(CURSOR,
@@ -434,17 +369,26 @@ public class MenuGame extends Container {
 						ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 						null);
 			}
+			if (showOpt) {
+				g2.drawImage(minMoveOverlay, 0, 0, null);
+			}
 		}
 	}
 
 	private int calcMinMoves() {
+		int[] arrowPlacement = new int[1];
+		int moves = -1; // default to return for failure, just in case
+		int goodPattern = -1;
 		for (int pattern : ALL_POSSIBLE_MOVES) {
-			int moves = pattern >> COUNT_OFFSET;
-			int pos = loc;
+			int pos;
+			moves = pattern >> COUNT_OFFSET;
+			pos = loc;
+			int newPos = pos;
+			arrowPlacement = new int[moves];
+
 			for (int i = 0; i < moves; i++) {
 				int moveToken = (pattern >> (i * 2)) & 0b11;
-				int newPos;
-
+				arrowPlacement[i] = newPos; // add to list of positions
 				switch (moveToken) {
 					case MOVE_UP :
 						newPos = moveUp(pos);
@@ -461,16 +405,32 @@ public class MenuGame extends Container {
 					default :
 						newPos = pos;
 						break;
-				}
-
+				} // end switch
 				pos = newPos;
-				if (pos == target) {
-					return moves;
-				}
+			} // end moves for
+
+			if (pos == target) {
+				goodPattern = pattern;
+				break;
 			}
 		}
+
+		// make the best moves pattern
+		if (goodPattern != -1) {
+			bestMoves = new PlayerMovement[moves+1];
+			for (int i = 0; i < moves; i++) {
+				int moveToken = (goodPattern >> (i * 2)) & 0b11;
+				bestMoves[i] = new PlayerMovement(arrowPlacement[i], moveToken);
+			}
+			bestMoves[moves] = new PlayerMovement(target, PRESS_START);
+		}
+
+		// make a single image of the optimal path, to be overlayed
+		if (showOpt) {
+			minMoveOverlay = PlayerMovement.drawOptimalPath(bestMoves, false);
+		}
 		// failure, just in case
-		return -1;
+		return moves;
 	}
 
 	/*

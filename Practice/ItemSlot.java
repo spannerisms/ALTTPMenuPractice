@@ -1,8 +1,10 @@
 package Practice;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
+import static Practice.MenuGameConstants.BLOCK_D;
 
 class ItemSlot extends JComponent {
 	private static final long serialVersionUID = -4130293452712063127L;
@@ -11,13 +13,27 @@ class ItemSlot extends JComponent {
 	private ImageNamePair i;
 	public final int weight;
 
-	ItemSlot(Item item) {
-		this.setSize(MenuGame.BLOCK_D);
-		this.setMinimumSize(MenuGame.BLOCK_D);
-		this.setMaximumSize(MenuGame.BLOCK_D);
-		this.setPreferredSize(MenuGame.BLOCK_D);
+	private ItemSlot(Item item, ImageNamePair i) {
+		this.setSize(BLOCK_D);
+		this.setMinimumSize(BLOCK_D);
+		this.setMaximumSize(BLOCK_D);
+		this.setPreferredSize(BLOCK_D);
 		this.mine = item;
-		weight = item.weight;
+		this.weight = item.weight;
+		this.i = i;
+	}
+
+	public ItemSlot(Item item) {
+		this.setSize(BLOCK_D);
+		this.setMinimumSize(BLOCK_D);
+		this.setMaximumSize(BLOCK_D);
+		this.setPreferredSize(BLOCK_D);
+		this.mine = item;
+		this.weight = item.weight;
+	}
+
+	private ItemSlot(ItemSlot c) {
+		this(c.mine, c.i);
 	}
 
 	public void setRandomItem() {
@@ -32,5 +48,13 @@ class ItemSlot extends JComponent {
 
 	public String getCurrentItem() {
 		return i.name;
+	}
+
+	public BufferedImage getCurrentImage() {
+		return i.img;
+	}
+
+	public ItemSlot clone() {
+		return new ItemSlot(this);
 	}
 }

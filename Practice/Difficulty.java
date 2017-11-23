@@ -6,10 +6,11 @@ enum Difficulty {
 	// 2 :
 	// 3 :
 	// 4 :
-	// 5 :
+	// 5 : show optimal path
 	// 6 : randomize location of starting cursor each round in collections mode
 	// 7 : show a cursor over the target item in addition to the name
 	// 8 : randomize location of starting cursor each round in study mode
+	BEGINNER ("Beginner", 0, 20, 5000, 20, 10, (byte) 0b00001010),
 	EASY ("Easy", 0, 15, 5000, 20, 7, (byte) 0b00000010),
 	MEDIUM ("Medium", 100, 10, 3000, 30, 5, (byte) 0b00000011),
 	HARD ("Hard", 200, 5, 1000, 50, 3, (byte) 0b00000000),
@@ -25,7 +26,8 @@ enum Difficulty {
 	final boolean randomizeStartStudy;
 	final boolean randomizeStartCollections;
 	final boolean showTargetCursor;
-
+	final boolean showOptimalPath;
+	
 	Difficulty(String name,
 			int difficultyBonus,
 			int studyRoundLength, int studyTime,
@@ -41,6 +43,7 @@ enum Difficulty {
 		this.randomizeStartStudy = ((flags >> 0) & 1) == 1;
 		this.showTargetCursor = ((flags >> 1) & 1) == 1;
 		this.randomizeStartCollections = ((flags >> 2) & 1) == 1;
+		this.showOptimalPath = ((flags >> 3) & 1) == 1;
 	}
 
 	public int roundLength(GameMode m) {
