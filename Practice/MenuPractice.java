@@ -145,6 +145,8 @@ public class MenuPractice {
 		clear.addActionListener(
 			arg0 -> {
 				hiscore.setText("0");
+				totalScore.set(0);
+				turn.set(1);
 				model.clear();
 			});
 
