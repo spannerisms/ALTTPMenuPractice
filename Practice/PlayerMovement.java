@@ -34,7 +34,8 @@ public class PlayerMovement {
 		Graphics g = ret.getGraphics();
 		int size = moves.length;
 		for (int i = 0; i < size; i++) {
-			PlayerMovement p = moves[i];			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
+			PlayerMovement p = moves[i];
+			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
 			g.drawImage(PLAYER_MOVES[p.MOVEMENT],
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
