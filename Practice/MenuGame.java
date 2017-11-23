@@ -157,8 +157,8 @@ public class MenuGame extends Container {
 					loc = moveLeft(loc);
 					ref.moves++;
 					fireInputEvent(InputEvent.SNES_LEFT);
-				// start
-				} else if (key == KEY_START) {
+				// start TODO : remove space when controls are added properly
+				} else if (key == KEY_START || key == KeyEvent.VK_SPACE) {
 					movesMade.add(new PlayerMovement(loc, PRESS_START));
 					pressStart();
 					fireInputEvent(InputEvent.SNES_START);
@@ -363,7 +363,7 @@ public class MenuGame extends Container {
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);
-	
+
 			if (dif.showTargetCursor) {
 				cursorLoc = ItemPoint.valueOf("SLOT_" + target);
 				g2.drawImage(TARGET_CURSOR,

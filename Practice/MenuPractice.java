@@ -32,7 +32,7 @@ import javax.swing.text.html.StyleSheet;
 // TODO: credits
 // feedback: candine
 public class MenuPractice {
-	static final String VERSION = "v0.5-beta";
+	static final String VERSION = "v0.6-beta";
 
 	static final Dimension d = new Dimension(800, 550);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
@@ -224,7 +224,6 @@ public class MenuPractice {
 		try {
 			htmlDocument.insertBeforeEnd(htmlDocument.getRootElements()[0].getElement(0), HOW_TO_PLAY);
 		} catch (Exception e) {}
-
 		// actual display
 		JScrollPane helpScroll = new JScrollPane(helpPane,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
