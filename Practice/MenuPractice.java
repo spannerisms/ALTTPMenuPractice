@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
@@ -100,9 +101,20 @@ public class MenuPractice {
 				SpringLayout.HORIZONTAL_CENTER, wrap);
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.SOUTH, gamePlayer, -50,
+		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
 				SpringLayout.SOUTH, wrap);
 		frame.add(gamePlayer);
+
+		// forfeit
+		JPanel fWrap = new JPanel();
+		JButton forfeit = new JButton("End");
+		forfeit.addActionListener(arg0 -> gamePlayer.forfeit());
+
+		l.putConstraint(SpringLayout.EAST, fWrap, 0,
+				SpringLayout.HORIZONTAL_CENTER, wrap);
+		l.putConstraint(SpringLayout.NORTH, fWrap, 5,
+				SpringLayout.NORTH, gamePlayer);
+		frame.add(fWrap);
 
 		// scores
 		JTable scores = new JTable();
@@ -120,7 +132,7 @@ public class MenuPractice {
 		scores.setBorder(null);
 		scores.setFont(CONSOLAS);
 		scores.setBackground(null);
-		scores.setFocusable(false);
+		scores.getTableHeader().setResizingAllowed(false);
 
 		// hiscore
 		JLabel scoreTotal = new JLabel("Total score:", SwingConstants.RIGHT);
@@ -176,11 +188,17 @@ public class MenuPractice {
 
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scores.setColumnSelectionAllowed(false);
+
 		scoreSel.addListSelectionListener(
 			arg0 -> {
 				int selectedRow = scores.getSelectedRow();
-				if (selectedRow != -1 && analysis.isVisible()) {
-					analysis.setRef(model.getRow(selectedRow));
+				if (analysis.isVisible()) {
+					if (selectedRow == -1) {
+						analysis.setVisible(false);
+					} else {
+						analysis.setRef(model.getRow(selectedRow));
+					}
 				}
 			});
 
@@ -314,6 +332,7 @@ public class MenuPractice {
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		// listeners for gameplay area
 		gamePlayer.addTurnListener(
 			arg0 -> {
 					ScoreCard tempRef = arg0.score;
@@ -325,6 +344,25 @@ public class MenuPractice {
 						turn.increment();
 					}
 					gamePlayer.repaint();
+			});
+
+		gamePlayer.addGameStartListener(
+			arg0 -> {
+				scores.clearSelection();
+				scores.setRowSelectionAllowed(false);
+				scores.setFocusable(false);
+				analyze.setEnabled(false);
+				clear.setEnabled(false);
+				fWrap.add(forfeit);
+			});
+
+		gamePlayer.addGameOverListener(
+			arg0 -> {
+				scores.setFocusable(true);
+				scores.setRowSelectionAllowed(true);
+				analyze.setEnabled(true);
+				clear.setEnabled(true);
+				fWrap.remove(forfeit);
 			});
 		frame.setVisible(true);
 	}

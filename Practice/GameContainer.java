@@ -26,8 +26,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
-import Practice.Listeners.TurnEvent;
-import Practice.Listeners.TurnListener;
+import Practice.Listeners.*;
 import static Practice.MenuGameConstants.*;
 
 public class GameContainer extends Container {
@@ -171,7 +170,6 @@ public class GameContainer extends Container {
 		controls.add(play, c);
 
 		// round number
-
 		SpinnerModel roundModel = new SpinnerNumberModel(1,1,20,1);
 		JSpinner roundSpinner = new JSpinner(roundModel);
 		roundSpinner.setFocusable(false);
@@ -181,7 +179,7 @@ public class GameContainer extends Container {
 		controls.add(roundLabel, c);
 		c.gridx++;
 		controls.add(roundSpinner, c);
-		
+
 		play.addActionListener(
 				arg0 -> {
 					Difficulty d = Difficulty.valueOf(difficultyGroup.getSelection().getActionCommand());
@@ -189,8 +187,8 @@ public class GameContainer extends Container {
 					int rounds = (int) roundModel.getValue();
 					newGame(m, d, rounds);
 				});
-		setLower(controls);
 
+		setLower(controls);
 		revalidate();
 	}
 
@@ -240,9 +238,16 @@ public class GameContainer extends Container {
 					setHolder(new HoldScreen(playing.getScore(), SCORE_SCREEN));
 					GameContainer.this.repaint();
 					playing.transferFocus();
+					fireGameOverEvent(arg0);
 				});
+		fireGameStartEvent();
 		setLower(targ);
 		revalidate();
+	}
+
+	public void forfeit() {
+		playing.forfeit();
+		counter.kill();
 	}
 
 	public void setController(Controller c) {
@@ -275,6 +280,7 @@ public class GameContainer extends Container {
 		}
 		return ret;
 	}
+
 	/*
 	 * Events for turn changes
 	 */
@@ -285,6 +291,34 @@ public class GameContainer extends Container {
 
 	private synchronized void fireTurnEvent(TurnEvent te) {
 		Iterator<TurnListener> listening = turnListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Events for game changes
+	 */
+	private List<GameOverListener> startListen = new ArrayList<GameOverListener>();
+	public synchronized void addGameStartListener(GameOverListener s) {
+		startListen.add(s);
+	}
+
+	private synchronized void fireGameStartEvent() {
+		GameOverEvent te = new GameOverEvent(this);
+		Iterator<GameOverListener> listening = startListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	private List<GameOverListener> endListen = new ArrayList<GameOverListener>();
+	public synchronized void addGameOverListener(GameOverListener s) {
+		endListen.add(s);
+	}
+
+	private synchronized void fireGameOverEvent(GameOverEvent te) {
+		Iterator<GameOverListener> listening = endListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
 		}

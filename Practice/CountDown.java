@@ -71,6 +71,10 @@ public class CountDown extends JComponent {
 		tick.schedule(new OpTask(count), COUNT_DOWN_WAIT);
 	}
 
+	public void kill() {
+		tick.cancel();
+	}
+
 	public void paint(Graphics g) {
 		if (curCount == -1) {
 			return;

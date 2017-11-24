@@ -171,9 +171,12 @@ public class MenuGame extends Container {
 		ref.startPresses++;
 		if (target == loc) {
 			nextTurn();
-		} else {
-
 		}
+	}
+
+	public void forfeit() {
+		waiter.cancel();
+		fireGameOverEvent();
 	}
 
 	private void nextTurn() {
@@ -496,10 +499,6 @@ public class MenuGame extends Container {
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
 		}
-	}
-
-	public void forfeit() {
-		fireGameOverEvent();
 	}
 
 	static class ItemLister {
