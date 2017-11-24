@@ -102,10 +102,15 @@ public class MenuPractice {
 		wrap.setLayout(l);
 
 		// a little thing for dialogs to hook onto for display
+		// intentionally constrained to be 0px in size
 		JPanel hooker = new JPanel();
 		l.putConstraint(SpringLayout.EAST, hooker, 0,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, hooker, 0,
+				SpringLayout.NORTH, wrap);
+		l.putConstraint(SpringLayout.WEST, hooker, 0,
+				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.SOUTH, hooker, 0,
 				SpringLayout.NORTH, wrap);
 		wrap.add(hooker);
 
