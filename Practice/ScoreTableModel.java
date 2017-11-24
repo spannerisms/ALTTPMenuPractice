@@ -51,6 +51,10 @@ class ScoreTableModel extends AbstractTableModel {
 		return getValueAt(0, c).getClass();
 	}
 
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return data.get(rowIndex).toArray()[columnIndex];
 	}

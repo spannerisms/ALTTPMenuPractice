@@ -127,9 +127,10 @@ public class GameContainer extends Container {
 			JRadioButton btn = new JRadioButton(d.diffName);
 			btn.setActionCommand(d.name());
 			difficultyGroup.add(btn);
+			btn.setFocusable(false);
 			c.gridy++;
 			controls.add(btn, c);
-			if (d.ordinal() == 0) {
+			if (d.ordinal() == 1) {
 				btn.setSelected(true);
 			}
 		}
@@ -149,6 +150,7 @@ public class GameContainer extends Container {
 			JRadioButton btn = new JRadioButton(m.modeName);
 			btn.setActionCommand(m.name());
 			gameModeGroup.add(btn);
+			btn.setFocusable(false);
 			c.gridy++;
 			controls.add(btn, c);
 			if (m.ordinal() == 0) {
@@ -258,7 +260,7 @@ public class GameContainer extends Container {
 		return playing;
 	}
 
-	static final String CHARS = "0123456789,";
+	static final String CHARS = "0123456789,-";
 	public static BufferedImage makeNumberImage(int i) {
 		String num = "";
 		char[] temp = Integer.toString(i).toCharArray();

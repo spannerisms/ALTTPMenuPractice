@@ -1,5 +1,6 @@
 package Practice;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,6 +27,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
@@ -39,8 +41,12 @@ public class MenuPractice {
 	static final Dimension d = new Dimension(800, 550);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
 
+	static final DefaultTableCellRenderer PLAIN_TABLE = new ScoreTableRenderer(false);
+	static final ScoreTableRenderer SCORE_TABLE = new ScoreTableRenderer(true);
+
 	static final String HOW_TO_PLAY;
 	static final String DATA_PATH = "/Practice/howtoplay.html";
+
 	static {
 		StringBuilder ret = new StringBuilder();
 		try {
@@ -108,6 +114,7 @@ public class MenuPractice {
 		// forfeit
 		JPanel fWrap = new JPanel();
 		JButton forfeit = new JButton("End");
+		forfeit.setFocusable(false);
 		forfeit.addActionListener(arg0 -> gamePlayer.forfeit());
 
 		l.putConstraint(SpringLayout.EAST, fWrap, 0,
@@ -120,6 +127,8 @@ public class MenuPractice {
 		JTable scores = new JTable();
 		ScoreTableModel model = new ScoreTableModel();
 		scores.setModel(model);
+
+		scores.setDefaultRenderer(Number.class, SCORE_TABLE);
 
 		// scroll pane for score
 		JScrollPane scoreScroll = new JScrollPane(scores,
@@ -189,7 +198,9 @@ public class MenuPractice {
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scores.setColumnSelectionAllowed(false);
-
+		scores.setCellSelectionEnabled(false);
+		scores.setRowSelectionAllowed(true);
+		scores.setSelectionBackground(Color.RED);
 		scoreSel.addListSelectionListener(
 			arg0 -> {
 				int selectedRow = scores.getSelectedRow();
@@ -272,6 +283,32 @@ public class MenuPractice {
 		final JMenu fileMenu = new JMenu("File");
 		menu.add(fileMenu);
 
+		// color the table
+		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
+		final JMenuItem colorful = new JMenuItem("Performance highlighting");
+		ImageIcon lampOn = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Lamp.png")
+			);
+		ImageIcon lampOff = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Lamp dark.png")
+			);
+
+		colorful.setIcon(lampOn);
+		colorful.addActionListener(
+			arg0 -> {
+				colors[0] = !colors[0];
+				if (colors[0]) {
+					colorful.setIcon(lampOn);
+					scores.setDefaultRenderer(Number.class, SCORE_TABLE);
+				} else {
+					colorful.setIcon(lampOff);
+					scores.setDefaultRenderer(Number.class, PLAIN_TABLE);
+				}
+				frame.repaint();
+			});
+
+		fileMenu.add(colorful);
+
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure keybinds");
 		ImageIcon mitts = new ImageIcon(
@@ -280,19 +317,23 @@ public class MenuPractice {
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
 
-		mapper.addActionListener(arg0 -> {
-			if (remap.isVisible()) {
-				return;
-			}
-			remap.setLocation(scoreScroll.getLocationOnScreen());
-			remap.setVisible(true);
-		});
+		mapper.addActionListener(
+			arg0 -> {
+				if (remap.isVisible()) {
+					remap.requestFocus();
+				} else {
+					remap.setLocation(scoreScroll.getLocationOnScreen());
+					remap.setVisible(true);
+				}
+			});
 
 		remap.addRemapListener(
 			arg0 -> {
 				gamePlayer.setController(arg0.map);
 				remap.setVisible(false);
 			});
+
+		fileMenu.addSeparator();
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
@@ -313,7 +354,15 @@ public class MenuPractice {
 			);
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
-		howToPlay.addActionListener(arg0 -> howPlayFrame.setVisible(true));
+		howToPlay.addActionListener(
+			arg0 -> {
+				if (howPlayFrame.isVisible()) {
+					howPlayFrame.requestFocus();
+				} else {
+					howPlayFrame.setLocation(scoreScroll.getLocationOnScreen());
+					howPlayFrame.setVisible(true);
+				}
+			});
 
 		// set icon
 		ImageIcon ico =
@@ -351,6 +400,7 @@ public class MenuPractice {
 				scores.clearSelection();
 				scores.setRowSelectionAllowed(false);
 				scores.setFocusable(false);
+				analysis.setVisible(false);
 				analyze.setEnabled(false);
 				clear.setEnabled(false);
 				fWrap.add(forfeit);
