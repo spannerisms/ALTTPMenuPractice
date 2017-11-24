@@ -32,13 +32,16 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import static Practice.MenuGameConstants.*;
+
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
 // TODO: credits
-// feedback: candide
+// feedback: candide, harb
 public class MenuPractice {
 	static final String VERSION = "v0.7-beta";
 
-	static final Dimension d = new Dimension(800, 550);
+	static final Dimension D = new Dimension((BG_WIDTH + 7) * ZOOM, 650);
+	static final Dimension CHART_D = new Dimension(450, 500);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
 
 	static final DefaultTableCellRenderer PLAIN_TABLE = new ScoreTableRenderer(false);
@@ -94,40 +97,55 @@ public class MenuPractice {
 		// main window
 		final JFrame frame = new JFrame("Menu Simulator 2K17 " + VERSION);
 
-		final Container wrap = frame.getContentPane();
+		Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
+
+		// a little thing for dialogs to hook onto for display
+		JPanel hooker = new JPanel();
+		l.putConstraint(SpringLayout.EAST, hooker, 0,
+				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.NORTH, hooker, 0,
+				SpringLayout.NORTH, wrap);
+		wrap.add(hooker);
+
+		// forfeit
+		JPanel fWrap = new JPanel();
+		JButton forfeit = new JButton("End");
+		forfeit.setFocusable(false);
+		l.putConstraint(SpringLayout.EAST, fWrap, -2,
+				SpringLayout.EAST, wrap);
+		l.putConstraint(SpringLayout.SOUTH, fWrap, -2,
+				SpringLayout.SOUTH, wrap);
+		wrap.add(fWrap);
 
 		// game
 		GameContainer gamePlayer = new GameContainer();
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.EAST, gamePlayer, 0,
-				SpringLayout.HORIZONTAL_CENTER, wrap);
+		l.putConstraint(SpringLayout.EAST, gamePlayer, 5,
+				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
 		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
-				SpringLayout.SOUTH, wrap);
-		frame.add(gamePlayer);
+				SpringLayout.NORTH, fWrap);
+		wrap.add(gamePlayer);
 
-		// forfeit
-		JPanel fWrap = new JPanel();
-		JButton forfeit = new JButton("End");
-		forfeit.setFocusable(false);
 		forfeit.addActionListener(arg0 -> gamePlayer.forfeit());
 
-		l.putConstraint(SpringLayout.EAST, fWrap, 0,
-				SpringLayout.HORIZONTAL_CENTER, wrap);
-		l.putConstraint(SpringLayout.NORTH, fWrap, 5,
-				SpringLayout.NORTH, gamePlayer);
-		frame.add(fWrap);
-
 		// scores
+		JDialog scoreFrame = new JDialog(frame, "Performance scores");
+		scoreFrame.setSize(CHART_D);
+		scoreFrame.setMinimumSize(CHART_D);
+		wrap = scoreFrame.getContentPane();
+		l = new SpringLayout();
+		wrap.setLayout(l);
+
+		// table
 		JTable scores = new JTable();
 		ScoreTableModel model = new ScoreTableModel();
 		scores.setModel(model);
-
 		scores.setDefaultRenderer(Number.class, SCORE_TABLE);
 
 		// scroll pane for score
@@ -140,13 +158,13 @@ public class MenuPractice {
 
 		scores.setBorder(null);
 		scores.setFont(CONSOLAS);
-		scores.setBackground(null);
 		scores.getTableHeader().setResizingAllowed(false);
 
 		// hiscore
 		JLabel scoreTotal = new JLabel("Total score:", SwingConstants.RIGHT);
 		JLabel hiscore = new JLabel("0", SwingConstants.RIGHT);
 		hiscore.setFont(CONSOLAS);
+		scoreTotal.setFont(CONSOLAS);
 
 		l.putConstraint(SpringLayout.WEST, scoreTotal, 0,
 				SpringLayout.HORIZONTAL_CENTER, scoreScroll);
@@ -221,7 +239,7 @@ public class MenuPractice {
 
 		// scores in wrap
 		l.putConstraint(SpringLayout.WEST, scoreScroll, 10,
-				SpringLayout.EAST, gamePlayer);
+				SpringLayout.WEST, wrap);
 		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, scoreScroll, 5,
@@ -283,32 +301,6 @@ public class MenuPractice {
 		final JMenu fileMenu = new JMenu("File");
 		menu.add(fileMenu);
 
-		// color the table
-		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
-		final JMenuItem colorful = new JMenuItem("Performance highlighting");
-		ImageIcon lampOn = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Lamp.png")
-			);
-		ImageIcon lampOff = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Lamp dark.png")
-			);
-
-		colorful.setIcon(lampOn);
-		colorful.addActionListener(
-			arg0 -> {
-				colors[0] = !colors[0];
-				if (colors[0]) {
-					colorful.setIcon(lampOn);
-					scores.setDefaultRenderer(Number.class, SCORE_TABLE);
-				} else {
-					colorful.setIcon(lampOff);
-					scores.setDefaultRenderer(Number.class, PLAIN_TABLE);
-				}
-				frame.repaint();
-			});
-
-		fileMenu.add(colorful);
-
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure keybinds");
 		ImageIcon mitts = new ImageIcon(
@@ -322,7 +314,7 @@ public class MenuPractice {
 				if (remap.isVisible()) {
 					remap.requestFocus();
 				} else {
-					remap.setLocation(scoreScroll.getLocationOnScreen());
+					remap.setLocation(hooker.getLocationOnScreen());
 					remap.setVisible(true);
 				}
 			});
@@ -344,6 +336,55 @@ public class MenuPractice {
 		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
 
+		// scores menu
+		final JMenu scoresMenu = new JMenu("Performance");
+		menu.add(scoresMenu);
+
+		// show scores
+		final JMenuItem scoreShow = new JMenuItem("Performance chart");
+		ImageIcon boots = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Boots.png")
+			);
+		scoreShow.setIcon(boots);
+		scoreShow.addActionListener(
+			arg0 -> {
+				if (scoreFrame.isVisible()) {
+					scoreFrame.requestFocus();
+				} else {
+					scoreFrame.setLocation(hooker.getLocationOnScreen());
+					scoreFrame.setVisible(true);
+				}
+			});
+		scoresMenu.add(scoreShow);
+
+		// colors
+		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
+		final JMenuItem colorful = new JMenuItem("Performance highlighting");
+		ImageIcon lampOn = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Lamp.png")
+			);
+		ImageIcon lampOff = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Lamp dark.png")
+			);
+
+		colorful.setIcon(lampOn);
+		colorful.addActionListener(
+			arg0 -> {
+				colors[0] = !colors[0];
+				if (colors[0]) {
+					colorful.setIcon(lampOn);
+					scores.setDefaultRenderer(Number.class, SCORE_TABLE);
+				} else {
+					colorful.setIcon(lampOff);
+					scores.setDefaultRenderer(Number.class, PLAIN_TABLE);
+				}
+				if (scoreFrame.isVisible()) {
+					scoreFrame.repaint();
+				}
+			});
+
+		scoresMenu.add(colorful);
+
 		// help menu
 		final JMenu helpMenu = new JMenu("Help");
 		menu.add(helpMenu);
@@ -359,7 +400,7 @@ public class MenuPractice {
 				if (howPlayFrame.isVisible()) {
 					howPlayFrame.requestFocus();
 				} else {
-					howPlayFrame.setLocation(scoreScroll.getLocationOnScreen());
+					howPlayFrame.setLocation(hooker.getLocationOnScreen());
 					howPlayFrame.setVisible(true);
 				}
 			});
@@ -376,8 +417,8 @@ public class MenuPractice {
 		frame.setIconImages(icons);
 
 		// frame display
-		frame.setSize(d);
-		frame.setMinimumSize(d);
+		frame.setSize(D);
+		frame.setMinimumSize(D);
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

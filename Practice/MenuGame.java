@@ -109,6 +109,7 @@ public class MenuGame extends Container {
 	private final void initialize() {
 		this.setPreferredSize(MENU_SIZE);
 		this.setLayout(null);
+
 		for (int i = 0; i < ITEM_COUNT; i++) {
 			ItemSlot temp = new ItemSlot(ALL_ITEMS[i]);
 			list[i] = temp;

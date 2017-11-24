@@ -1,6 +1,5 @@
 package Practice;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -84,7 +83,7 @@ public class GameContainer extends Container {
 
 		l.putConstraint(SpringLayout.NORTH, holder, 0,
 				SpringLayout.NORTH, this);
-		l.putConstraint(SpringLayout.SOUTH, holder, BG_HEIGHT * 2,
+		l.putConstraint(SpringLayout.SOUTH, holder, BG_HEIGHT * ZOOM,
 				SpringLayout.NORTH, this);
 		this.add(holder);
 
@@ -92,7 +91,6 @@ public class GameContainer extends Container {
 		targ.setFont(SANS);
 		targ.setFocusable(false);
 		targ.setVerticalTextPosition(SwingConstants.TOP);
-		targ.setBackground(Color.BLACK);
 
 		l.putConstraint(SpringLayout.EAST, lower, 0,
 				SpringLayout.EAST, holder);
@@ -121,7 +119,9 @@ public class GameContainer extends Container {
 		// difficulty radio buttons
 		c.gridy = 0;
 		c.gridx++;
-		controls.add(new JLabel("Difficulty"), c);
+		JLabel diffLbl = new JLabel("Difficulty");
+		controls.add(diffLbl, c);
+
 		ButtonGroup difficultyGroup = new ButtonGroup();
 		for (Difficulty d : Difficulty.values()) {
 			JRadioButton btn = new JRadioButton(d.diffName);
@@ -144,7 +144,9 @@ public class GameContainer extends Container {
 		// game mode radio buttons
 		c.gridy = 0;
 		c.gridx++;
-		controls.add(new JLabel("Mode"), c);
+		JLabel modeLbl = new JLabel("Mode");
+		controls.add(modeLbl, c);
+
 		ButtonGroup gameModeGroup = new ButtonGroup();
 		for (GameMode m : GameMode.values()) {
 			JRadioButton btn = new JRadioButton(m.modeName);

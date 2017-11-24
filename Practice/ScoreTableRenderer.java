@@ -23,8 +23,7 @@ public class ScoreTableRenderer extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int col) {
 			super.getTableCellRendererComponent(table, (int) value, isSelected, hasFocus, row, col);
-		setForeground(isSelected ? Color.WHITE: Color.BLACK);
-		//setFont(isSelected ? CONSOLAS_BOLD : CONSOLAS);
+		setForeground(isSelected ? Color.WHITE : Color.BLACK);
 		this.setHorizontalAlignment(SwingConstants.RIGHT);
 		int ensity;
 		int val = (int) table.getModel().getValueAt(row, col);
