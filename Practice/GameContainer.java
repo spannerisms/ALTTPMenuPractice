@@ -105,8 +105,6 @@ public class GameContainer extends Container {
 		// set control panel stuff
 		controls.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		controls.setPreferredSize(MENU_SIZE);
-		controls.setSize(MENU_SIZE);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = -1;
 
