@@ -1,5 +1,7 @@
 package Practice;
 
+import java.awt.image.BufferedImage;
+
 enum Difficulty {
 	// flag is a map for booleans, where each bitplane represents the following
 	// 1 :
@@ -27,7 +29,9 @@ enum Difficulty {
 	final boolean randomizeStartCollections;
 	final boolean showTargetCursor;
 	final boolean showOptimalPath;
-	
+	final BufferedImage word;
+	final BufferedImage wordHilite;
+
 	Difficulty(String name,
 			int difficultyBonus,
 			int studyRoundLength, int studyTime,
@@ -35,11 +39,15 @@ enum Difficulty {
 			int collectionRoundLength,
 			byte flags) {
 		this.diffName = name;
+		this.word = ControlScreen.makeWordImage(diffName, false);
+		this.wordHilite = ControlScreen.makeWordImage(diffName, true);
+
 		this.bonus = difficultyBonus;
 		this.studyRoundLength = studyRoundLength;
 		this.studyTime = studyTime;
 		this.burstRounds = burstRounds;
 		this.collectionRoundLength = collectionRoundLength;
+
 		this.randomizeStartStudy = ((flags >> 0) & 1) == 1;
 		this.showTargetCursor = ((flags >> 1) & 1) == 1;
 		this.randomizeStartCollections = ((flags >> 2) & 1) == 1;

@@ -56,7 +56,7 @@ public final class MenuGameConstants {
 	static final BufferedImage BACKGROUND;
 	static final BufferedImage CURSOR;
 	static final BufferedImage TARGET_CURSOR;
-	static final BufferedImage NUMBER_SPRITES;
+	static final BufferedImage FONT_SPRITES;
 	static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
 	static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
 
@@ -156,11 +156,11 @@ public final class MenuGameConstants {
 
 		// sprite sheet for numbers
 		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/number sprites.png"));
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/font sheet.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
-		NUMBER_SPRITES = temp;
+		FONT_SPRITES = temp;
 	}
 
 	/**

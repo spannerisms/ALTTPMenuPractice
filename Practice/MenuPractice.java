@@ -38,9 +38,9 @@ import static Practice.MenuGameConstants.*;
 // TODO: credits
 // feedback: candide, harb
 public class MenuPractice {
-	static final String VERSION = "v0.7-beta";
+	static final String VERSION = "v0.8-beta";
 
-	static final Dimension D = new Dimension((BG_WIDTH + 7) * ZOOM, 650);
+	static final Dimension D = new Dimension((BG_WIDTH + 9) * ZOOM, (BG_HEIGHT + 7) * ZOOM + 100);
 	static final Dimension CHART_D = new Dimension(450, 500);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
 

@@ -81,6 +81,7 @@ public class CountDown extends JComponent {
 		}
 		Graphics2D g2 = (Graphics2D) g;
 		g2.scale(ZOOM, ZOOM);
+		g2.drawImage(BACKGROUND, 0, 0, null);
 		g2.drawImage(COUNT_DOWN_BG[curCount], 0, 0, null);
 	}
 
