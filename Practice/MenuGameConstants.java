@@ -19,6 +19,10 @@ public final class MenuGameConstants {
 	public static final int ITEM_SIZE = 16; // size of the image itself
 	public static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
 
+	public static final int BOARD_SIZE = 19;
+	public static final int BOARD_SIZE_NO_BORDER = BOARD_SIZE - 2;
+
+	// items
 	public static final Item[] ALL_ITEMS = Item.values(); // for easy access
 	public static final int MIN_ITEMS = 4;
 
@@ -234,7 +238,7 @@ public final class MenuGameConstants {
 		g.drawImage(word, (x * 8), (y * 8), null);
 	}
 
-	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=";
+	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=/";
 	public static BufferedImage makeWordImage(String s, boolean hilite) {
 		BufferedImage ret = new BufferedImage(s.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
 		char[] temp = s.toUpperCase().toCharArray();
@@ -271,15 +275,16 @@ public final class MenuGameConstants {
 	 * @return
 	 */
 	public static BufferedImage makePrettyBorder(int size) {
-		BufferedImage ret = new BufferedImage((size + 2) * 8, 8, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage ret = new BufferedImage((size + 2) * 8, 24, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = ret.getGraphics();
 		int i = 0;
-		g.drawImage(PRETTY_BORDER_LEFT, i * 8, 0, null);
+		g.drawImage(PRETTY_BORDER_LEFT, i++ * 8, 0, null);
 
-		for ( ; i < size; i++) {
+		for ( ; i <= size; i++) {
 			g.drawImage(PRETTY_BORDER, i * 8, 0, null);
 		}
-		g.drawImage(PRETTY_BORDER_RIGHT, i * 8, 0, null);
+
+		g.drawImage(PRETTY_BORDER_RIGHT, i++ * 8, 0, null);
 
 		return ret;
 	}

@@ -33,10 +33,14 @@ public class MenuGame extends Container {
 	// gameplay
 	final GameMode mode; // current game mode
 	final Difficulty dif; // current difficulty
-	int currentTurn; // current turn, based on difficulty
-	int currentRound;
+
+	int currentTurn;
 	final int maxTurn;
+	int currentRound;
 	final int maxRound;
+	int currentGame;
+	final int maxGame;
+
 	int scoreForGame = 0;
 	ArrayList<PlayerMovement> movesMade = new ArrayList<PlayerMovement>();
 	PlayerMovement[] bestMoves;
@@ -58,17 +62,23 @@ public class MenuGame extends Container {
 
 	// end gameplay
 
-	public MenuGame(Controller controls, GameMode gameMode, Difficulty difficulty, int rounds) {
+	public MenuGame(Controller controls, GameMode gameMode, Difficulty difficulty, int games) {
 		initialize();
 		mode = gameMode;
 		dif = difficulty;
 		maxTurn = dif.roundLength(mode);
-		currentRound = dif.roundCount(rounds, mode);
-		maxRound = currentRound;
 		currentTurn = maxTurn;
+
+		currentRound = dif.roundsPerGame(mode);
+		maxRound = currentRound;
+
+		currentGame = games;
+		maxGame = games;
+
 		randoAllStarts = dif.randomizesStart(mode);
 		showOpt = dif.showOptimalPath;
 		this.controls = controls;
+
 		KEY_UP = controls.T_UP;
 		KEY_DOWN = controls.T_DOWN;
 		KEY_RIGHT = controls.T_RIGHT;
@@ -201,10 +211,16 @@ public class MenuGame extends Container {
 	private void nextRound() {
 		currentRound--;
 		if (currentRound == 0) {
-			newTurn();
-			fireGameOverEvent();
-			return;
+			currentGame--;
+			if (currentGame == 0) {
+				newTurn();
+				fireGameOverEvent();
+				return;
+			}  else {
+				currentRound = maxRound;
+			}
 		}
+
 		currentTurn = maxTurn;
 		switch (mode) {
 			case STUDY :
@@ -440,6 +456,33 @@ public class MenuGame extends Container {
 		}
 		// failure, just in case
 		return moves;
+	}
+
+	// turn
+	public int getTurn() {
+		return maxTurn - currentTurn + 1;
+	}
+
+	public int getMaxTurn() {
+		return maxTurn;
+	}
+
+	// round
+	public int getRound() {
+		return maxRound - currentRound + 1;
+	}
+
+	public int getMaxRound() {
+		return maxRound;
+	}
+
+	// game
+	public int getGame() {
+		return maxGame - currentGame + 1;
+	}
+
+	public int getMaxGame() {
+		return maxGame;
 	}
 
 	/*

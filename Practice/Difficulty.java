@@ -70,22 +70,21 @@ public enum Difficulty {
 		return ret;
 	}
 
-	public int roundCount(int rounds, GameMode m) {
+	public int roundsPerGame(GameMode m) {
 		int ret = 1;
 		switch (m) {
 			case STUDY :
-				ret = rounds;
 				if (this == HARD) {
-					ret *= 5;
+					ret = 5;
 				} else if (this == EXPERT) {
-					ret *= 10;
+					ret = 10;
 				}
 				break;
 			case BLITZ :
-				ret = rounds * burstRounds;
+				ret = burstRounds;
 				break;
 			case COLLECT :
-				ret = rounds * 17;
+				ret = 17;
 				break;
 		}
 		return ret;
