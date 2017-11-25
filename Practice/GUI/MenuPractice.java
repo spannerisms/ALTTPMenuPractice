@@ -104,10 +104,13 @@ public class MenuPractice {
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
 		wrap.setBackground(Color.BLACK);
+		frame.setBackground(Color.BLACK);
 
 		// a little thing for dialogs to hook onto for display
 		// intentionally constrained to be 0px in size
 		JPanel hooker = new JPanel();
+		hooker.setBackground(null);
+
 		l.putConstraint(SpringLayout.EAST, hooker, 0,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, hooker, 0,
@@ -123,7 +126,7 @@ public class MenuPractice {
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.EAST, gamePlayer, 5,
+		l.putConstraint(SpringLayout.EAST, gamePlayer, -5,
 				SpringLayout.EAST, wrap);
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);

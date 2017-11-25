@@ -50,9 +50,11 @@ public class GameContainer extends Container {
 	private final void initialize() {
 		SpringLayout l = new SpringLayout();
 		this.setLayout(l);
+		this.setBackground(null);
 
 		holder.setPreferredSize(MENU_SIZE);
 		holder.setSize(MENU_SIZE);
+		holder.setBackground(null);
 
 		l.putConstraint(SpringLayout.NORTH, holder, 0,
 				SpringLayout.NORTH, this);
