@@ -57,7 +57,7 @@ public final class MenuGameConstants {
 	public static final int ZOOM = 3;
 	public static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * ZOOM + 5, BG_HEIGHT * ZOOM + 5);
 	public static final Dimension MENU_SIZE_X2 = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
-	
+
 	// images
 	public static final BufferedImage BACKGROUND;
 	public static final BufferedImage CURSOR;
@@ -67,13 +67,14 @@ public final class MenuGameConstants {
 	public static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
 
 	public static final BufferedImage FONT_SPRITES;
+	public static final BufferedImage FONT_SPRITES_SMALL;
 	public static final BufferedImage COMPASS;
 	public static final BufferedImage MAP;
 
 	public static final BufferedImage PRETTY_BORDER;
 	public static final BufferedImage PRETTY_BORDER_RIGHT;
 	public static final BufferedImage PRETTY_BORDER_LEFT;
-	
+
 	public static final BufferedImage PRETTY_BORDER_INSET;
 	public static final BufferedImage PRETTY_BORDER_INSET_RIGHT;
 	public static final BufferedImage PRETTY_BORDER_INSET_LEFT;
@@ -81,6 +82,8 @@ public final class MenuGameConstants {
 	public static final BufferedImage PRETTY_BORDER_DISABLED;
 	public static final BufferedImage PRETTY_BORDER_RIGHT_DISABLED;
 	public static final BufferedImage PRETTY_BORDER_LEFT_DISABLED;
+
+	public static final BufferedImage CREDITS;
 
 	static {
 		BufferedImage temp;
@@ -92,6 +95,14 @@ public final class MenuGameConstants {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		BACKGROUND = temp;
+
+		// main background
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/About BG.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		CREDITS = temp;
 
 		// menu cursors
 		try {
@@ -168,7 +179,7 @@ public final class MenuGameConstants {
 			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[MOVE_LEFT] = temp;
-		
+
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player start.png"));
 		} catch (Exception e) {
@@ -176,13 +187,20 @@ public final class MenuGameConstants {
 		}
 		PLAYER_MOVES[PRESS_START] = temp;
 
-		// sprite sheet for numbers
+		// sprite sheet for fonts
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/font sheet.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		FONT_SPRITES = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/font sheet small.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		FONT_SPRITES_SMALL = temp;
 
 		// wait icon
 		try {
@@ -191,7 +209,7 @@ public final class MenuGameConstants {
 			temp = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		COMPASS = temp;
-	
+
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/Map menu.png"));
 		} catch (Exception e) {
@@ -306,12 +324,16 @@ public final class MenuGameConstants {
 			}
 		}
 	}
-	
+
 	public static final void draw(Graphics g, BufferedImage word, int x, int y) {
 		g.drawImage(word, (x * 8), (y * 8), null);
 	}
 
-	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=/";
+	public static final void drawSmall(Graphics g, BufferedImage word, int x, int y) {
+		g.drawImage(word, (x * 6), (y * 6), null);
+	}
+
+	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-:<>!=/";
 	/**
 	 * 
 	 * @param s
@@ -346,6 +368,18 @@ public final class MenuGameConstants {
 		w = w.replace("-,", "-"); // lol
 
 		return makeWordImage(w, flag);
+	}
+
+	public static BufferedImage makeWordImageSmall(String s) {
+		BufferedImage ret = new BufferedImage(s.length() * 6, 6, BufferedImage.TYPE_INT_ARGB);
+		char[] temp = s.toUpperCase().toCharArray();
+		Graphics g = ret.getGraphics();
+		for (int i = 0; i < temp.length; i++) {
+			int loc = CHARS.indexOf(temp[i]);
+			BufferedImage t = FONT_SPRITES_SMALL.getSubimage(loc * 6, 0, 6, 6);
+			g.drawImage(t, i * 6, 0, null);
+		}
+		return ret;
 	}
 
 	/**
