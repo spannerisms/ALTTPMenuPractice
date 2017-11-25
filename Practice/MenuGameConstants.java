@@ -11,56 +11,59 @@ public final class MenuGameConstants {
 	private MenuGameConstants() {};
 
 	// location within the menu image to start for calculating
-	static final int ITEM_ORIGIN_X = 24;
-	static final int ITEM_ORIGIN_Y = 16;
+	public static final int ITEM_ORIGIN_X = 24;
+	public static final int ITEM_ORIGIN_Y = 16;
 
-	static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
-	static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
-	static final int ITEM_SIZE = 16; // size of the image itself
-	static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
+	public static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
+	public static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
+	public static final int ITEM_SIZE = 16; // size of the image itself
+	public static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
 
-	static final Item[] ALL_ITEMS = Item.values(); // for easy access
-	static final int MIN_ITEMS = 4;
+	public static final Item[] ALL_ITEMS = Item.values(); // for easy access
+	public static final int MIN_ITEMS = 4;
 
 	// all possible moves
-	static final ArrayList<Integer> ALL_POSSIBLE_MOVES = new ArrayList<Integer>();
+	public static final ArrayList<Integer> ALL_POSSIBLE_MOVES = new ArrayList<Integer>();
 
 	// how this works
 	// each int holds 14 possible moves:
-	static final byte MOVE_UP = 0b000;
-	static final byte MOVE_DOWN = 0b001;
-	static final byte MOVE_RIGHT = 0b010;
-	static final byte MOVE_LEFT = 0b011;
-	static final byte PRESS_START = 0b100;
-	static final byte[] MOVES = { MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT };
+	public static final byte MOVE_UP = 0b000;
+	public static final byte MOVE_DOWN = 0b001;
+	public static final byte MOVE_RIGHT = 0b010;
+	public static final byte MOVE_LEFT = 0b011;
+	public static final byte PRESS_START = 0b100;
+	public static final byte[] MOVES = { MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT };
 
 	// the first 4 bits are the number of moves in this set
-	static final int COUNT_OFFSET = 28;
+	public static final int COUNT_OFFSET = 28;
 
 	// starting from the least significant bit
 	// every 2 bits form the token for a single move
 	// the moves are counted from right to left
 
 	static {// do all move patterns
-		for (int i = 1; i < 6; i++) {
+		for (int i = 1; i < 5; i++) {
 			addToPattern(0, i, i);
 		}
 	}
 
 	// display
-	static final int BG_WIDTH = 152;
-	static final int BG_HEIGHT = 120;
-	static final int ZOOM = 3;
-	static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * ZOOM + 5, BG_HEIGHT * ZOOM + 5);
-	static final Dimension MENU_SIZE_X2 = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
+	public static final int BG_WIDTH = 152;
+	public static final int BG_HEIGHT = 120;
+	public static final int ZOOM = 3;
+	public static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * ZOOM + 5, BG_HEIGHT * ZOOM + 5);
+	public static final Dimension MENU_SIZE_X2 = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
 	
 	// images
-	static final BufferedImage BACKGROUND;
-	static final BufferedImage CURSOR;
-	static final BufferedImage TARGET_CURSOR;
-	static final BufferedImage FONT_SPRITES;
-	static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
-	static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
+	public static final BufferedImage BACKGROUND;
+	public static final BufferedImage CURSOR;
+	public static final BufferedImage TARGET_CURSOR;
+	public static final BufferedImage FONT_SPRITES;
+	public static final BufferedImage PRETTY_BORDER;
+	public static final BufferedImage PRETTY_BORDER_RIGHT;
+	public static final BufferedImage PRETTY_BORDER_LEFT;
+	public static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
+	public static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
 
 	static {
 		BufferedImage temp;
@@ -163,6 +166,28 @@ public final class MenuGameConstants {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		FONT_SPRITES = temp;
+
+		// border making
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-right.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_RIGHT = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-left.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_LEFT = temp;
 	}
 
 	/**
@@ -172,11 +197,21 @@ public final class MenuGameConstants {
 	 */
 	private static void addToPattern(int p, int l, int m) {
 		for (int i = 0; i < 4; i++) {
+			if (m > l) { // not the first move
+				int prevMove = p & 0b11; // get previous move
+				// uses an XOR to see if the move is the opposite of the last move
+				// because the first bit plane defines the axis
+				// and the second bit plane defines the direction
+				// only same axis different direction will produce 0b01
+				if ((MOVES[i] ^ prevMove) == 0b01) {
+					continue;
+				}
+			}
 			int pattern = p | (MOVES[i] << (2 * (l - 1)));
 			if (l == 1) { // bottom level, just add
 				pattern |= m << COUNT_OFFSET; // add number of moves
 				ALL_POSSIBLE_MOVES.add(pattern);
-			} else { // recursion
+			} else { // next move
 				addToPattern(pattern, l-1, m);
 			}
 		}
@@ -184,7 +219,7 @@ public final class MenuGameConstants {
 
 	// list of items with repeats to give some items higher chance of appearing
 	// only needs to be defined once
-	static final ArrayList<Integer> ITEM_CHOOSER = new ArrayList<Integer>();
+	public static final ArrayList<Integer> ITEM_CHOOSER = new ArrayList<Integer>();
 
 	static {
 		for (Item i : Item.values()) { // for each item
@@ -195,11 +230,11 @@ public final class MenuGameConstants {
 		}
 	}
 	
-	static final void draw(Graphics g, BufferedImage word, int x, int y) {
-		g.drawImage(word, (8 * x), (8 * y), null);
+	public static final void draw(Graphics g, BufferedImage word, int x, int y) {
+		g.drawImage(word, (x * 8), (y * 8), null);
 	}
 
-	static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=";
+	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=";
 	public static BufferedImage makeWordImage(String s, boolean hilite) {
 		BufferedImage ret = new BufferedImage(s.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
 		char[] temp = s.toUpperCase().toCharArray();
@@ -228,5 +263,24 @@ public final class MenuGameConstants {
 		w = w.replace("-,", "-"); // lol
 
 		return makeWordImage(w, hilite);
+	}
+
+	/**
+	 * 
+	 * @param size - number of characters
+	 * @return
+	 */
+	public static BufferedImage makePrettyBorder(int size) {
+		BufferedImage ret = new BufferedImage((size + 2) * 8, 8, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = ret.getGraphics();
+		int i = 0;
+		g.drawImage(PRETTY_BORDER_LEFT, i * 8, 0, null);
+
+		for ( ; i < size; i++) {
+			g.drawImage(PRETTY_BORDER, i * 8, 0, null);
+		}
+		g.drawImage(PRETTY_BORDER_RIGHT, i * 8, 0, null);
+
+		return ret;
 	}
 }

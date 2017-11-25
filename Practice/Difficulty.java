@@ -2,7 +2,7 @@ package Practice;
 
 import java.awt.image.BufferedImage;
 
-enum Difficulty {
+public enum Difficulty {
 	// flag is a map for booleans, where each bitplane represents the following
 	// 1 :
 	// 2 :
@@ -19,20 +19,20 @@ enum Difficulty {
 	EXPERT ("Expert", 500, 2, 500, 100, 1, (byte) 0b00000101);
 
 	// local vars
-	final String diffName; // difficulty name
-	final int bonus;
-	final int studyRoundLength; // number of item rounds per menu in study mode
-	final int studyTime; // time in milliseconds to study the menu
-	final int burstRounds; // number of rounds in burst mode
-	final int collectionRoundLength;
-	final boolean randomizeStartStudy;
-	final boolean randomizeStartCollections;
-	final boolean showTargetCursor;
-	final boolean showOptimalPath;
-	final BufferedImage word;
-	final BufferedImage wordHilite;
+	public final String diffName; // difficulty name
+	public final int bonus;
+	public final int studyRoundLength; // number of item rounds per menu in study mode
+	public final int studyTime; // time in milliseconds to study the menu
+	public final int burstRounds; // number of rounds in burst mode
+	public final int collectionRoundLength;
+	public final boolean randomizeStartStudy;
+	public final boolean randomizeStartCollections;
+	public final boolean showTargetCursor;
+	public final boolean showOptimalPath;
+	public final BufferedImage word;
+	public final BufferedImage wordHilite;
 
-	Difficulty(String name,
+	private Difficulty(String name,
 			int difficultyBonus,
 			int studyRoundLength, int studyTime,
 			int burstRounds,

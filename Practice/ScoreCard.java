@@ -5,18 +5,18 @@ import java.awt.image.BufferedImage;
 import static Practice.MenuGameConstants.*;
 
 public class ScoreCard {
-	int startPresses;
-	int moves;
-	final long startTime;
-	long endTime;
-	int finalScore;
-	int finalTime;
-	final int minMoves;
-	final Difficulty d;
-	final ItemSlot[] itemsPlaced;
-	final PlayerMovement[] bestPath;
-	PlayerMovement[] yourMoves;
-	int turn;
+	public int startPresses;
+	public int moves;
+	public final long startTime;
+	public long endTime;
+	public int finalScore;
+	public int finalTime;
+	public final int minMoves;
+	public final Difficulty d;
+	public final ItemSlot[] itemsPlaced;
+	public final PlayerMovement[] bestPath;
+	public PlayerMovement[] yourMoves;
+	public int turn;
 
 	public ScoreCard(Difficulty d, int minMoves, PlayerMovement[] bestPath, ItemSlot[] itemsPlaced) {
 		this.d = d;
@@ -28,7 +28,7 @@ public class ScoreCard {
 		startTime = System.currentTimeMillis();
 	}
 
-	int calcScore() {
+	public int calcScore() {
 		// score for how long it took
 		endTime = System.currentTimeMillis(); // calculate end time on score request
 		long timeDiff = endTime - startTime;
@@ -49,11 +49,11 @@ public class ScoreCard {
 		return finalScore;
 	}
 
-	void setPlayerPath(PlayerMovement[] yourMoves) {
+	public void setPlayerPath(PlayerMovement[] yourMoves) {
 		this.yourMoves = yourMoves;
 	}
 
-	void setTurn(int t) {
+	public void setTurn(int t) {
 		turn = t;
 	}
 

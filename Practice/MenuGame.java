@@ -12,11 +12,12 @@ import java.util.List;
 import java.util.Timer;
 
 import Practice.Listeners.*;
+import Practice.GUI.Controller;
+import Practice.GUI.OpTask;
 
 import static Practice.Item.ITEM_COUNT;
 import static Practice.MenuGameConstants.*;
 
-// TODO: https://github.com/snes9xgit/snes9x
 public class MenuGame extends Container {
 	private static final long serialVersionUID = -4474643068621537992L;
 
@@ -158,7 +159,6 @@ public class MenuGame extends Container {
 					loc = moveLeft(loc);
 					ref.moves++;
 					fireInputEvent(InputEvent.SNES_LEFT);
-				// start TODO : remove space when controls are added properly
 				} else if (key == KEY_START) {
 					movesMade.add(new PlayerMovement(loc, PRESS_START));
 					pressStart();
