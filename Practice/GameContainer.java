@@ -15,6 +15,8 @@ import javax.swing.SwingConstants;
 import Practice.Listeners.*;
 import static Practice.MenuGameConstants.*;
 
+// TODO : make pretty menu border label for target
+// TODO : make pretty meny border button for forfeit and put forfeit here
 public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
 
@@ -95,6 +97,10 @@ public class GameContainer extends Container {
 
 	void setLower(Component c) {
 		lower.removeAll();
+		if (c == null) {
+			revalidate();
+			return;
+		}
 		SpringLayout l = (SpringLayout) lower.getLayout();
 		l.putConstraint(SpringLayout.EAST, c, 0,
 				SpringLayout.EAST, lower);

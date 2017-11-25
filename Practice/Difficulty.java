@@ -39,8 +39,8 @@ enum Difficulty {
 			int collectionRoundLength,
 			byte flags) {
 		this.diffName = name;
-		this.word = ControlScreen.makeWordImage(diffName, false);
-		this.wordHilite = ControlScreen.makeWordImage(diffName, true);
+		this.word = MenuGameConstants.makeWordImage(diffName, false);
+		this.wordHilite = MenuGameConstants.makeWordImage(diffName, true);
 
 		this.bonus = difficultyBonus;
 		this.studyRoundLength = studyRoundLength;

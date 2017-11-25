@@ -31,6 +31,7 @@ public class TurnAnalyzer extends JDialog {
 	final JLabel timeVal = new JLabel("-", SwingConstants.RIGHT);
 	final JLabel movesVal = new JLabel("-", SwingConstants.RIGHT);
 	final JLabel optVal = new JLabel("-", SwingConstants.RIGHT);
+	final JLabel penaltyVal = new JLabel("-", SwingConstants.RIGHT);
 	final JLabel diffName = new JLabel("-", SwingConstants.RIGHT);
 	final SpringLayout l = new SpringLayout();
 
@@ -43,14 +44,14 @@ public class TurnAnalyzer extends JDialog {
 					return;
 				}
 				Graphics2D g2 = (Graphics2D) g;
-				g2.scale(ZOOM, ZOOM);
+				g2.scale(2, 2);
 
 				g2.drawImage(refImg, 0, 0, null);
 			}
 		};
-		menuPainter.setPreferredSize(MENU_SIZE);
-		menuPainter.setMinimumSize(MENU_SIZE);
-		menuPainter.setSize(MENU_SIZE);
+		menuPainter.setPreferredSize(MENU_SIZE_X2);
+		menuPainter.setMinimumSize(MENU_SIZE_X2);
+		menuPainter.setSize(MENU_SIZE_X2);
 		initialize();
 	}
 
@@ -139,6 +140,17 @@ public class TurnAnalyzer extends JDialog {
 		c.gridx = 2;
 		wrap.add(timeVal, c);
 
+		// penal
+		JLabel penalLbl = new JLabel("Penalties", SwingConstants.LEFT);
+		colon = new JLabel(":");
+		c.gridy++;
+		c.gridx = 0;
+		wrap.add(penalLbl, c);
+		c.gridx = 1;
+		wrap.add(colon, c);
+		c.gridx = 2;
+		wrap.add(penaltyVal, c);
+
 		// image
 		c.gridy++;
 		c.gridx = 0;
@@ -155,6 +167,7 @@ public class TurnAnalyzer extends JDialog {
 		timeVal.setText(Integer.toString(ref.finalTime));
 		optVal.setText(Integer.toString(ref.minMoves));
 		movesVal.setText(Integer.toString(ref.moves));
+		penaltyVal.setText(Integer.toString(ref.startPresses-1));
 		revalidate();
 		repaint();
 	}

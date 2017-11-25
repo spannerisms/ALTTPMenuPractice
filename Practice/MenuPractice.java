@@ -114,16 +114,6 @@ public class MenuPractice {
 				SpringLayout.NORTH, wrap);
 		wrap.add(hooker);
 
-		// forfeit
-		JPanel fWrap = new JPanel();
-		JButton forfeit = new JButton("End");
-		forfeit.setFocusable(false);
-		l.putConstraint(SpringLayout.EAST, fWrap, -2,
-				SpringLayout.EAST, wrap);
-		l.putConstraint(SpringLayout.SOUTH, fWrap, -2,
-				SpringLayout.SOUTH, wrap);
-		wrap.add(fWrap);
-
 		// game
 		GameContainer gamePlayer = new GameContainer();
 
@@ -134,10 +124,8 @@ public class MenuPractice {
 		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
 				SpringLayout.NORTH, wrap);
 		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
-				SpringLayout.NORTH, fWrap);
+				SpringLayout.SOUTH, wrap);
 		wrap.add(gamePlayer);
-
-		forfeit.addActionListener(arg0 -> gamePlayer.forfeit());
 
 		// scores
 		JDialog scoreFrame = new JDialog(frame, "Performance scores");
@@ -449,7 +437,6 @@ public class MenuPractice {
 				analysis.setVisible(false);
 				analyze.setEnabled(false);
 				clear.setEnabled(false);
-				fWrap.add(forfeit);
 			});
 
 		gamePlayer.addGameOverListener(
@@ -458,7 +445,6 @@ public class MenuPractice {
 				scores.setRowSelectionAllowed(true);
 				analyze.setEnabled(true);
 				clear.setEnabled(true);
-				fWrap.remove(forfeit);
 			});
 		frame.setVisible(true);
 	}

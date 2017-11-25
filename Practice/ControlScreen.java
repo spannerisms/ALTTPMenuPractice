@@ -20,8 +20,6 @@ import java.util.List;
 public class ControlScreen extends JPanel {
 	private static final long serialVersionUID = -4589871913175293600L;
 
-	static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=";
-
 	static final BufferedImage TITLE_SPLASH;
 	static final BufferedImage SCORE_SPLASH;
 
@@ -142,6 +140,7 @@ public class ControlScreen extends JPanel {
 					case KeyEvent.VK_SPACE :
 						if (selection == Focus.START) {
 							fireGameOverEvent();
+							selection = Focus.MODE; // safety against starting a new game when done
 						}
 						break;
 				}
@@ -237,38 +236,4 @@ public class ControlScreen extends JPanel {
 			(listening.next()).eventReceived(te);
 		}
 	}
-
-	static final void draw(Graphics g, BufferedImage word, int x, int y) {
-		g.drawImage(word, (8 * x), (8 * y), null);
-	}
-
-	public static BufferedImage makeWordImage(String s, boolean hilite) {
-		BufferedImage ret = new BufferedImage(s.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
-		char[] temp = s.toUpperCase().toCharArray();
-		Graphics g = ret.getGraphics();
-		int y = hilite ? 8 : 0;
-		for (int i = 0; i < temp.length; i++) {
-			int loc = CHARS.indexOf(temp[i]);
-			BufferedImage t = FONT_SPRITES.getSubimage(loc * 8, y, 8, 8);
-			g.drawImage(t, i * 8, 0, null);
-		}
-		return ret;
-	}
-
-	public static BufferedImage makeNumberImage(int i, boolean hilite) {
-		String w = "";
-		char[] temp = Integer.toString(i).toCharArray();
-		int pos = 1;
-
-		for (int j = temp.length - 1; j >= 0; j--, pos++ ) {
-			w = temp[j] + w;
-			if ((pos % 3 == 0) && (j != 0)) {
-				w = ',' + w;
-			}
-		}
-
-		w = w.replace("-,", "-"); // lol
-
-		return makeWordImage(w, hilite);
-	}	
 }
