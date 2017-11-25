@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 
 public final class MenuGameConstants {
@@ -17,6 +16,7 @@ public final class MenuGameConstants {
 	public static final int CURSOR_OFFSET = 8; // number of pixels to shift the cursor
 	public static final int BLOCK_SIZE = 24; // size in pixels of an item block (for offsets, not drawing)
 	public static final int ITEM_SIZE = 16; // size of the image itself
+	public static final int CURSOR_SIZE = 32;
 	public static final Dimension BLOCK_D = new Dimension(BLOCK_SIZE, BLOCK_SIZE);
 
 	public static final int BOARD_SIZE = 19;
@@ -62,12 +62,25 @@ public final class MenuGameConstants {
 	public static final BufferedImage BACKGROUND;
 	public static final BufferedImage CURSOR;
 	public static final BufferedImage TARGET_CURSOR;
+
+	public static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
+	public static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
+
 	public static final BufferedImage FONT_SPRITES;
+	public static final BufferedImage COMPASS;
+	public static final BufferedImage MAP;
+
 	public static final BufferedImage PRETTY_BORDER;
 	public static final BufferedImage PRETTY_BORDER_RIGHT;
 	public static final BufferedImage PRETTY_BORDER_LEFT;
-	public static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
-	public static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
+	
+	public static final BufferedImage PRETTY_BORDER_INSET;
+	public static final BufferedImage PRETTY_BORDER_INSET_RIGHT;
+	public static final BufferedImage PRETTY_BORDER_INSET_LEFT;
+
+	public static final BufferedImage PRETTY_BORDER_DISABLED;
+	public static final BufferedImage PRETTY_BORDER_RIGHT_DISABLED;
+	public static final BufferedImage PRETTY_BORDER_LEFT_DISABLED;
 
 	static {
 		BufferedImage temp;
@@ -84,14 +97,14 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/menu cursor.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		CURSOR = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/target cursor.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		TARGET_CURSOR = temp;
 
@@ -99,28 +112,28 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/optimal up.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		OPTIMAL_MOVES[MOVE_UP] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/optimal down.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		OPTIMAL_MOVES[MOVE_DOWN] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/optimal right.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		OPTIMAL_MOVES[MOVE_RIGHT] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/optimal left.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		OPTIMAL_MOVES[MOVE_LEFT] = temp;
 
@@ -131,35 +144,35 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player up.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[MOVE_UP] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player down.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[MOVE_DOWN] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player right.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[MOVE_RIGHT] = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player left.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[MOVE_LEFT] = temp;
 		
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/player start.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(32, 32, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PLAYER_MOVES[PRESS_START] = temp;
 
@@ -171,7 +184,22 @@ public final class MenuGameConstants {
 		}
 		FONT_SPRITES = temp;
 
-		// border making
+		// wait icon
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/Compass menu.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		COMPASS = temp;
+	
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/Map menu.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		MAP = temp;
+
+		// normal border
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border.png"));
 		} catch (Exception e) {
@@ -192,6 +220,51 @@ public final class MenuGameConstants {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_LEFT = temp;
+
+		// inset border
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-inset.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_INSET = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-inset-right.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_INSET_RIGHT = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-inset-left.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_INSET_LEFT = temp;
+
+		// disabled gray border
+		// border making
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-disabled.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_DISABLED = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-right-disabled.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_RIGHT_DISABLED = temp;
+
+		try {
+			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/Practice/Images/Meta/pretty-border-left-disabled.png"));
+		} catch (Exception e) {
+			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+		}
+		PRETTY_BORDER_LEFT_DISABLED = temp;
 	}
 
 	/**
@@ -239,11 +312,17 @@ public final class MenuGameConstants {
 	}
 
 	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,-:<>!=/";
-	public static BufferedImage makeWordImage(String s, boolean hilite) {
+	/**
+	 * 
+	 * @param s
+	 * @param flag 0 : white | 1 : yellow | 2 : gray
+	 * @return
+	 */
+	public static BufferedImage makeWordImage(String s, int flag) {
 		BufferedImage ret = new BufferedImage(s.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
 		char[] temp = s.toUpperCase().toCharArray();
 		Graphics g = ret.getGraphics();
-		int y = hilite ? 8 : 0;
+		int y = 8 * flag;
 		for (int i = 0; i < temp.length; i++) {
 			int loc = CHARS.indexOf(temp[i]);
 			BufferedImage t = FONT_SPRITES.getSubimage(loc * 8, y, 8, 8);
@@ -252,7 +331,7 @@ public final class MenuGameConstants {
 		return ret;
 	}
 
-	public static BufferedImage makeNumberImage(int i, boolean hilite) {
+	public static BufferedImage makeNumberImage(int i, int flag) {
 		String w = "";
 		char[] temp = Integer.toString(i).toCharArray();
 		int pos = 1;
@@ -266,7 +345,7 @@ public final class MenuGameConstants {
 
 		w = w.replace("-,", "-"); // lol
 
-		return makeWordImage(w, hilite);
+		return makeWordImage(w, flag);
 	}
 
 	/**
@@ -285,6 +364,35 @@ public final class MenuGameConstants {
 		}
 
 		g.drawImage(PRETTY_BORDER_RIGHT, i++ * 8, 0, null);
+		return ret;
+	}
+
+	public static BufferedImage makePrettyBorderInset(int size) {
+		BufferedImage ret = new BufferedImage((size + 2) * 8, 24, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = ret.getGraphics();
+		int i = 0;
+		g.drawImage(PRETTY_BORDER_INSET_LEFT, i++ * 8, 0, null);
+
+		for ( ; i <= size; i++) {
+			g.drawImage(PRETTY_BORDER_INSET, i * 8, 0, null);
+		}
+
+		g.drawImage(PRETTY_BORDER_INSET_RIGHT, i++ * 8, 0, null);
+
+		return ret;
+	}
+
+	public static BufferedImage makePrettyBorderDisabled(int size) {
+		BufferedImage ret = new BufferedImage((size + 2) * 8, 24, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = ret.getGraphics();
+		int i = 0;
+		g.drawImage(PRETTY_BORDER_LEFT_DISABLED, i++ * 8, 0, null);
+
+		for ( ; i <= size; i++) {
+			g.drawImage(PRETTY_BORDER_DISABLED, i * 8, 0, null);
+		}
+
+		g.drawImage(PRETTY_BORDER_RIGHT_DISABLED, i++ * 8, 0, null);
 
 		return ret;
 	}

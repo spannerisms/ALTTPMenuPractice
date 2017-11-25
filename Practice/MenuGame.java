@@ -47,6 +47,7 @@ public class MenuGame extends Container {
 
 	final boolean randoAllStarts;
 	final boolean showOpt;
+	final boolean showIcon;
 	BufferedImage minMoveOverlay;
 
 	ItemLister chosen; // list of chosen items
@@ -77,8 +78,9 @@ public class MenuGame extends Container {
 
 		randoAllStarts = dif.randomizesStart(mode);
 		showOpt = dif.showOptimalPath;
-		this.controls = controls;
+		showIcon = dif.showItemIcon;
 
+		this.controls = controls;
 		KEY_UP = controls.T_UP;
 		KEY_DOWN = controls.T_DOWN;
 		KEY_RIGHT = controls.T_RIGHT;
@@ -371,6 +373,15 @@ public class MenuGame extends Container {
 			return "Study the menu";
 		}
 		return list[target].getCurrentItem();
+	}
+
+	public BufferedImage getTargetImage() {
+		if (studying) {
+			return MAP;
+		} else if (!showIcon) {
+			return null;
+		}
+		return list[target].getCurrentImage();
 	}
 
 	public void paint(Graphics g) {
