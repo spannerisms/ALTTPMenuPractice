@@ -67,6 +67,7 @@ public class MenuGame extends Container {
 		initialize();
 		mode = gameMode;
 		dif = difficulty;
+
 		maxTurn = dif.roundLength(mode);
 		currentTurn = maxTurn;
 
@@ -194,11 +195,10 @@ public class MenuGame extends Container {
 
 	private void nextTurn() {
 		currentTurn--;
+		newTurn();
 		if (currentTurn == 0) {
 			nextRound();
-			return;
 		}
-		newTurn();
 	}
 
 	private void newTurn() {
@@ -215,7 +215,6 @@ public class MenuGame extends Container {
 		if (currentRound == 0) {
 			currentGame--;
 			if (currentGame == 0) {
-				newTurn();
 				fireGameOverEvent();
 				return;
 			}  else {
@@ -231,11 +230,9 @@ public class MenuGame extends Container {
 				break;
 			case BLITZ :
 				randomizeMenu();
-				newTurn();
 				break;
 			case COLLECT :
 				addToMenu();
-				newTurn();
 				break;
 		}
 	}

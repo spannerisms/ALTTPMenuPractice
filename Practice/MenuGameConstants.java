@@ -291,9 +291,11 @@ public final class MenuGameConstants {
 	 * @param m - number of moves
 	 */
 	private static void addToPattern(int p, int l, int m) {
+
 		for (int i = 0; i < 4; i++) {
+			int pattern = p | (MOVES[i] << (2 * (l - 1)));
 			if (m > l) { // not the first move
-				int prevMove = p & 0b11; // get previous move
+				int prevMove = (p >> (2 * (l - 1))) & 0b11; // get previous move
 				// uses an XOR to see if the move is the opposite of the last move
 				// because the first bit plane defines the axis
 				// and the second bit plane defines the direction
@@ -302,7 +304,6 @@ public final class MenuGameConstants {
 					continue;
 				}
 			}
-			int pattern = p | (MOVES[i] << (2 * (l - 1)));
 			if (l == 1) { // bottom level, just add
 				pattern |= m << COUNT_OFFSET; // add number of moves
 				ALL_POSSIBLE_MOVES.add(pattern);
