@@ -312,7 +312,7 @@ public class MenuPractice {
 
 		pos++;
 		drawSmall(credits, makeWordImageSmall("WRITTEN BY:"), 2, pos++);
-		drawSmall(credits, makeWordImageSmall("FATMANPANDA"), 4, pos++);
+		drawSmall(credits, makeWordImageSmall("FATMANSPANDA"), 4, pos++);
 
 		pos++;
 		drawSmall(credits, makeWordImageSmall("RESOURCES:"), 2, pos++);
@@ -339,7 +339,7 @@ public class MenuPractice {
 			public void paint(Graphics g) {
 				Graphics2D g2 = (Graphics2D) g;
 				g2.scale(ZOOM, ZOOM);
-				g2.drawImage(CREDITS, 0, 4, null);
+				g2.drawImage(CREDITS, 0, 2, null);
 			}
 		};
 		aboutDisplay.setBackground(null);
