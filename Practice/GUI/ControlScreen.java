@@ -30,19 +30,19 @@ public class ControlScreen extends JPanel {
 	public static final BufferedImage[] GAME_NUMBERS = new BufferedImage[20];
 	public static final BufferedImage[] GAME_NUMBERS_HILITE = new BufferedImage[20];
 
-	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", false);
-	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", true);
+	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", 0);
+	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", 1);
 
-	public static final BufferedImage MODE_WORD = makeWordImage("MODE:", false);
-	public static final BufferedImage MODE_HILITE = makeWordImage("MODE:", true);
+	public static final BufferedImage MODE_WORD = makeWordImage("MODE:", 0);
+	public static final BufferedImage MODE_HILITE = makeWordImage("MODE:", 1);
 
-	public static final BufferedImage GAMES_WORD = makeWordImage("GAMES:", false);
-	public static final BufferedImage GAMES_HILITE = makeWordImage("GAMES:", true);
+	public static final BufferedImage GAMES_WORD = makeWordImage("GAMES:", 0);
+	public static final BufferedImage GAMES_HILITE = makeWordImage("GAMES:", 1);
 
-	public static final BufferedImage START_WORD = makeWordImage("START", false);
-	public static final BufferedImage START_HILITE = makeWordImage("START", true);
+	public static final BufferedImage START_WORD = makeWordImage("START", 0);
+	public static final BufferedImage START_HILITE = makeWordImage("START", 1);
 
-	public static final BufferedImage CARETS = makeWordImage("<             >", true);
+	public static final BufferedImage CARETS = makeWordImage("<             >", 1);
 
 	static {
 		for (int i = 0, j = 1; i < 20; i++, j++) {
@@ -52,8 +52,8 @@ public class ControlScreen extends JPanel {
 			} else {
 				w = Integer.toString(j);
 			}
-			GAME_NUMBERS[i] = makeWordImage(w, false);
-			GAME_NUMBERS_HILITE[i] = makeWordImage(w, true);
+			GAME_NUMBERS[i] = makeWordImage(w, 0);
+			GAME_NUMBERS_HILITE[i] = makeWordImage(w, 1);
 		}
 
 		BufferedImage temp;
@@ -90,7 +90,7 @@ public class ControlScreen extends JPanel {
 
 	public void setScore(int s) {
 		disp = SCORE_SPLASH;
-		score = makeNumberImage(s, false);
+		score = makeNumberImage(s, 0);
 	}
 
 	private final void addKeys() {

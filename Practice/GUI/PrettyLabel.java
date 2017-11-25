@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-
 import javax.swing.JComponent;
 
 import Practice.MenuGameConstants;
@@ -23,6 +22,8 @@ public class PrettyLabel extends JComponent {
 	private String textRight;
 	private BufferedImage dispRight;
 
+	private BufferedImage icon;
+
 	private Dimension d;
 
 	public PrettyLabel(int length) {
@@ -37,13 +38,18 @@ public class PrettyLabel extends JComponent {
 
 	public void setText(String text) {
 		this.text = text;
-		disp = MenuGameConstants.makeWordImage(this.text, false);
+		disp = MenuGameConstants.makeWordImage(this.text, 0);
 		repaint();
 	}
 
 	public void setRightText(String text) {
 		this.textRight = text;
-		dispRight = MenuGameConstants.makeWordImage(this.textRight, false);
+		dispRight = MenuGameConstants.makeWordImage(this.textRight, 0);
+		repaint();
+	}
+
+	public void setIcon(BufferedImage icon) {
+		this.icon = icon;
 		repaint();
 	}
 
@@ -52,10 +58,17 @@ public class PrettyLabel extends JComponent {
 		g2.scale(ZOOM, ZOOM);
 
 		g2.drawImage(bg, 0, 0, null);
-		g2.drawImage(disp, 8, 8, null);
+
+		int align = 0;
+		if (icon != null) {
+			g2.drawImage(icon, 8, 4, null);
+			align = 16;
+		}
+
+		g2.drawImage(disp, 8 + align, 8, null);
 
 		if (dispRight != null) {
-			int align =  (length - textRight.length()) * 8;
+			align =  (length - textRight.length()) * 8;
 			g2.drawImage(dispRight, 8 + align, 8, null);
 		}
 	}

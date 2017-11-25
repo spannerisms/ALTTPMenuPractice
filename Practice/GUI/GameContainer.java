@@ -1,12 +1,10 @@
 package Practice.GUI;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
@@ -22,12 +20,14 @@ public class GameContainer extends Container {
 
 	private static final String WAIT = "CHOOSE SETTINGS";
 
+
 	CountDown counter = new CountDown();
 	MenuGame playing;
 	final JPanel holder = new JPanel(new SpringLayout());
 
 	final PrettyLabel targ = new PrettyLabel(BOARD_SIZE_NO_BORDER);
-	final PrettyLabel forfeit = new PrettyLabel(3);
+	final PrettyButton forfeit = new PrettyButton(3);
+
 	final PrettyLabel gameCount = new PrettyLabel(BOARD_SIZE_NO_BORDER - 5);
 	final PrettyLabel roundCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 	final PrettyLabel turnCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
@@ -62,6 +62,7 @@ public class GameContainer extends Container {
 
 		// status text
 		targ.setText(WAIT);
+		targ.setIcon(COMPASS);
 
 		l.putConstraint(SpringLayout.WEST, targ, 0,
 				SpringLayout.WEST, holder);
@@ -71,7 +72,7 @@ public class GameContainer extends Container {
 
 		// game count
 		gameCount.setText("GAME :");
-		gameCount.setRightText("20/20");
+		gameCount.setRightText("--");
 
 		l.putConstraint(SpringLayout.WEST, gameCount, 0,
 				SpringLayout.WEST, targ);
@@ -87,10 +88,15 @@ public class GameContainer extends Container {
 		l.putConstraint(SpringLayout.NORTH, forfeit, 0,
 				SpringLayout.SOUTH, targ);
 		this.add(forfeit);
+		forfeit.setEnabled(false);
+		forfeit.addActionListener(
+			arg0 -> {
+				forfeit();
+			});
 
 		// round count
 		roundCount.setText("ROUND:");
-		roundCount.setRightText("99/99");
+		roundCount.setRightText("--");
 
 		l.putConstraint(SpringLayout.WEST, roundCount, 0,
 				SpringLayout.WEST, targ);
@@ -100,7 +106,7 @@ public class GameContainer extends Container {
 
 		// turn count
 		turnCount.setText("TURN :");
-		turnCount.setRightText("100/100");
+		turnCount.setRightText("--");
 
 		l.putConstraint(SpringLayout.WEST, turnCount, 0,
 				SpringLayout.WEST, targ);
@@ -140,6 +146,7 @@ public class GameContainer extends Container {
 		playing.addTurnListener(
 			arg0 -> {
 				targ.setText(playing.getTarget());
+				targ.setIcon(playing.getTargetImage());
 				gameCount.setRightText(playing.getGame() + "/" + playing.getMaxGame());
 				roundCount.setRightText(playing.getRound() + "/" + playing.getMaxRound());
 				turnCount.setRightText(playing.getTurn() + "/" + playing.getMaxTurn());
@@ -151,7 +158,9 @@ public class GameContainer extends Container {
 		repaint();
 		playing.addGameOverListener(
 				arg0 -> {
+					forfeit.setEnabled(false);
 					targ.setText(WAIT);
+					targ.setIcon(COMPASS);
 					gameCount.setRightText("--");
 					roundCount.setRightText("--");
 					turnCount.setRightText("--");
@@ -163,6 +172,7 @@ public class GameContainer extends Container {
 					fireGameOverEvent(arg0);
 				});
 		targ.setText("GET READY");
+		forfeit.setEnabled(true);
 		fireGameStartEvent();
 		revalidate();
 	}
