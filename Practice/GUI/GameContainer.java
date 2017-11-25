@@ -79,7 +79,7 @@ public class GameContainer extends Container {
 		l.putConstraint(SpringLayout.NORTH, gameCount, 0,
 				SpringLayout.SOUTH, targ);
 		this.add(gameCount);
-		
+
 		// forfeit button
 		forfeit.setText("END");
 

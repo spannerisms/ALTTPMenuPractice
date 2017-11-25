@@ -49,9 +49,9 @@ public class PrettyButton extends AbstractButton {
 			}
 
 			public void mouseClicked(MouseEvent arg0) {
-				
+
 			}
-	
+
 			public void mouseEntered(MouseEvent arg0) {
 				dispCur = dispHover;
 				repaint();

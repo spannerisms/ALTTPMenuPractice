@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,9 +40,6 @@ import Practice.ScoreCard;
 
 import static Practice.MenuGameConstants.*;
 
-// TODO: Meme names? Byran; IT'S GOTTA BE; etc
-// TODO: credits
-// feedback: candide, harb
 public class MenuPractice {
 	static final String VERSION = "v0.8-beta";
 
@@ -273,6 +273,7 @@ public class MenuPractice {
 		try {
 			htmlDocument.insertBeforeEnd(htmlDocument.getRootElements()[0].getElement(0), HOW_TO_PLAY);
 		} catch (Exception e) {}
+
 		// actual display
 		JScrollPane helpScroll = new JScrollPane(helpPane,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -289,7 +290,57 @@ public class MenuPractice {
 
 		// input config
 		ControlMapper remap = new ControlMapper(frame);
-	
+
+		// credits
+		Dimension creditsD = new Dimension((CREDITS.getWidth() + 2) * ZOOM, (CREDITS.getHeight() + 15) * ZOOM);
+		final JDialog aboutFrame = new JDialog(frame, "About");
+		aboutFrame.setPreferredSize(creditsD);
+		aboutFrame.setMinimumSize(creditsD);
+		aboutFrame.setResizable(false);
+		aboutFrame.getContentPane().setBackground(Color.BLACK);
+
+		int pos = 0;
+		Graphics credits = CREDITS.getGraphics();
+		drawSmall(credits, makeWordImageSmall("ABOUT"), 2, pos++);
+		drawSmall(credits, makeWordImageSmall("MENU SIM " + VERSION), 1, pos++);
+
+		pos++;
+		drawSmall(credits, makeWordImageSmall("ACKNOWLEDGEMENTS:"), 1, pos++);
+
+		pos++;
+		drawSmall(credits, makeWordImageSmall("WRITTEN BY:"), 2, pos++);
+		drawSmall(credits, makeWordImageSmall("FATMANPANDA"), 4, pos++);
+
+		pos++;
+		drawSmall(credits, makeWordImageSmall("RESOURCES:"), 2, pos++);
+		drawSmall(credits, makeWordImageSmall("ZARBY89"), 4, pos++);
+
+		pos++;
+		drawSmall(credits, makeWordImageSmall("TESTING = FEEDBACK:"), 2, pos++);
+		String[] testers = new String[] {
+				"Candide",
+				"Harb"
+		};
+
+		for (int i = 0; i < testers.length; i++) {
+			drawSmall(credits, makeWordImageSmall(testers[i]), 4, pos++);
+		}
+
+		pos++;
+		drawSmall(credits, makeWordImageSmall("LISTED FOR TRADITION:"), 2, pos++);
+		drawSmall(credits, makeWordImageSmall("MIKETRETHEWEY"), 4, pos++);
+
+		@SuppressWarnings("serial")
+		final JComponent aboutDisplay = new JComponent() {
+			public void paint(Graphics g) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.scale(ZOOM, ZOOM);
+				g2.drawImage(CREDITS, 0, 4, null);
+			}
+		};
+		aboutDisplay.setBackground(null);
+		aboutFrame.add(aboutDisplay);
+
 		// menu
 		final JMenuBar menu = new JMenuBar();
 		frame.setJMenuBar(menu);
@@ -386,6 +437,7 @@ public class MenuPractice {
 		final JMenu helpMenu = new JMenu("Help");
 		menu.add(helpMenu);
 
+		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
 		ImageIcon compass = new ImageIcon(
 				MenuGame.class.getResource("/Practice/Images/Meta/Compass.png")
@@ -399,6 +451,23 @@ public class MenuPractice {
 				} else {
 					howPlayFrame.setLocation(hooker.getLocationOnScreen());
 					howPlayFrame.setVisible(true);
+				}
+			});
+
+		// about
+		final JMenuItem about = new JMenuItem("About");
+		ImageIcon map = new ImageIcon(
+				MenuGame.class.getResource("/Practice/Images/Meta/Map.png")
+			);
+		about.setIcon(map);
+		helpMenu.add(about);
+		about.addActionListener(
+			arg0 -> {
+				if (aboutFrame.isVisible()) {
+					aboutFrame.requestFocus();
+				} else {
+					aboutFrame.setLocation(hooker.getLocationOnScreen());
+					aboutFrame.setVisible(true);
 				}
 			});
 
