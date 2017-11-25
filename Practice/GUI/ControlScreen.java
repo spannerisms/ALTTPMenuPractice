@@ -27,8 +27,8 @@ public class ControlScreen extends JPanel {
 	static final BufferedImage TITLE_SPLASH;
 	static final BufferedImage SCORE_SPLASH;
 
-	public static final BufferedImage[] ROUND_NUMBERS = new BufferedImage[20];
-	public static final BufferedImage[] ROUND_NUMBERS_HILITE = new BufferedImage[20];
+	public static final BufferedImage[] GAME_NUMBERS = new BufferedImage[20];
+	public static final BufferedImage[] GAME_NUMBERS_HILITE = new BufferedImage[20];
 
 	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", false);
 	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", true);
@@ -36,8 +36,8 @@ public class ControlScreen extends JPanel {
 	public static final BufferedImage MODE_WORD = makeWordImage("MODE:", false);
 	public static final BufferedImage MODE_HILITE = makeWordImage("MODE:", true);
 
-	public static final BufferedImage ROUNDS_WORD = makeWordImage("ROUNDS:", false);
-	public static final BufferedImage ROUNDS_HILITE = makeWordImage("ROUNDS:", true);
+	public static final BufferedImage GAMES_WORD = makeWordImage("GAMES:", false);
+	public static final BufferedImage GAMES_HILITE = makeWordImage("GAMES:", true);
 
 	public static final BufferedImage START_WORD = makeWordImage("START", false);
 	public static final BufferedImage START_HILITE = makeWordImage("START", true);
@@ -52,8 +52,8 @@ public class ControlScreen extends JPanel {
 			} else {
 				w = Integer.toString(j);
 			}
-			ROUND_NUMBERS[i] = makeWordImage(w, false);
-			ROUND_NUMBERS_HILITE[i] = makeWordImage(w, true);
+			GAME_NUMBERS[i] = makeWordImage(w, false);
+			GAME_NUMBERS_HILITE[i] = makeWordImage(w, true);
 		}
 
 		BufferedImage temp;
@@ -72,12 +72,12 @@ public class ControlScreen extends JPanel {
 		SCORE_SPLASH = temp;
 	}
 
-	static enum Focus { MODE, DIFFICULTY, ROUND, START };
+	static enum Focus { MODE, DIFFICULTY, GAME, START };
 
 	private Focus selection = Focus.DIFFICULTY;
 	private Difficulty diffSel = Difficulty.EASY;
 	private GameMode modeSel = GameMode.STUDY;
-	private int rounds = 1;
+	private int games = 1;
 	private BufferedImage disp = TITLE_SPLASH;
 	private BufferedImage score;
 
@@ -111,10 +111,10 @@ public class ControlScreen extends JPanel {
 							case MODE :
 								modeChange(-1);
 								break;
-							case ROUND :
-								rounds--;
-								if (rounds < 1) {
-									rounds = 1;
+							case GAME :
+								games--;
+								if (games < 1) {
+									games = 1;
 								}
 								repaint();
 								break;
@@ -130,10 +130,10 @@ public class ControlScreen extends JPanel {
 							case MODE :
 								modeChange(+1);
 								break;
-							case ROUND :
-								rounds++;
-								if (rounds > 20) {
-									rounds = 20;
+							case GAME :
+								games++;
+								if (games > 20) {
+									games = 20;
 								}
 								repaint();
 								break;
@@ -192,7 +192,7 @@ public class ControlScreen extends JPanel {
 	}
 
 	public MenuGame makeThisGame(Controller c) {
-		return new MenuGame(c, modeSel, diffSel, rounds);
+		return new MenuGame(c, modeSel, diffSel, games);
 	}
 
 	public void paint(Graphics g) {
@@ -217,9 +217,9 @@ public class ControlScreen extends JPanel {
 		draw(g2, isSelected ? DIFFICULTY_HILITE : DIFFICULTY_WORD, 2, 8);
 		draw(g2, isSelected ? diffSel.wordHilite : diffSel.word, 4, 9);
 
-		isSelected = selection == Focus.ROUND;
-		draw(g2, isSelected ? ROUNDS_HILITE : ROUNDS_WORD, 2, 10);
-		draw(g2, isSelected ? ROUND_NUMBERS_HILITE[rounds-1] : ROUND_NUMBERS[rounds-1], 14, 11);
+		isSelected = selection == Focus.GAME;
+		draw(g2, isSelected ? GAMES_HILITE : GAMES_WORD, 2, 10);
+		draw(g2, isSelected ? GAME_NUMBERS_HILITE[games-1] : GAME_NUMBERS[games-1], 14, 11);
 
 		isSelected = selection == Focus.START;
 		draw(g2, isSelected ? START_HILITE : START_WORD, 7, 13);

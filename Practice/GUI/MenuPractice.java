@@ -43,7 +43,7 @@ import static Practice.MenuGameConstants.*;
 public class MenuPractice {
 	static final String VERSION = "v0.8-beta";
 
-	static final Dimension D = new Dimension((BG_WIDTH + 9) * ZOOM, (BG_HEIGHT + 7) * ZOOM + 100);
+	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
 	static final Font CONSOLAS = new Font("Consolas", Font.PLAIN, 12);
 
@@ -103,6 +103,7 @@ public class MenuPractice {
 		Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();
 		wrap.setLayout(l);
+		wrap.setBackground(Color.BLACK);
 
 		// a little thing for dialogs to hook onto for display
 		// intentionally constrained to be 0px in size
@@ -415,6 +416,7 @@ public class MenuPractice {
 		// frame display
 		frame.setSize(D);
 		frame.setMinimumSize(D);
+		frame.setResizable(false);
 		frame.setLocation(150, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

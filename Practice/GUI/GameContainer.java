@@ -1,16 +1,14 @@
 package Practice.GUI;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 
 import Practice.MenuGame;
 import Practice.Listeners.*;
@@ -22,14 +20,18 @@ import static Practice.MenuGameConstants.*;
 public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
 
-	private static final String NOTHING = "";
-	static final Font SANS = new Font("SANS", Font.PLAIN, 20);
+	private static final String WAIT = "CHOOSE SETTINGS";
 
 	CountDown counter = new CountDown();
 	MenuGame playing;
 	final JPanel holder = new JPanel(new SpringLayout());
-	final JPanel lower = new JPanel(new SpringLayout());
-	final JLabel targ = new JLabel(NOTHING);
+
+	final PrettyLabel targ = new PrettyLabel(BOARD_SIZE_NO_BORDER);
+	final PrettyLabel forfeit = new PrettyLabel(3);
+	final PrettyLabel gameCount = new PrettyLabel(BOARD_SIZE_NO_BORDER - 5);
+	final PrettyLabel roundCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
+	final PrettyLabel turnCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
+
 	Controller controller = new Controller();
 	ControlScreen splash = new ControlScreen();
 
@@ -58,27 +60,63 @@ public class GameContainer extends Container {
 				SpringLayout.NORTH, this);
 		this.add(holder);
 
-		setHolder(splash);
-		targ.setFont(SANS);
-		targ.setFocusable(false);
-		targ.setVerticalTextPosition(SwingConstants.TOP);
+		// status text
+		targ.setText(WAIT);
 
-		l.putConstraint(SpringLayout.EAST, lower, 0,
-				SpringLayout.EAST, holder);
-		l.putConstraint(SpringLayout.WEST, lower, 0,
+		l.putConstraint(SpringLayout.WEST, targ, 0,
 				SpringLayout.WEST, holder);
-		l.putConstraint(SpringLayout.NORTH, lower, 5,
+		l.putConstraint(SpringLayout.NORTH, targ, 0,
 				SpringLayout.SOUTH, holder);
-		l.putConstraint(SpringLayout.SOUTH, lower, 0,
-				SpringLayout.SOUTH, this);
-		this.add(lower);
+		this.add(targ);
 
+		// game count
+		gameCount.setText("GAME :");
+		gameCount.setRightText("20/20");
+
+		l.putConstraint(SpringLayout.WEST, gameCount, 0,
+				SpringLayout.WEST, targ);
+		l.putConstraint(SpringLayout.NORTH, gameCount, 0,
+				SpringLayout.SOUTH, targ);
+		this.add(gameCount);
+		
+		// forfeit button
+		forfeit.setText("END");
+
+		l.putConstraint(SpringLayout.EAST, forfeit, 0,
+				SpringLayout.EAST, targ);
+		l.putConstraint(SpringLayout.NORTH, forfeit, 0,
+				SpringLayout.SOUTH, targ);
+		this.add(forfeit);
+
+		// round count
+		roundCount.setText("ROUND:");
+		roundCount.setRightText("99/99");
+
+		l.putConstraint(SpringLayout.WEST, roundCount, 0,
+				SpringLayout.WEST, targ);
+		l.putConstraint(SpringLayout.NORTH, roundCount, 0,
+				SpringLayout.SOUTH, gameCount);
+		this.add(roundCount);
+
+		// turn count
+		turnCount.setText("TURN :");
+		turnCount.setRightText("100/100");
+
+		l.putConstraint(SpringLayout.WEST, turnCount, 0,
+				SpringLayout.WEST, targ);
+		l.putConstraint(SpringLayout.NORTH, turnCount, 0,
+				SpringLayout.SOUTH, roundCount);
+		this.add(turnCount);
+
+		// splash
+		setHolder(splash);
 		splash.requestFocus();
 		splash.addGameOverListener(
 			arg0 -> {
 				newGame(splash.makeThisGame(controller));
 				splash.transferFocus();
 			});
+
 		revalidate();
 	}
 
@@ -97,28 +135,14 @@ public class GameContainer extends Container {
 		revalidate();
 	}
 
-	void setLower(Component c) {
-		lower.removeAll();
-		if (c == null) {
-			revalidate();
-			return;
-		}
-		SpringLayout l = (SpringLayout) lower.getLayout();
-		l.putConstraint(SpringLayout.EAST, c, 0,
-				SpringLayout.EAST, lower);
-		l.putConstraint(SpringLayout.WEST, c, 0,
-				SpringLayout.WEST, lower);
-		l.putConstraint(SpringLayout.NORTH, c, 0,
-				SpringLayout.NORTH, lower);
-		lower.add(c);
-		revalidate();
-	}
-
 	public synchronized void newGame(MenuGame game) {
 		playing = game;
 		playing.addTurnListener(
 			arg0 -> {
 				targ.setText(playing.getTarget());
+				gameCount.setRightText(playing.getGame() + "/" + playing.getMaxGame());
+				roundCount.setRightText(playing.getRound() + "/" + playing.getMaxRound());
+				turnCount.setRightText(playing.getTurn() + "/" + playing.getMaxTurn());
 				GameContainer.this.fireTurnEvent(arg0);
 			}); // just relay it to MenuPractice
 		playing.addInputListener(arg0 -> GameContainer.this.repaint() );
@@ -127,8 +151,10 @@ public class GameContainer extends Container {
 		repaint();
 		playing.addGameOverListener(
 				arg0 -> {
-					targ.setText(NOTHING);
-					setLower(null);
+					targ.setText(WAIT);
+					gameCount.setRightText("--");
+					roundCount.setRightText("--");
+					turnCount.setRightText("--");
 					splash.setScore(playing.getScore());
 					setHolder(splash);
 					splash.requestFocus();
@@ -136,8 +162,8 @@ public class GameContainer extends Container {
 					playing.transferFocus();
 					fireGameOverEvent(arg0);
 				});
+		targ.setText("GET READY");
 		fireGameStartEvent();
-		setLower(targ);
 		revalidate();
 	}
 
