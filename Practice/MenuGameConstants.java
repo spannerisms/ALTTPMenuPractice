@@ -47,7 +47,7 @@ public final class MenuGameConstants {
 
 	static {// do all move patterns
 		for (int i = 1; i < 5; i++) {
-			addToPattern(0, i, i);
+			addToPattern(0, 1, i);
 		}
 	}
 
@@ -294,8 +294,8 @@ public final class MenuGameConstants {
 
 		for (int i = 0; i < 4; i++) {
 			int pattern = p | (MOVES[i] << (2 * (l - 1)));
-			if (m > l) { // not the first move
-				int prevMove = (p >> (2 * (l - 1))) & 0b11; // get previous move
+			if (l > 1) { // not the first move
+				int prevMove = (p >> (2 * (l-2))) & 0b11; // get previous move
 				// uses an XOR to see if the move is the opposite of the last move
 				// because the first bit plane defines the axis
 				// and the second bit plane defines the direction
@@ -304,11 +304,11 @@ public final class MenuGameConstants {
 					continue;
 				}
 			}
-			if (l == 1) { // bottom level, just add
+			if (l == m) { // bottom level, just add
 				pattern |= m << COUNT_OFFSET; // add number of moves
 				ALL_POSSIBLE_MOVES.add(pattern);
 			} else { // next move
-				addToPattern(pattern, l-1, m);
+				addToPattern(pattern, l+1, m);
 			}
 		}
 	}

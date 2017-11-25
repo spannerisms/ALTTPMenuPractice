@@ -195,10 +195,11 @@ public class MenuGame extends Container {
 
 	private void nextTurn() {
 		currentTurn--;
-		newTurn();
 		if (currentTurn == 0) {
 			nextRound();
+			return;
 		}
+		newTurn();
 	}
 
 	private void newTurn() {
@@ -212,17 +213,15 @@ public class MenuGame extends Container {
 
 	private void nextRound() {
 		currentRound--;
-		if (currentRound == 0) {
-			currentGame--;
-			if (currentGame == 0) {
-				fireGameOverEvent();
-				return;
-			}  else {
-				currentRound = maxRound;
-			}
-		}
-
 		currentTurn = maxTurn;
+		if (currentRound == 0) {
+			nextGame();
+			return;
+		}
+		newRound();
+	}
+
+	private void newRound() {
 		switch (mode) {
 			case STUDY :
 				randomizeMenu();
@@ -230,11 +229,24 @@ public class MenuGame extends Container {
 				break;
 			case BLITZ :
 				randomizeMenu();
+				newTurn();
 				break;
 			case COLLECT :
 				addToMenu();
+				newTurn();
 				break;
 		}
+	}
+
+	private void nextGame() {
+		currentGame--;
+		currentRound = maxRound;
+		if (currentGame == 0) {
+			fireGameOverEvent();
+			return;
+		}
+		currentRound = maxRound;
+		newRound();
 	}
 
 	public int getScore() {
@@ -282,10 +294,10 @@ public class MenuGame extends Container {
 
 		switch (mode) {
 			case STUDY :
-				currentTurn = dif.studyRoundLength;
+				currentTurn = maxTurn;
 				break;
 			case COLLECT :
-				currentTurn = dif.collectionRoundLength;
+				currentTurn = maxTurn;
 				break;
 			default :
 				currentTurn = 1;
