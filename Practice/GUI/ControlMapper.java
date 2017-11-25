@@ -1,4 +1,4 @@
-package Practice;
+package Practice.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +21,8 @@ import javax.swing.SwingConstants;
 
 import Practice.Listeners.*;
 
+// TODO : http://www.java-gaming.org/index.php?topic=21694.0
+// https://github.com/snes9xgit/snes9x
 public class ControlMapper extends JDialog {
 	private static final long serialVersionUID = -3293305934784136424L;
 
@@ -49,6 +51,7 @@ public class ControlMapper extends JDialog {
 		c.ipadx = 4;
 		c.ipady = 2;
 		c.anchor = GridBagConstraints.PAGE_START;
+
 		// up
 		JLabel upLbl = new JLabel("Up");
 		up = new KeyWrapper(KeyEvent.VK_UP);
@@ -186,7 +189,7 @@ public class ControlMapper extends JDialog {
 				}
 
 				public void keyReleased(KeyEvent arg0) {}
-				public void keyTyped(KeyEvent arg0) {}			
+				public void keyTyped(KeyEvent arg0) {}
 			});
 		}
 

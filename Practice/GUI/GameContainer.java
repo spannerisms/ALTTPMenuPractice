@@ -1,4 +1,4 @@
-package Practice;
+package Practice.GUI;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
+import Practice.MenuGame;
 import Practice.Listeners.*;
+
 import static Practice.MenuGameConstants.*;
 
 // TODO : make pretty menu border label for target

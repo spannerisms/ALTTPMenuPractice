@@ -1,7 +1,9 @@
-package Practice;
+package Practice.GUI;
 
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
+
+import Practice.ScoreCard;
 
 class ScoreTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5841696898807444151L;

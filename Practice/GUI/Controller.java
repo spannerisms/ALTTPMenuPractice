@@ -1,4 +1,4 @@
-package Practice;
+package Practice.GUI;
 
 import java.awt.event.KeyEvent;
 

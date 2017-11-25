@@ -1,4 +1,4 @@
-package Practice;
+package Practice.GUI;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,13 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
+import Practice.ScoreCard;
+
 import static Practice.MenuGameConstants.*;
 
 public class TurnAnalyzer extends JDialog {
 	private static final long serialVersionUID = -5679165578072012375L;
 
 	static final Dimension PREF_D =
-			new Dimension(MenuGameConstants.BG_WIDTH * 2 + 20, MenuGameConstants.BG_HEIGHT * 2 + 140);
+			new Dimension(BG_WIDTH * 2 + 20, BG_HEIGHT * 2 + 140);
 
 	ScoreCard curRef;
 	BufferedImage refImg;

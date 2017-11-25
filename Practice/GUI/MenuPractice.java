@@ -1,4 +1,4 @@
-package Practice;
+package Practice.GUI;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -32,6 +32,9 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import Practice.MenuGame;
+import Practice.ScoreCard;
+
 import static Practice.MenuGameConstants.*;
 
 // TODO: Meme names? Byran; IT'S GOTTA BE; etc
@@ -48,7 +51,7 @@ public class MenuPractice {
 	static final ScoreTableRenderer SCORE_TABLE = new ScoreTableRenderer(true);
 
 	static final String HOW_TO_PLAY;
-	static final String DATA_PATH = "/Practice/howtoplay.html";
+	static final String DATA_PATH = "/Practice/GUI/howtoplay.html";
 
 	static {
 		StringBuilder ret = new StringBuilder();

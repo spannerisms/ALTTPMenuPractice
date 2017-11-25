@@ -1,12 +1,7 @@
-package Practice;
+package Practice.GUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
-import Practice.Listeners.GameOverEvent;
-import Practice.Listeners.GameOverListener;
-
-import static Practice.MenuGameConstants.*;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,6 +11,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+
+import Practice.Difficulty;
+import Practice.GameMode;
+import Practice.MenuGame;
+import Practice.Listeners.GameOverEvent;
+import Practice.Listeners.GameOverListener;
+
+import static Practice.MenuGameConstants.*;
 
 public class ControlScreen extends JPanel {
 	private static final long serialVersionUID = -4589871913175293600L;
