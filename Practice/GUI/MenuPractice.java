@@ -41,7 +41,7 @@ import Practice.ScoreCard;
 import static Practice.MenuGameConstants.*;
 
 public class MenuPractice {
-	static final String VERSION = "v0.8-beta";
+	static final String VERSION = "v0.8.1-beta";
 
 	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
@@ -319,7 +319,8 @@ public class MenuPractice {
 		drawSmall(credits, makeWordImageSmall("TESTING = FEEDBACK:"), 2, pos++);
 		String[] testers = new String[] {
 				"Candide",
-				"Harb"
+				"Harb",
+				"IHNN"
 		};
 
 		for (int i = 0; i < testers.length; i++) {
