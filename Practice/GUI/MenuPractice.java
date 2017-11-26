@@ -189,13 +189,15 @@ public class MenuPractice implements SNESControllable {
 		// clear data
 		JButton clear = new JButton("Reset");
 		clear.setFocusable(false);
-		clear.addActionListener(
-			arg0 -> {
-				hiscore.setText("0");
-				totalScore.set(0);
-				turn.set(1);
-				model.clear();
-			});
+
+		Task clearData = () -> {
+			hiscore.setText("0");
+			totalScore.set(0);
+			turn.set(1);
+			model.clear();
+		};
+
+		clear.addActionListener(arg0 -> clearData.doThing());
 
 		l.putConstraint(SpringLayout.EAST, clear, -10,
 				SpringLayout.WEST, scoreTotal);
@@ -207,9 +209,7 @@ public class MenuPractice implements SNESControllable {
 		TurnAnalyzer analysis = new TurnAnalyzer(frame);
 		JButton analyze = new JButton("Recap");
 
-		analyze.setFocusable(false);
-		analyze.addActionListener(
-			arg0 -> {
+		Task showAnalysis = () -> {
 				int selectedRow = scores.getSelectedRow();
 				if (selectedRow != -1) {
 					analysis.setRef(model.getRow(selectedRow));
@@ -219,13 +219,19 @@ public class MenuPractice implements SNESControllable {
 					analysis.setLocation(hiscore.getLocationOnScreen().x,
 							scoreScroll.getLocationOnScreen().y);
 				}
-			});
+			};
+
+		analyze.setFocusable(false);
+		analyze.addActionListener(arg0 -> showAnalysis.doThing());
 
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		scoreSel.addListSelectionListener(
 			arg0 -> {
+				if (!scoreFrame.isVisible()) {
+					return;
+				}
 				int selectedRow = scores.getSelectedRow();
 				if (analysis.isVisible()) {
 					if (selectedRow == -1) {
@@ -360,9 +366,7 @@ public class MenuPractice implements SNESControllable {
 
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure keybinds");
-		ImageIcon mitts = new ImageIcon(
-				MenuPractice.class.getResource("/Practice/Images/Meta/Mitts.png")
-			);
+		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Mitts.png"));
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
 
@@ -386,9 +390,7 @@ public class MenuPractice implements SNESControllable {
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
-		ImageIcon mirror = new ImageIcon(
-				MenuPractice.class.getResource("/Practice/Images/Meta/Mirror.png")
-			);
+		ImageIcon mirror = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Mirror.png"));
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
@@ -399,34 +401,29 @@ public class MenuPractice implements SNESControllable {
 
 		// show scores
 		final JMenuItem scoreShow = new JMenuItem("Performance chart");
-		ImageIcon boots = new ImageIcon(
-				MenuPractice.class.getResource("/Practice/Images/Meta/Boots.png")
-			);
+		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Boots.png"));
 		scoreShow.setIcon(boots);
-		scoreShow.addActionListener(
-			arg0 -> {
+
+		Task showScores = () -> {
 				if (scoreFrame.isVisible()) {
 					scoreFrame.requestFocus();
 				} else {
 					scoreFrame.setLocation(hooker.getLocationOnScreen());
 					scoreFrame.setVisible(true);
 				}
-			});
+			};
+
+		scoreShow.addActionListener(arg0 -> showScores.doThing());
 		scoresMenu.add(scoreShow);
 
 		// colors
 		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
 		final JMenuItem colorful = new JMenuItem("Performance highlighting");
-		ImageIcon lampOn = new ImageIcon(
-				MenuPractice.class.getResource("/Practice/Images/Meta/Lamp.png")
-			);
-		ImageIcon lampOff = new ImageIcon(
-				MenuPractice.class.getResource("/Practice/Images/Meta/Lamp dark.png")
-			);
-
+		ImageIcon lampOn = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Lamp.png"));
+		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Lamp dark.png"));
 		colorful.setIcon(lampOn);
-		colorful.addActionListener(
-			arg0 -> {
+
+		Task colorize = () -> {
 				colors[0] = !colors[0];
 				if (colors[0]) {
 					colorful.setIcon(lampOn);
@@ -438,7 +435,9 @@ public class MenuPractice implements SNESControllable {
 				if (scoreFrame.isVisible()) {
 					scoreFrame.repaint();
 				}
-			});
+			};
+
+		colorful.addActionListener(arg0 -> colorize.doThing());
 
 		scoresMenu.add(colorful);
 
@@ -531,17 +530,52 @@ public class MenuPractice implements SNESControllable {
 			});
 
 		// add snes input stuff here
+		MoveSel moveSel = (a) -> {
+				int b = a < 0 ? -1 : 1;
+				int scoresRow = scores.getSelectedRow();
+				int maxRow = scores.getRowCount();
+				if (maxRow == 0) {
+					return;
+				}
+				if (scoresRow == -1) {
+					scores.setRowSelectionInterval(0, 0);
+					return;
+				}
+				int newSel = a + b;
+				if (newSel < 0) {
+					newSel = 0;
+				} else if (newSel == maxRow) {
+					newSel = maxRow - 1;
+				}
+				scores.setRowSelectionInterval(newSel, newSel);
+			};
+
 		this.addSNESInputListener(
-				arg0 -> {
-						if (arg0.getSource() == this) {
-							return;
-						}
-						switch (arg0.getKey()) {
-							case SNESInputEvent.SNES_SELECT :
-								
-								break;
-						}
-					});
+			arg0 -> {
+					if (arg0.getSource() == this) {
+						return;
+					}
+					switch (arg0.getKey()) {
+						case SNESInputEvent.SNES_SELECT :
+							showScores.doThing();
+							break;
+						case SNESInputEvent.SNES_X :
+							showAnalysis.doThing();
+							break;
+						case SNESInputEvent.SNES_R :
+							moveSel.moveDir(1);
+							break;
+						case SNESInputEvent.SNES_L :
+							moveSel.moveDir(-1);
+							break;
+						case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
+							clearData.doThing();
+							break;
+						case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
+							colorize.doThing();
+							break;
+					}
+				});
 
 		frame.setVisible(true);
 	}
@@ -584,5 +618,9 @@ public class MenuPractice implements SNESControllable {
 		void increment() {
 			val++;
 		}
+	}
+
+	static interface MoveSel {
+		void moveDir(int i);
 	}
 }
