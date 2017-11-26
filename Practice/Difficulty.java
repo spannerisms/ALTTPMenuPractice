@@ -12,18 +12,57 @@ public enum Difficulty {
 	// 6 : randomize location of starting cursor each round in collections mode
 	// 7 : show a cursor over the target item in addition to the name
 	// 8 : randomize location of starting cursor each round in study mode
-	BEGINNER ("Beginner", 0, 20, 5000, 20, 10, (byte) 0b0011_1010),
-	EASY ("Easy", 0, 15, 5000, 20, 7, (byte) 0b0001_0010),
-	MEDIUM ("Medium", 100, 10, 3000, 30, 5, (byte) 0b0001_0011),
-	HARD ("Hard", 200, 5, 1000, 50, 3, (byte) 0b0001_0000),
-	EXPERT ("Expert", 500, 2, 500, 100, 1, (byte) 0b000_00101);
+	BEGINNER (
+			"Beginner", // name
+			0, 10, 7000, // bonus, mult, time thresh
+			20, 5000, // study: round length, time
+			20, // blitz : rounds
+			10, // collections: round length
+			(byte) 0b0011_1010
+		),
+	EASY (
+			"Easy",
+			0, 20, 5000,
+			15, 5000,
+			20,
+			7, (byte)
+			0b0001_0010
+		),
+	MEDIUM (
+			"Medium",
+			100, 50, 2500,
+			10, 3000,
+			30,
+			5,
+			(byte) 0b0001_0011
+		),
+	HARD (
+			"Hard",
+			200, 90, 1200,
+			5, 1000,
+			50,
+			3,
+			(byte) 0b0001_0000
+		),
+	EXPERT (
+			"Expert",
+			500, 150, 750,
+			2, 500,
+			100,
+			1,
+			(byte) 0b000_00101
+		);
 
 	// local vars
-	public final String diffName; // difficulty name
+	public final String diffName;
+
 	public final int bonus;
-	public final int studyRoundLength; // number of item rounds per menu in study mode
-	public final int studyTime; // time in milliseconds to study the menu
-	public final int blitzRounds; // number of rounds in blitz mode
+	public final int multiplier;
+	public final int timeThresh;
+
+	public final int studyRoundLength;
+	public final int studyTime;
+	public final int blitzRounds;
 	public final int collectionRoundLength;
 
 	// values determined by flag
@@ -39,7 +78,7 @@ public enum Difficulty {
 	public final BufferedImage wordHilite;
 
 	private Difficulty(String name,
-			int difficultyBonus,
+			int difficultyBonus, int difficultyMultiplier, int timeThreshold,
 			int studyRoundLength, int studyTime,
 			int burstRounds,
 			int collectionRoundLength,
@@ -49,6 +88,8 @@ public enum Difficulty {
 		this.wordHilite = MenuGameConstants.makeWordImage(diffName, 1);
 
 		this.bonus = difficultyBonus;
+		this.multiplier = difficultyMultiplier;
+		this.timeThresh = timeThreshold;
 		this.studyRoundLength = studyRoundLength;
 		this.studyTime = studyTime;
 		this.blitzRounds = burstRounds;

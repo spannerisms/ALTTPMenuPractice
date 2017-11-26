@@ -3,8 +3,6 @@ package Practice;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,13 +10,14 @@ import java.util.List;
 import java.util.Timer;
 
 import Practice.Listeners.*;
-import Practice.GUI.Controller;
+import Practice.GUI.ControllerHandler;
 import Practice.GUI.OpTask;
+import Practice.GUI.SNESControllable;
 
 import static Practice.Item.ITEM_COUNT;
 import static Practice.MenuGameConstants.*;
 
-public class MenuGame extends Container {
+public class MenuGame extends Container implements SNESControllable {
 	private static final long serialVersionUID = -4474643068621537992L;
 
 	// local vars
@@ -49,22 +48,15 @@ public class MenuGame extends Container {
 	final boolean showOpt;
 	final boolean showIcon;
 	final boolean showStartStudy;
+	final ControllerHandler controls;
 	BufferedImage minMoveOverlay;
 
 	ItemLister chosen;
 	final Timer waiter = new Timer();
 	boolean studying = false;
 
-	final Controller controls;
-	final int KEY_UP;
-	final int KEY_DOWN;
-	final int KEY_RIGHT;
-	final int KEY_LEFT;
-	final int KEY_START;
-
-	// end gameplay
-
-	public MenuGame(Controller controls, GameMode gameMode, Difficulty difficulty, int games) {
+	// constructor
+	public MenuGame(ControllerHandler controls, GameMode gameMode, Difficulty difficulty, int games) {
 		initialize();
 		mode = gameMode;
 		dif = difficulty;
@@ -84,12 +76,8 @@ public class MenuGame extends Container {
 		showStartStudy = dif.showStartDuringStudy;
 
 		this.controls = controls;
-		KEY_UP = controls.T_UP;
-		KEY_DOWN = controls.T_DOWN;
-		KEY_RIGHT = controls.T_RIGHT;
-		KEY_LEFT = controls.T_LEFT;
-		KEY_START = controls.T_START;
-		addKeys();
+		addToController(this.controls);
+		addSNESInput();
 	}
 
 	private void makeNewCard() {
@@ -99,11 +87,10 @@ public class MenuGame extends Container {
 
 	public void start() {
 		randomizeMenu();
-		randomizeGoal();
 		if (mode == GameMode.STUDY) {
 			holdOn();
 		} else {
-			
+			randomizeGoal();
 			fireTurnEvent(null);
 			makeNewCard();
 		}
@@ -113,6 +100,7 @@ public class MenuGame extends Container {
 		ref = null;
 		studying = true;
 		fireTurnEvent(null);
+		randomizeGoal();
 		waiter.schedule(new OpTask(
 			() -> {
 					studying = false;
@@ -141,46 +129,53 @@ public class MenuGame extends Container {
 		}
 	}
 
-	private final void addKeys() {
-		this.addKeyListener(new KeyListener() {
-			public void keyTyped(KeyEvent arg0) {}
-			public void keyReleased(KeyEvent arg0) {}
+	public void whineToMommy() {
+		controls.kidWhined(this);
+	}
 
-			public void keyPressed(KeyEvent arg0) {
+	public void shutUp() {
+		controls.kidCalmed(this);
+	}
+
+	public final void addSNESInput() {
+		this.addSNESInputListener(
+			arg0 -> {
+				if (arg0.getSource() == this) {
+					return;
+				}
+
 				if (ref == null) { // don't do anything unless we have a scoring object
 					return;
 				}
-				int key = arg0.getExtendedKeyCode();
-				// up
-				if (key == KEY_UP) {
-					movesMade.add(new PlayerMovement(loc, MOVE_UP));
-					loc = moveUp(loc);
-					ref.moves++;
-					fireInputEvent(InputEvent.SNES_UP);
-				// down
-				} else if (key == KEY_DOWN) {
-					movesMade.add(new PlayerMovement(loc, MOVE_DOWN));
-					loc = moveDown(loc);
-					ref.moves++;
-					fireInputEvent(InputEvent.SNES_DOWN);
-				// right
-				} else if (key == KEY_RIGHT) {
-					movesMade.add(new PlayerMovement(loc, MOVE_RIGHT));
-					loc = moveRight(loc);
-					ref.moves++;
-					fireInputEvent(InputEvent.SNES_RIGHT);
-				// left
-				} else if (key == KEY_LEFT) {
-					movesMade.add(new PlayerMovement(loc, MOVE_LEFT));
-					loc = moveLeft(loc);
-					ref.moves++;
-					fireInputEvent(InputEvent.SNES_LEFT);
-				} else if (key == KEY_START) {
-					movesMade.add(new PlayerMovement(loc, PRESS_START));
-					pressStart();
-					fireInputEvent(InputEvent.SNES_START);
+
+				switch(arg0.getKey()) {
+					case SNESInputEvent.SNES_UP :
+						movesMade.add(new PlayerMovement(loc, MOVE_UP));
+						loc = moveUp(loc);
+						ref.moves++;
+						break;
+					case SNESInputEvent.SNES_DOWN :
+						movesMade.add(new PlayerMovement(loc, MOVE_DOWN));
+						loc = moveDown(loc);
+						ref.moves++;
+						break;
+					case SNESInputEvent.SNES_RIGHT :
+						movesMade.add(new PlayerMovement(loc, MOVE_RIGHT));
+						loc = moveRight(loc);
+						ref.moves++;
+					case SNESInputEvent.SNES_LEFT :
+						movesMade.add(new PlayerMovement(loc, MOVE_LEFT));
+						loc = moveLeft(loc);
+						ref.moves++;
+						break;
+					case SNESInputEvent.SNES_START :
+						movesMade.add(new PlayerMovement(loc, PRESS_START));
+						pressStart();
+						break;
+					case SNESInputEvent.SNES_L | SNESInputEvent.SNES_R :
+						forfeit();
+						break;
 				}
-			}
 		});
 	}
 
@@ -228,6 +223,7 @@ public class MenuGame extends Container {
 		switch (mode) {
 			case STUDY :
 				randomizeMenu();
+				newTurn();
 				holdOn();
 				break;
 			case BLITZ :
@@ -245,6 +241,7 @@ public class MenuGame extends Container {
 		currentGame--;
 		currentRound = maxRound;
 		if (currentGame == 0) {
+			newTurn();
 			fireGameOverEvent();
 			return;
 		}
@@ -542,16 +539,15 @@ public class MenuGame extends Container {
 	/*
 	 * Events for snes inputs
 	 */
-	private List<InputListener> snesListen = new ArrayList<InputListener>();
-	public synchronized void addInputListener(InputListener s) {
+	private List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
+	public synchronized void addSNESInputListener(SNESInputListener s) {
 		snesListen.add(s);
 	}
 
-	private synchronized void fireInputEvent(int button) {
-		InputEvent te = new InputEvent(this, button);
-		Iterator<InputListener> listening = snesListen.iterator();
+	public synchronized void fireSNESInputEvent(SNESInputEvent e) {
+		Iterator<SNESInputListener> listening = snesListen.iterator();
 		while(listening.hasNext()) {
-			(listening.next()).eventReceived(te);
+			(listening.next()).eventReceived(e);
 		}
 	}
 

@@ -33,19 +33,27 @@ public class ScoreCard {
 		endTime = System.currentTimeMillis(); // calculate end time on score request
 		long timeDiff = endTime - startTime;
 		finalTime = (int) (timeDiff);
-		int timeScore = (4000 - finalTime);
+		int penalizedTime = finalTime + ((startPresses - 1) * 1000); // add 1 second for every start button penalty
+		int timeScore = (d.timeThresh - penalizedTime);
+		timeScore = (timeScore * d.multiplier) / 100;
 
 		// difference between moves made and optimal moves
-		int diffScore = ( 500 * ( (minMoves + 1) - moves) );
-		int moveBonus = (moves == minMoves) ? 1000 : 0; // bonus for being optimal
+		int moveScore =
+					(
+						(
+							(500 * d.multiplier) / 100
+						) * (
+								(minMoves + 1) - moves
+							)
+					);
+		int perfectBonus = (1000 * d.multiplier) / 100;
+		int moveBonus = (moves == minMoves) ? perfectBonus : 0; // bonus for being optimal
 
-		// penalty for pressing start on the wrong item
-		int startPenalty = 0;
-		if (startPresses > 1) {
-			startPenalty = startPresses * 1000;
-		}
-
-		finalScore = timeScore + diffScore + moveBonus - startPenalty + d.bonus;
+//		System.out.println("Time: " + timeScore);
+//		System.out.println("Moves: " + moveScore);
+//		System.out.println("Bonus: " + moveBonus);
+//		System.out.println("Difficulty: " + d.bonus);
+		finalScore = timeScore + moveScore + moveBonus + d.bonus;
 		return finalScore;
 	}
 
