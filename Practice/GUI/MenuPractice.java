@@ -146,7 +146,12 @@ public class MenuPractice {
 		JTable scores = new JTable();
 		ScoreTableModel model = new ScoreTableModel();
 		scores.setModel(model);
+
 		scores.setDefaultRenderer(Number.class, SCORE_TABLE);
+		scores.setAutoCreateRowSorter(true);
+		scores.setColumnSelectionAllowed(false);
+		scores.setCellSelectionEnabled(false);
+		scores.setRowSelectionAllowed(true);
 
 		// scroll pane for score
 		JScrollPane scoreScroll = new JScrollPane(scores,
@@ -215,10 +220,7 @@ public class MenuPractice {
 
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scores.setColumnSelectionAllowed(false);
-		scores.setCellSelectionEnabled(false);
-		scores.setRowSelectionAllowed(true);
-		scores.setSelectionBackground(Color.RED);
+
 		scoreSel.addListSelectionListener(
 			arg0 -> {
 				int selectedRow = scores.getSelectedRow();

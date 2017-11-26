@@ -50,7 +50,11 @@ class ScoreTableModel extends AbstractTableModel {
 	}
 
 	public Class<?> getColumnClass(int c) {
-		return getValueAt(0, c).getClass();
+		Object o = getValueAt(0, c);
+		if (o == null) {
+			return Number.class;
+		}
+		return o.getClass();
 	}
 
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -58,6 +62,9 @@ class ScoreTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		if (rowIndex >= data.size()) {
+			return null;
+		}
 		return data.get(rowIndex).toArray()[columnIndex];
 	}
 }

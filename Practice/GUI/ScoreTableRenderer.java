@@ -24,10 +24,14 @@ public class ScoreTableRenderer extends DefaultTableCellRenderer {
 			boolean isSelected, boolean hasFocus, int row, int col) {
 			super.getTableCellRendererComponent(table, (int) value, isSelected, hasFocus, row, col);
 		setForeground(isSelected ? Color.WHITE : Color.BLACK);
+
 		this.setHorizontalAlignment(SwingConstants.RIGHT);
 		int ensity;
-		int val = (int) table.getModel().getValueAt(row, col);
+		int realRow = table.getRowSorter().convertRowIndexToModel(row);
+
+		int val = (int) table.getModel().getValueAt(realRow, col);
 		Color c = null;
+
 		switch (col | useColors) {
 			case 1 : // score
 				ensity = ensity(val, 5000);
@@ -39,8 +43,8 @@ public class ScoreTableRenderer extends DefaultTableCellRenderer {
 				break;
 			case 2 : // moves
 			case 3 : // optimal path
-				int moves = (int) table.getModel().getValueAt(row, 2);
-				int opt = (int) table.getModel().getValueAt(row, 3);
+				int moves = (int) table.getModel().getValueAt(realRow, 2);
+				int opt = (int) table.getModel().getValueAt(realRow, 3);
 				ensity = ensity(opt, moves);
 				if (moves == opt) {
 					c = new Color(0, 255, 0, 200);
