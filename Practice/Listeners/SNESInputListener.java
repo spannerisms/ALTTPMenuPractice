@@ -1,5 +1,5 @@
 package Practice.Listeners;
 
-public interface InputListener {
-	void eventReceived(InputEvent arg0);
+public interface SNESInputListener {
+	void eventReceived(SNESInputEvent arg0);
 }
