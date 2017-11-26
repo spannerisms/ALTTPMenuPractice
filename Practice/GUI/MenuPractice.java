@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,13 +37,14 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import Practice.MenuGame;
 import Practice.ScoreCard;
+import Practice.Listeners.SNESInputEvent;
+import Practice.Listeners.SNESInputListener;
 
 import static Practice.MenuGameConstants.*;
 
-public class MenuPractice {
-	static final String VERSION = "v0.8.1-beta";
+public class MenuPractice implements SNESControllable {
+	static final String VERSION = "v0.9-beta";
 
 	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
@@ -75,13 +78,13 @@ public class MenuPractice {
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				doTheGUI();
+				new MenuPractice().doTheGUI();
 			}
 		});
 	}
 
 	// GUI
-	public static void doTheGUI() {
+	public void doTheGUI() {
 		// try to set LaF
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -358,7 +361,7 @@ public class MenuPractice {
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure keybinds");
 		ImageIcon mitts = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Mitts.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Mitts.png")
 			);
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
@@ -384,7 +387,7 @@ public class MenuPractice {
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
 		ImageIcon mirror = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Mirror.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Mirror.png")
 			);
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
@@ -397,7 +400,7 @@ public class MenuPractice {
 		// show scores
 		final JMenuItem scoreShow = new JMenuItem("Performance chart");
 		ImageIcon boots = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Boots.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Boots.png")
 			);
 		scoreShow.setIcon(boots);
 		scoreShow.addActionListener(
@@ -415,10 +418,10 @@ public class MenuPractice {
 		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
 		final JMenuItem colorful = new JMenuItem("Performance highlighting");
 		ImageIcon lampOn = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Lamp.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Lamp.png")
 			);
 		ImageIcon lampOff = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Lamp dark.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Lamp dark.png")
 			);
 
 		colorful.setIcon(lampOn);
@@ -446,7 +449,7 @@ public class MenuPractice {
 		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
 		ImageIcon compass = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Compass.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Compass.png")
 			);
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
@@ -463,7 +466,7 @@ public class MenuPractice {
 		// about
 		final JMenuItem about = new JMenuItem("About");
 		ImageIcon map = new ImageIcon(
-				MenuGame.class.getResource("/Practice/Images/Meta/Map.png")
+				MenuPractice.class.getResource("/Practice/Images/Meta/Map.png")
 			);
 		about.setIcon(map);
 		helpMenu.add(about);
@@ -526,9 +529,43 @@ public class MenuPractice {
 				analyze.setEnabled(true);
 				clear.setEnabled(true);
 			});
+
+		// add snes input stuff here
+		this.addSNESInputListener(
+				arg0 -> {
+						if (arg0.getSource() == this) {
+							return;
+						}
+						switch (arg0.getKey()) {
+							case SNESInputEvent.SNES_SELECT :
+								
+								break;
+						}
+					});
+
 		frame.setVisible(true);
 	}
 
+	private List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
+	public synchronized void addSNESInputListener(SNESInputListener s) {
+		snesListen.add(s);
+	}
+
+	public synchronized void fireSNESInputEvent(SNESInputEvent e) {
+		Iterator<SNESInputListener> listening = snesListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(e);
+		}
+	}
+
+	// implement snes inputs in doTheGUI
+	public void addSNESInput() {}
+
+	// this class should never actually have exclusive focus of its controller
+	public void whineToMommy() {}
+	public void shutUp() {}
+
+	// for holding ints
 	static class IntHolder {
 		int val;
 

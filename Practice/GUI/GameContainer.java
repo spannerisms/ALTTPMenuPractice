@@ -13,8 +13,6 @@ import Practice.Listeners.*;
 
 import static Practice.MenuGameConstants.*;
 
-// TODO : make pretty menu border label for target
-// TODO : make pretty meny border button for forfeit and put forfeit here
 public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
 
@@ -32,8 +30,8 @@ public class GameContainer extends Container {
 	final PrettyLabel roundCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 	final PrettyLabel turnCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 
-	Controller controller = new Controller();
-	ControlScreen splash = new ControlScreen();
+	ControllerHandler controller = new ControllerHandler();
+	ControlScreen splash = new ControlScreen(controller);
 
 	public GameContainer() {
 		counter.addGameOverListener(
@@ -154,7 +152,7 @@ public class GameContainer extends Container {
 				turnCount.setRightText(playing.getTurn() + "/" + playing.getMaxTurn());
 				GameContainer.this.fireTurnEvent(arg0);
 			}); // just relay it to MenuPractice
-		playing.addInputListener(arg0 -> GameContainer.this.repaint() );
+		playing.addSNESInputListener(arg0 -> GameContainer.this.repaint() );
 		counter.newGame();
 		setHolder(counter);
 		repaint();
@@ -184,8 +182,8 @@ public class GameContainer extends Container {
 		counter.kill();
 	}
 
-	public void setController(Controller c) {
-		controller = c;
+	public void setController(ControllerHandler c) {
+		splash.setController(controller);
 	}
 
 	public MenuGame getInstance() {

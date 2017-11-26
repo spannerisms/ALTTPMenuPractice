@@ -147,8 +147,8 @@ public class ControlMapper extends JDialog {
 			});
 	}
 
-	private Controller makeController() {
-		return new Controller(up.i, down.i, right.i, left.i, start.i);
+	private ControllerHandler makeController() {
+		return new ControllerHandler(up.i, down.i, right.i, left.i, start.i);
 	}
 
 	static class KeyWrapper {

@@ -5,23 +5,19 @@ import javax.swing.JPanel;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 import Practice.Difficulty;
 import Practice.GameMode;
 import Practice.MenuGame;
-import Practice.Listeners.GameOverEvent;
-import Practice.Listeners.GameOverListener;
+import Practice.Listeners.*;
 
 import static Practice.MenuGameConstants.*;
 
-public class ControlScreen extends JPanel {
+public class ControlScreen extends JPanel implements SNESControllable {
 	private static final long serialVersionUID = -4589871913175293600L;
 
 	static final BufferedImage TITLE_SPLASH;
@@ -58,34 +54,39 @@ public class ControlScreen extends JPanel {
 
 		BufferedImage temp;
 		try {
-			temp = ImageIO.read(GameContainer.class.getResourceAsStream("/Practice/Images/title screen.png"));
+			temp = ImageIO.read(ControlScreen.class.getResourceAsStream("/Practice/Images/title screen.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		TITLE_SPLASH = temp;
 
 		try {
-			temp = ImageIO.read(GameContainer.class.getResourceAsStream("/Practice/Images/score screen.png"));
+			temp = ImageIO.read(ControlScreen.class.getResourceAsStream("/Practice/Images/score screen.png"));
 		} catch (Exception e) {
 			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		SCORE_SPLASH = temp;
 	}
 
+	
 	static enum Focus { MODE, DIFFICULTY, GAME, START };
-
 	private Focus selection = Focus.DIFFICULTY;
+
 	private Difficulty diffSel = Difficulty.EASY;
 	private GameMode modeSel = GameMode.STUDY;
 	private int games = 1;
+
 	private BufferedImage disp = TITLE_SPLASH;
 	private BufferedImage score;
 
-	public ControlScreen() {
+	private ControllerHandler controls;
+
+	public ControlScreen(ControllerHandler c) {
 		setPreferredSize(MENU_SIZE);
 		setSize(MENU_SIZE);
 		setFocusable(true);
-		addKeys();
+		addSNESInput();
+		setController(c);
 	}
 
 	public void setScore(int s) {
@@ -93,17 +94,36 @@ public class ControlScreen extends JPanel {
 		score = makeNumberImage(s, 0);
 	}
 
-	private final void addKeys() {
-		this.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent arg0) {
-				switch (arg0.getKeyCode()) {
-					case KeyEvent.VK_UP :
+	public final void setController(ControllerHandler c) {
+		if (controls != null) {
+			removeFromController(c);
+		}
+		controls = c;
+		addToController(controls);
+	}
+
+	public void whineToMommy() {
+		controls.kidWhined(this);
+	}
+
+	public void shutUp() {
+		controls.kidCalmed(this);
+	}
+
+	public final void addSNESInput() {
+		this.addSNESInputListener(
+			arg0 -> {
+				if (arg0.getSource() == this) {
+					return;
+				}
+				switch (arg0.getKey()) {
+					case SNESInputEvent.SNES_UP :
 						selectionChange(-1);
 						break;
-					case KeyEvent.VK_DOWN :
+					case SNESInputEvent.SNES_DOWN :
 						selectionChange(+1);
 						break;
-					case KeyEvent.VK_LEFT :
+					case SNESInputEvent.SNES_LEFT :
 						switch (selection) {
 							case DIFFICULTY :
 								difficultyChange(-1);
@@ -122,7 +142,7 @@ public class ControlScreen extends JPanel {
 								break;
 						}
 						break;
-					case KeyEvent.VK_RIGHT :
+					case SNESInputEvent.SNES_RIGHT :
 						switch (selection) {
 							case DIFFICULTY :
 								difficultyChange(+1);
@@ -141,17 +161,14 @@ public class ControlScreen extends JPanel {
 								break;
 						}
 						break;
-					case KeyEvent.VK_SPACE :
+					case SNESInputEvent.SNES_START :
+					case SNESInputEvent.SNES_A :
 						if (selection == Focus.START) {
 							fireGameOverEvent();
 							selection = Focus.MODE; // safety against starting a new game when done
 						}
 						break;
 				}
-			}
-
-			public void keyReleased(KeyEvent arg0) {}
-			public void keyTyped(KeyEvent arg0) {}
 		});
 	}
 
@@ -191,7 +208,7 @@ public class ControlScreen extends JPanel {
 		repaint();
 	}
 
-	public MenuGame makeThisGame(Controller c) {
+	public MenuGame makeThisGame(ControllerHandler c) {
 		return new MenuGame(c, modeSel, diffSel, games);
 	}
 
@@ -238,6 +255,21 @@ public class ControlScreen extends JPanel {
 		Iterator<GameOverListener> listening = doneListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Events for snes inputs
+	 */
+	private List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
+	public synchronized void addSNESInputListener(SNESInputListener s) {
+		snesListen.add(s);
+	}
+
+	public synchronized void fireSNESInputEvent(SNESInputEvent e) {
+		Iterator<SNESInputListener> listening = snesListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(e);
 		}
 	}
 }
