@@ -48,9 +48,10 @@ public class MenuGame extends Container {
 	final boolean randoAllStarts;
 	final boolean showOpt;
 	final boolean showIcon;
+	final boolean showStartStudy;
 	BufferedImage minMoveOverlay;
 
-	ItemLister chosen; // list of chosen items
+	ItemLister chosen;
 	final Timer waiter = new Timer();
 	boolean studying = false;
 
@@ -80,6 +81,7 @@ public class MenuGame extends Container {
 		randoAllStarts = dif.randomizesStart(mode);
 		showOpt = dif.showOptimalPath;
 		showIcon = dif.showItemIcon;
+		showStartStudy = dif.showStartDuringStudy;
 
 		this.controls = controls;
 		KEY_UP = controls.T_UP;
@@ -97,10 +99,11 @@ public class MenuGame extends Container {
 
 	public void start() {
 		randomizeMenu();
+		randomizeGoal();
 		if (mode == GameMode.STUDY) {
 			holdOn();
 		} else {
-			randomizeGoal();
+			
 			fireTurnEvent(null);
 			makeNewCard();
 		}
@@ -112,7 +115,6 @@ public class MenuGame extends Container {
 		fireTurnEvent(null);
 		waiter.schedule(new OpTask(
 			() -> {
-					randomizeGoal();
 					studying = false;
 					fireTurnEvent(null);
 					makeNewCard();
@@ -123,6 +125,7 @@ public class MenuGame extends Container {
 	private final void initialize() {
 		this.setPreferredSize(MENU_SIZE);
 		this.setLayout(null);
+		this.setBackground(null);
 
 		for (int i = 0; i < ITEM_COUNT; i++) {
 			ItemSlot temp = new ItemSlot(ALL_ITEMS[i]);
@@ -399,19 +402,22 @@ public class MenuGame extends Container {
 
 		g2.drawImage(BACKGROUND, 0, 0, null);
 		paintComponents(g2);
+		ItemPoint cursorPos;
+
+		if (!studying || showStartStudy) {
+			cursorPos = ItemPoint.valueOf("SLOT_" + loc);
+			g2.drawImage(CURSOR,
+					ITEM_ORIGIN_X + cursorPos.x - CURSOR_OFFSET,
+					ITEM_ORIGIN_Y + cursorPos.y - CURSOR_OFFSET,
+					null);
+		}
 
 		if (!studying) {
-			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + loc);
-			g2.drawImage(CURSOR,
-					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
-					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
-					null);
-
 			if (dif.showTargetCursor) {
-				cursorLoc = ItemPoint.valueOf("SLOT_" + target);
+				cursorPos = ItemPoint.valueOf("SLOT_" + target);
 				g2.drawImage(TARGET_CURSOR,
-						ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
-						ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
+						ITEM_ORIGIN_X + cursorPos.x - CURSOR_OFFSET,
+						ITEM_ORIGIN_Y + cursorPos.y - CURSOR_OFFSET,
 						null);
 			}
 			if (showOpt) {
