@@ -38,6 +38,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 import Practice.ScoreCard;
+import Practice.Controls.ControlMapper;
+import Practice.Controls.SNESControllable;
 import Practice.Listeners.SNESInputEvent;
 import Practice.Listeners.SNESInputListener;
 

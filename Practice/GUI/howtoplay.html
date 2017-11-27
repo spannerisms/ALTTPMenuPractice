@@ -21,6 +21,42 @@
 			margin-left: 5px;
 			list-style-type: circle;
 		}
+		table {
+			width: 100%;
+			margin: 4px;
+			border-spacing: 0px;
+			border-collapse: collapse;
+		}
+		td,
+		th {
+			border: 1px solid #000000;
+			padding: 0 5px;
+			margin: 0px;
+		}
+		tr {
+			margin: 0px;
+		}
+		tr.oddrow td {
+			background: #E5E5FF;
+		}
+		th {
+			font-weight: bold;
+			background: #C0C0C0;
+			border-bottom: 2px solid;
+		}
+		th.caption {
+			background: #A0A0A0;
+			border-bottom: 4px solid;
+		}
+		caption {
+			padding: 0px;
+			font-weight: bold;
+			text-align: center;
+		}
+		tt {
+			font-family: consolas;
+			text-variant: small-caps;
+		}
 	</style>
 	<body>
 		<h2>Gameplay</h2>
@@ -39,7 +75,7 @@
 			and your target is indicated with two green rings.
 		</p>
 		<p>
-			To confirm your selection, press <tt>START</tt>.
+			To confirm your selection, press <tt>Start</tt>.
 		</p>
 		<hr />
 		<h2>Game modes</h2>
@@ -99,7 +135,7 @@
 			<li>
 				<b>Collections</b>
 				<ul>
-					<li>Higher difficulties add items added more often.</li>
+					<li>Higher difficulties have items added more often.</li>
 					<li>In expert, your starting position is randomized each turn.</li>
 				</ul>
 			</li>
@@ -114,7 +150,7 @@
 			<li>The number of moves you made</li>
 			<li>How long it took you</li>
 			<li>A bonus for having an optimal path</li>
-			<li>A penalty for pressing <tt>START</tt> on the wrong item</li>
+			<li>A penalty for pressing <tt>Start</tt> on the wrong item</li>
 		</ul>
 		<br />
 		<p>
@@ -127,7 +163,83 @@
 			<li>A snapshot of the original item layout, including the starting point and goal.</li>
 			<li>The optimal path found by the computer.</li>
 			<li>The path you took, indicated with hollow, blue arrows.</li>
-			<li>Any slot you pressed start on, indicated with two blue rings.</li>
+			<li>Any slot you pressed <tt>Start</tt> on, indicated with two blue rings.</li>
 		</ul>
+		<hr />
+		<h2>Controls</h2>
+		<table>
+			<tr>
+				<th class="caption" colspan="2">During gameplay</th>
+			</th>
+			<tr>
+				<th>Buttons</th>
+				<th>Action</th>
+			</tr>
+			<tr>
+				<td><tt>Up</tt><td rowspan="4">Move cursor</td>
+			</tr>
+			<tr>
+				<td><tt>Down</tt></td>
+			</tr>
+			<tr>
+				<td><tt>Right</tt></td>
+			</tr>
+			<tr>
+				<td><tt>Left</tt></td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>Start</tt></td>
+				<td>Choose item</td>
+			</tr>
+			<tr>
+				<td><tt>R + L<tt></td>
+				<td>Forfeit game</td>
+			</tr>
+			<tr>
+				<th class="caption" colspan="2">During downtime</th>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>Up</tt><td rowspan="2">Select setting</td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>Down</tt></td>
+			</tr>
+			<tr>
+				<td><tt>Right</tt><td rowspan="2">Change setting</td>
+			</tr>
+			<tr>
+				<td><tt>Left</tt></td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>A</tt><td rowspan="2">(While on <tt>START</tt>) Begin game</td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>Start</tt></td>
+			</tr>
+			<tr>
+				<td><tt>Select</tt></td>
+				<td>Show/Hide score table</td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>X</tt></td>
+				<td>Show/Hide turn analysis</td>
+			</tr>
+			<tr>
+				<td><tt>R</tt></td>
+				<td>Select next row of scores</td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>L</tt></td>
+				<td>Select previous row of scores</td>
+			</tr>
+			<tr>
+				<td><tt>L + Y</tt></td>
+				<td>Reset score data</td>
+			</tr>
+			<tr class="oddrow">
+				<td><tt>L + X</tt></td>
+				<td>Toggle performance highlight colors</td>
+			</tr>
+		</table>
 	</body>
 </html>

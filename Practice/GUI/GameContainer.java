@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
 import Practice.MenuGame;
+import Practice.Controls.ControllerHandler;
 import Practice.Listeners.*;
 
 import static Practice.MenuGameConstants.*;
@@ -30,8 +31,8 @@ public class GameContainer extends Container {
 	final PrettyLabel roundCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 	final PrettyLabel turnCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 
-	ControllerHandler controller = new ControllerHandler();
-	ControlScreen splash = new ControlScreen(controller);
+	ControllerHandler controller;
+	ControlScreen splash;
 
 	public GameContainer() {
 		counter.addGameOverListener(

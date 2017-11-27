@@ -13,6 +13,8 @@ import java.util.List;
 import Practice.Difficulty;
 import Practice.GameMode;
 import Practice.MenuGame;
+import Practice.Controls.ControllerHandler;
+import Practice.Controls.SNESControllable;
 import Practice.Listeners.*;
 
 import static Practice.MenuGameConstants.*;
@@ -81,12 +83,11 @@ public class ControlScreen extends JPanel implements SNESControllable {
 
 	private ControllerHandler controls;
 
-	public ControlScreen(ControllerHandler c) {
+	public ControlScreen() {
 		setPreferredSize(MENU_SIZE);
 		setSize(MENU_SIZE);
 		setFocusable(true);
 		addSNESInput();
-		setController(c);
 	}
 
 	public void setScore(int s) {
