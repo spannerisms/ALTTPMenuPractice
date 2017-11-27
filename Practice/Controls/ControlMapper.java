@@ -13,9 +13,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -29,6 +31,57 @@ public class ControlMapper extends JDialog {
 	private static final Dimension TEXT_D = new Dimension(100, 17);
 
 	private KeyWrapper[] list = new KeyWrapper[SNESButton.values().length];
+
+	private Controller[] controllerList = refreshList();
+
+	static final Controller[] refreshList() {
+		ControllerEnvironment env = ControllerEnvironment.getDefaultEnvironment();
+		ArrayList<Controller> ret = new ArrayList<Controller>();
+		for (Controller c : env.getControllers()) {
+			Controller.Type t = c.getType();
+			if (t.equals(Controller.Type.GAMEPAD) ||
+					t.equals(Controller.Type.KEYBOARD)) {
+				ret.add(c);
+			}
+		}
+
+		Controller[] r = new Controller[ret.size()];
+		int i = 0;
+		for (Controller a : ret) {
+			r[i++] = a;
+		}
+		return r;
+	}
+
+	// default controller
+	public static final ControllerHandler defaultController;
+
+	static {
+		Controller[] list = refreshList();
+		Controller keyboard = null;
+		for (Controller c : list) {
+			if (c.getType().equals(Controller.Type.KEYBOARD)) {
+				keyboard = c;
+				break;
+			}
+		}
+		Component[] comp = keyboard.getComponents();
+		Component[] use = new Component[12];
+		int i = 0;
+		defaultMappings :
+		for (SNESButton s : SNESButton.values()) {
+			for (Component c : comp) {
+				if (c.getIdentifier() == s.defaultKeyboardKey) {
+					use[i++] = c;
+					System.out.println("Found");
+					continue defaultMappings;
+				}
+			}
+		}
+		defaultController = new ControllerHandler(keyboard, use);
+	}
+
+	JPanel comboArea = new JPanel();
 
 	public ControlMapper(JFrame frame) {
 		super(frame, "Configure");
@@ -46,12 +99,19 @@ public class ControlMapper extends JDialog {
 		c.ipadx = 4;
 		c.ipady = 2;
 		c.anchor = GridBagConstraints.PAGE_START;
+		c.gridy = -1;
 
-		// up
+		newComboBox();
+		c.gridy++;
+		c.gridx = 0;
+		c.gridwidth = 2;
+		this.add(comboArea, c);
+		c.gridwidth = 1;
+
 		int i = 0;
 		for (SNESButton b : SNESButton.values()) {
 			JLabel lbl = new JLabel(b.name);
-			KeyWrapper k = new KeyWrapper(b.defaultKeyboardKey);
+			KeyWrapper k = new KeyWrapper(0);
 			list[i++] = k;
 			c.gridy++;
 			c.gridx = 0;
@@ -107,6 +167,14 @@ public class ControlMapper extends JDialog {
 					no.setBackground(Color.RED);
 				}
 			});
+	}
+
+	private void newComboBox() {
+		controllerList = refreshList();
+		comboArea.removeAll();
+		JComboBox<Controller> add = new JComboBox<Controller>(controllerList);
+		comboArea.add(add);
+		revalidate();
 	}
 
 	private ControllerHandler makeController() {

@@ -16,7 +16,6 @@ public interface SNESControllable {
 	 */
 	void addSNESInput();
 
-	// 
 	void fireSNESInputEvent(SNESInputEvent e);
 
 	void whineToMommy();

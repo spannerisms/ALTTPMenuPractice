@@ -1,26 +1,26 @@
 package Practice.Controls;
 
-import java.awt.event.KeyEvent;
+import net.java.games.input.*;
 
 public enum SNESButton {
-	UP ("Up", KeyEvent.VK_UP),
-	DOWN ("Down", KeyEvent.VK_DOWN),
-	RIGHT ("Right", KeyEvent.VK_RIGHT),
-	LEFT ("Left", KeyEvent.VK_LEFT),
-	A ("A", KeyEvent.VK_Q),
-	B ("B", KeyEvent.VK_W),
-	X ("X", KeyEvent.VK_R),
-	Y ("Y", KeyEvent.VK_E),
-	R ("R", KeyEvent.VK_S),
-	L ("L", KeyEvent.VK_A),
-	START ("Start", KeyEvent.VK_D),
-	SELECT ("Select", KeyEvent.VK_F);
+	UP ("Up", Component.Identifier.Key.UP),
+	DOWN ("Down", Component.Identifier.Key.DOWN),
+	RIGHT ("Right", Component.Identifier.Key.RIGHT),
+	LEFT ("Left", Component.Identifier.Key.LEFT),
+	A ("A", Component.Identifier.Key.Q),
+	B ("B", Component.Identifier.Key.W),
+	X ("X", Component.Identifier.Key.R),
+	Y ("Y", Component.Identifier.Key.E),
+	R ("R", Component.Identifier.Key.S),
+	L ("L", Component.Identifier.Key.A),
+	START ("Start", Component.Identifier.Key.D),
+	SELECT ("Select", Component.Identifier.Key.F);
 
 	public final String name;
-	public final int defaultKeyboardKey;
+	public final Component.Identifier.Key defaultKeyboardKey;
 
-	private SNESButton(String name, int defaultKeyboardKey) {
+	private SNESButton(String name, Component.Identifier.Key key) {
 		this.name = name;
-		this.defaultKeyboardKey = defaultKeyboardKey;
+		this.defaultKeyboardKey = key;
 	}
 }
