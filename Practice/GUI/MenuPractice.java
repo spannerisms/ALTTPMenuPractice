@@ -128,6 +128,7 @@ public class MenuPractice implements SNESControllable {
 
 		// game
 		GameContainer gamePlayer = new GameContainer();
+		gamePlayer.setController(ControlMapper.defaultController);
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
@@ -138,7 +139,7 @@ public class MenuPractice implements SNESControllable {
 		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
 				SpringLayout.SOUTH, wrap);
 		wrap.add(gamePlayer);
-
+		
 		// scores
 		JDialog scoreFrame = new JDialog(frame, "Performance scores");
 		scoreFrame.setSize(CHART_D);

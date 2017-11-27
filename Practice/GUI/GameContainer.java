@@ -32,7 +32,7 @@ public class GameContainer extends Container {
 	final PrettyLabel turnCount = new PrettyLabel(BOARD_SIZE_NO_BORDER);
 
 	ControllerHandler controller;
-	ControlScreen splash;
+	ControlScreen splash = new ControlScreen();
 
 	public GameContainer() {
 		counter.addGameOverListener(
@@ -184,6 +184,7 @@ public class GameContainer extends Container {
 	}
 
 	public void setController(ControllerHandler c) {
+		controller = c;
 		splash.setController(controller);
 	}
 
