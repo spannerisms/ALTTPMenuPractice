@@ -1,4 +1,4 @@
-package Practice.GUI;
+package Practice.Controls;
 
 import Practice.Listeners.SNESInputEvent;
 

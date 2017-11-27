@@ -1,44 +1,57 @@
-package Practice.GUI;
+package Practice.Controls;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.java.games.input.Component;
-import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
-
+import net.java.games.input.*;
 import Practice.Listeners.SNESInputEvent;
 import Practice.Listeners.SNESInputListener;
 
-public class ControllerHandler {
-	public final int T_UP;
-	public final int T_DOWN;
-	public final int T_RIGHT;
-	public final int T_LEFT;
-	public final int T_START;
+/*
+ * TODO:
+ * Up/Down + Right/Left = Vertical
+ * Up>down
+ * Left>right
+ * menu cursor move time = 2 frames after input is read
+ * item switch delay = 16 frames
+ */
+public abstract class ControllerHandler {
+	static final long TICK = 10;
 
-	private final SNESInputListener snes;
+	protected final SNESInputListener snes;
 
-	private final ArrayList<SNESControllable> children;
-	private SNESControllable brat; // has full control and only one who receives events
+	protected final ArrayList<SNESControllable> children;
+	protected SNESControllable brat; // has full control and only one who receives events
 
-	public ControllerHandler(int up, int down, int right, int left, int start) {
-		T_UP = up;
-		T_DOWN = down;
-		T_RIGHT = right;
-		T_LEFT = left;
-		T_START = start;
+	protected Thread ticker;
+	protected boolean running;
 
+	protected ControllerHandler() {
 		children = new ArrayList<SNESControllable>();
 
 		brat = null;
 		snes = null;
+
+		ticker = new Thread(new Runnable() {
+				public void run(){
+					try {
+						while(running){
+							Thread.sleep(TICK);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 	}
 
-	public ControllerHandler() {
-		this(KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_SPACE);
+	public abstract void setPolling();
+
+	public void kill() {
+		running = false;
+		ticker = null;
+		children.clear();
 	}
 
 	public void addChild(SNESControllable kid) {
@@ -50,6 +63,7 @@ public class ControllerHandler {
 
 	public void removeChild(SNESControllable kid) {
 		children.remove(kid);
+		kidCalmed(kid);
 	}
 
 	// requests full focus of the controller
@@ -66,6 +80,11 @@ public class ControllerHandler {
 	}
 
 	public void fireEvents(SNESInputEvent e) {
+		if (brat != null) {
+			brat.fireSNESInputEvent(e);
+			return;
+		}
+
 		for (SNESControllable kid : children) {
 			kid.fireSNESInputEvent(e);
 		}
@@ -74,7 +93,7 @@ public class ControllerHandler {
 	/*
 	 * Events for snes inputs
 	 */
-	private List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
+	protected List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
 	public synchronized void addInputListener(SNESInputListener s) {
 		snesListen.add(s);
 	}

@@ -1,4 +1,4 @@
-package Practice.GUI;
+package Practice.Controls;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,20 +20,15 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import Practice.Listeners.*;
+import net.java.games.input.*;
 
-// TODO : http://www.java-gaming.org/index.php?topic=21694.0
-// https://github.com/snes9xgit/snes9x
 public class ControlMapper extends JDialog {
 	private static final long serialVersionUID = -3293305934784136424L;
 
-	private static final Dimension PREF_D = new Dimension(200, 200);
+	private static final Dimension PREF_D = new Dimension(200, 400);
 	private static final Dimension TEXT_D = new Dimension(100, 17);
 
-	private KeyWrapper up;
-	private KeyWrapper down;
-	private KeyWrapper right;
-	private KeyWrapper left;
-	private KeyWrapper start;
+	private KeyWrapper[] list = new KeyWrapper[SNESButton.values().length];
 
 	public ControlMapper(JFrame frame) {
 		super(frame, "Configure");
@@ -53,49 +48,17 @@ public class ControlMapper extends JDialog {
 		c.anchor = GridBagConstraints.PAGE_START;
 
 		// up
-		JLabel upLbl = new JLabel("Up");
-		up = new KeyWrapper(KeyEvent.VK_UP);
-		c.gridy++;
-		c.gridx = 0;
-		this.add(upLbl, c);
-		c.gridx = 1;
-		this.add(up.text, c);
-
-		// down
-		JLabel downLbl = new JLabel("Down");
-		down = new KeyWrapper(KeyEvent.VK_DOWN);
-		c.gridy++;
-		c.gridx = 0;
-		this.add(downLbl, c);
-		c.gridx = 1;
-		this.add(down.text, c);
-
-		// right
-		JLabel rightLbl = new JLabel("Right");
-		right = new KeyWrapper(KeyEvent.VK_RIGHT);
-		c.gridy++;
-		c.gridx = 0;
-		this.add(rightLbl, c);
-		c.gridx = 1;
-		this.add(right.text, c);
-
-		// left
-		JLabel leftLbl = new JLabel("Left");
-		left = new KeyWrapper(KeyEvent.VK_LEFT);
-		c.gridy++;
-		c.gridx = 0;
-		this.add(leftLbl, c);
-		c.gridx = 1;
-		this.add(left.text, c);
-
-		// start
-		JLabel startLbl = new JLabel("Start");
-		start = new KeyWrapper(KeyEvent.VK_SPACE);
-		c.gridy++;
-		c.gridx = 0;
-		this.add(startLbl, c);
-		c.gridx = 1;
-		this.add(start.text, c);
+		int i = 0;
+		for (SNESButton b : SNESButton.values()) {
+			JLabel lbl = new JLabel(b.name);
+			KeyWrapper k = new KeyWrapper(b.defaultKeyboardKey);
+			list[i++] = k;
+			c.gridy++;
+			c.gridx = 0;
+			this.add(lbl, c);
+			c.gridx = 1;
+			this.add(k.text, c);
+		}
 
 		// apply
 		JButton confirm = new JButton("Apply");
@@ -118,7 +81,6 @@ public class ControlMapper extends JDialog {
 
 		confirm.addActionListener(
 			arg0 -> {
-				KeyWrapper[] list = new KeyWrapper[] { up, down, right, left, start };
 				boolean okToGo = true;
 				dupeSearch :
 				for (KeyWrapper e : list) {
@@ -148,7 +110,7 @@ public class ControlMapper extends JDialog {
 	}
 
 	private ControllerHandler makeController() {
-		return new ControllerHandler(up.i, down.i, right.i, left.i, start.i);
+		return null;
 	}
 
 	static class KeyWrapper {
