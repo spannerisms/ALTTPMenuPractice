@@ -76,6 +76,7 @@ public class MenuGame extends Container implements SNESControllable {
 		showStartStudy = dif.showStartDuringStudy;
 
 		this.controls = controls;
+		this.whineToMommy();
 		addToController(this.controls);
 		addSNESInput();
 	}
