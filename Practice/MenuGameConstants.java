@@ -6,8 +6,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
+import net.java.games.input.Controller;
+import net.java.games.input.ControllerEnvironment;
+
 public final class MenuGameConstants {
 	private MenuGameConstants() {};
+
+	// controllers
+	public static final ControllerEnvironment CONTROLS_ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
+	public static final Controller[] CONTROLLER_LIST = CONTROLS_ENVIRONMENT.getControllers();
 
 	// location within the menu image to start for calculating
 	public static final int ITEM_ORIGIN_X = 24;

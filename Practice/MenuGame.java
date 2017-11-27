@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Timer;
 
 import Practice.Listeners.*;
-import Practice.GUI.ControllerHandler;
 import Practice.GUI.OpTask;
-import Practice.GUI.SNESControllable;
+import Practice.Controls.ControllerHandler;
+import Practice.Controls.SNESControllable;
 
 import static Practice.Item.ITEM_COUNT;
 import static Practice.MenuGameConstants.*;

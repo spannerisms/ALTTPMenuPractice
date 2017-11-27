@@ -25,8 +25,8 @@ public enum Difficulty {
 			0, 20, 5000,
 			15, 5000,
 			20,
-			7, (byte)
-			0b0001_0010
+			7,
+			(byte) 0b0001_0010
 		),
 	MEDIUM (
 			"Medium",
