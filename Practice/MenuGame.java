@@ -170,7 +170,6 @@ public class MenuGame extends Container implements SNESControllable {
 					case SNESInputEvent.SNES_RIGHT :
 						movesMade.add(new PlayerMovement(loc, MOVE_RIGHT));
 						loc = moveRight(loc);
-						System.out.println(loc);
 						ref.moves++;
 						break;
 					case SNESInputEvent.SNES_LEFT :
