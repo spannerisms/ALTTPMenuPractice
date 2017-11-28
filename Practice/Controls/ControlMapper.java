@@ -73,7 +73,6 @@ public class ControlMapper extends JDialog {
 			for (Component c : comp) {
 				if (c.getIdentifier() == s.defaultKeyboardKey) {
 					use[i++] = c;
-					System.out.println("Found");
 					continue defaultMappings;
 				}
 			}

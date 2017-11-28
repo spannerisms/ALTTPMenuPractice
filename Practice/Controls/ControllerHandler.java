@@ -129,7 +129,7 @@ public class ControllerHandler {
 			x.poll(ms);
 		}
 	}
-	
+
 	private synchronized void setUpAndFireEvents() {
 		int pressesFiredAll = 0;
 		int pressesFiredDPad = 0;
@@ -139,23 +139,29 @@ public class ControllerHandler {
 				case SNESInputEvent.SNES_UP :
 				case SNESInputEvent.SNES_DOWN :
 				case SNESInputEvent.SNES_RIGHT :
-				case SNESInputEvent.SNES_LEFT :
+					case SNESInputEvent.SNES_LEFT :
 					if (x.pressedThisFrame) {
 						pressesFiredDPad |= id;
 					}
 					break;
-				default :
+				case SNESInputEvent.SNES_R :
+				case SNESInputEvent.SNES_L :
 					if (x.heldDuringFrame) {
+						pressesFiredAll |= id;
+					}
+					break;
+				default :
+					if (x.pressedThisFrame) {
 						pressesFiredAll |= id;
 					}
 					break;
 			}
 		}
-		if (pressesFiredAll != 0) {
-			fireEvents(new SNESInputEvent(this, pressesFiredAll));
-		}
 		if (pressesFiredDPad != 0) {
 			fireEvents(new SNESInputEvent(this, pressesFiredDPad));
+		}
+		if (pressesFiredAll != 0) {
+			fireEvents(new SNESInputEvent(this, pressesFiredAll));
 		}
 	}
 
@@ -165,14 +171,14 @@ public class ControllerHandler {
 		children.clear();
 	}
 
-	public void addChild(SNESControllable kid) {
+	public synchronized void addChild(SNESControllable kid) {
 		if (children.contains(kid)) {
 			return;
 		}
 		children.add(kid);
 	}
 
-	public void removeChild(SNESControllable kid) {
+	public synchronized void removeChild(SNESControllable kid) {
 		children.remove(kid);
 		kidCalmed(kid);
 	}
@@ -195,7 +201,10 @@ public class ControllerHandler {
 			brat.fireSNESInputEvent(e);
 			return;
 		}
-		Iterator<SNESControllable> i = children.iterator();
+
+		ArrayList<SNESControllable> firing = new ArrayList<SNESControllable>();
+		firing.addAll(children);
+		Iterator<SNESControllable> i = firing.iterator();
 		while (i.hasNext()) {
 			(i.next()).fireSNESInputEvent(e);
 		}
