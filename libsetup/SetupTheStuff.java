@@ -31,6 +31,7 @@ public class SetupTheStuff {
 						"give it write permissions to your program files."
 					};
 				}
+				System.out.println("\nEnjoy the dialog");
 				show(msg);
 			}
 		});
@@ -58,20 +59,23 @@ public class SetupTheStuff {
 
 	public static void writeLibraries() throws Exception {
 		FileOutputStream f;
+		System.out.println("Writing files...");
 		for (LibFile x : LibFile.values()) {
 			try {
-				f = new FileOutputStream(
-						BIN_PATH +
+				String path = BIN_PATH +
 						SEP +
 						"bin" +
 						SEP +
 						x.name +
 						"." +
-						x.ext
-					);
+						x.ext;
+				System.out.print("\t" + path);
+				f = new FileOutputStream(path);
 				f.write(x.data);
 				f.close();
+				System.out.println(" Done");
 			} catch (Exception e) {
+				System.out.println(" <- problems");
 				throw e;
 			}
 		}
