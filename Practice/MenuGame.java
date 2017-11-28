@@ -145,11 +145,18 @@ public class MenuGame extends Container implements SNESControllable {
 					return;
 				}
 
-				if (ref == null) { // don't do anything unless we have a scoring object
+				int key = arg0.getKey();
+
+				// forfeit controls need to operate outside of the game controls
+				if (key == (SNESInputEvent.SNES_L | SNESInputEvent.SNES_R)) { // logical or
+						forfeit();
+				}
+
+				if (ref == null) { // don't do anything related to playing unless we have a scoring object
 					return;
 				}
 
-				switch(arg0.getKey()) {
+				switch(key) {
 					case SNESInputEvent.SNES_UP :
 						movesMade.add(new PlayerMovement(loc, MOVE_UP));
 						loc = moveUp(loc);
@@ -163,7 +170,9 @@ public class MenuGame extends Container implements SNESControllable {
 					case SNESInputEvent.SNES_RIGHT :
 						movesMade.add(new PlayerMovement(loc, MOVE_RIGHT));
 						loc = moveRight(loc);
+						System.out.println(loc);
 						ref.moves++;
+						break;
 					case SNESInputEvent.SNES_LEFT :
 						movesMade.add(new PlayerMovement(loc, MOVE_LEFT));
 						loc = moveLeft(loc);
@@ -172,9 +181,6 @@ public class MenuGame extends Container implements SNESControllable {
 					case SNESInputEvent.SNES_START :
 						movesMade.add(new PlayerMovement(loc, PRESS_START));
 						pressStart();
-						break;
-					case SNESInputEvent.SNES_L | SNESInputEvent.SNES_R :
-						forfeit();
 						break;
 				}
 		});
@@ -189,6 +195,7 @@ public class MenuGame extends Container implements SNESControllable {
 
 	public void forfeit() {
 		waiter.cancel();
+		removeFromController(controls);
 		fireGameOverEvent();
 	}
 

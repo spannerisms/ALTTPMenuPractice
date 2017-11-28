@@ -427,7 +427,7 @@ public final class MenuGameConstants {
 	public static BufferedImage makePrettyBorderDisabled(int size) {
 		BufferedImage ret = new BufferedImage((size + 2) * 8, 24, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = ret.getGraphics();
-	
+
 		int i = 0;
 		g.drawImage(PRETTY_BORDER_LEFT_DISABLED, i++ * 8, 0, null);
 
