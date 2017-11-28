@@ -85,7 +85,7 @@ public class SetupTheStuff {
 		DX8 ("jinput-dx8", "dll"),
 		DX8_64 ("jinput-dx8_64", "dll"),
 		RAW ("jinput-raw", "dll"),
-		RAW_64 ("jinput-raw", "dll"),
+		RAW_64 ("jinput-raw_64", "dll"),
 		WINTAB ("jinput-wintab", "dll"),
 		LINUX ("libjinput-linux", "so"),
 		LINUX_64 ("libjinput-linux64", "so"),
