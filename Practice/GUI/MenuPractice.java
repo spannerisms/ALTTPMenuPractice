@@ -1,5 +1,6 @@
 package Practice.GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -30,7 +31,6 @@ import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.html.HTMLDocument;
@@ -39,6 +39,7 @@ import javax.swing.text.html.StyleSheet;
 
 import Practice.ScoreCard;
 import Practice.Controls.ControlMapper;
+import Practice.Controls.ControllerHandler;
 import Practice.Controls.SNESControllable;
 import Practice.Listeners.SNESInputEvent;
 import Practice.Listeners.SNESInputListener;
@@ -80,7 +81,18 @@ public class MenuPractice implements SNESControllable {
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				try {
+					// try to get the controller environment
+					// if this fails, it means the user is missing some files,
+					// so tell the user to add those files there
+					@SuppressWarnings("unused")
+					Object o = ControlMapper.defaultController;
+				} catch (ExceptionInInitializerError e) {
+					MenuPractice.showWarning();
+					return;
+				}
 				new MenuPractice().doTheGUI();
+				//MenuPractice.showWarning();
 			}
 		});
 	}
@@ -93,10 +105,6 @@ public class MenuPractice implements SNESControllable {
 		} catch (Exception e2) {
 				// do nothing
 		} //end System
-
-		// fast and long-lasting tooltips
-		ToolTipManager.sharedInstance().setInitialDelay(100);
-		ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE); // 596:31:23.647
 
 		final IntHolder turn = new IntHolder();
 		turn.increment();
@@ -126,9 +134,11 @@ public class MenuPractice implements SNESControllable {
 				SpringLayout.NORTH, wrap);
 		wrap.add(hooker);
 
+		// controller
+		ControllerHandler controls = ControlMapper.defaultController;
 		// game
 		GameContainer gamePlayer = new GameContainer();
-		gamePlayer.setController(ControlMapper.defaultController);
+		gamePlayer.setController(controls);
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
@@ -139,7 +149,7 @@ public class MenuPractice implements SNESControllable {
 		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
 				SpringLayout.SOUTH, wrap);
 		wrap.add(gamePlayer);
-		
+
 		// scores
 		JDialog scoreFrame = new JDialog(frame, "Performance scores");
 		scoreFrame.setSize(CHART_D);
@@ -193,14 +203,14 @@ public class MenuPractice implements SNESControllable {
 		JButton clear = new JButton("Reset");
 		clear.setFocusable(false);
 
-		Task clearData = () -> {
+		DialogTask clearData = (b) -> {
 			hiscore.setText("0");
 			totalScore.set(0);
 			turn.set(1);
 			model.clear();
 		};
 
-		clear.addActionListener(arg0 -> clearData.doThing());
+		clear.addActionListener(arg0 -> clearData.switchWindow(false));
 
 		l.putConstraint(SpringLayout.EAST, clear, -10,
 				SpringLayout.WEST, scoreTotal);
@@ -212,20 +222,28 @@ public class MenuPractice implements SNESControllable {
 		TurnAnalyzer analysis = new TurnAnalyzer(frame);
 		JButton analyze = new JButton("Recap");
 
-		Task showAnalysis = () -> {
+		DialogTask showAnalysis = (b) -> {
 				int selectedRow = scores.getSelectedRow();
 				if (selectedRow != -1) {
 					analysis.setRef(model.getRow(selectedRow));
 				}
-				if (!analysis.isVisible()) {
+				if (analysis.isVisible()) {
+					if (b) {
+						analysis.setVisible(false);
+					}
+				} else {
+					if (scoreFrame.isVisible()) {
+						analysis.setLocation(hiscore.getLocationOnScreen().x,
+								scoreScroll.getLocationOnScreen().y);
+					} else {
+						analysis.setLocation(hooker.getLocationOnScreen());
+					}
 					analysis.setVisible(true);
-					analysis.setLocation(hiscore.getLocationOnScreen().x,
-							scoreScroll.getLocationOnScreen().y);
 				}
 			};
 
 		analyze.setFocusable(false);
-		analyze.addActionListener(arg0 -> showAnalysis.doThing());
+		analyze.addActionListener(arg0 -> showAnalysis.switchWindow(false));
 
 		ListSelectionModel scoreSel = scores.getSelectionModel();
 		scoreSel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -385,7 +403,9 @@ public class MenuPractice implements SNESControllable {
 
 		remap.addRemapListener(
 			arg0 -> {
+				controls.kill();
 				gamePlayer.setController(arg0.map);
+				addToController(arg0.map);
 				remap.setVisible(false);
 			});
 
@@ -407,16 +427,20 @@ public class MenuPractice implements SNESControllable {
 		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Boots.png"));
 		scoreShow.setIcon(boots);
 
-		Task showScores = () -> {
+		DialogTask showScores = (b) -> {
 				if (scoreFrame.isVisible()) {
-					scoreFrame.requestFocus();
+					if (b) {
+						scoreFrame.setVisible(false);
+					} else {
+						scoreFrame.requestFocus();
+					}
 				} else {
 					scoreFrame.setLocation(hooker.getLocationOnScreen());
 					scoreFrame.setVisible(true);
 				}
 			};
 
-		scoreShow.addActionListener(arg0 -> showScores.doThing());
+		scoreShow.addActionListener(arg0 -> showScores.switchWindow(false));
 		scoresMenu.add(scoreShow);
 
 		// colors
@@ -426,7 +450,7 @@ public class MenuPractice implements SNESControllable {
 		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/Practice/Images/Meta/Lamp dark.png"));
 		colorful.setIcon(lampOn);
 
-		Task colorize = () -> {
+		DialogTask colorize = (b) -> {
 				colors[0] = !colors[0];
 				if (colors[0]) {
 					colorful.setIcon(lampOn);
@@ -440,7 +464,7 @@ public class MenuPractice implements SNESControllable {
 				}
 			};
 
-		colorful.addActionListener(arg0 -> colorize.doThing());
+		colorful.addActionListener(arg0 -> colorize.switchWindow(false));
 
 		scoresMenu.add(colorful);
 
@@ -553,6 +577,7 @@ public class MenuPractice implements SNESControllable {
 				scores.setRowSelectionInterval(newSel, newSel);
 			};
 
+		addToController(controls);
 		this.addSNESInputListener(
 			arg0 -> {
 					if (arg0.getSource() == this) {
@@ -560,10 +585,10 @@ public class MenuPractice implements SNESControllable {
 					}
 					switch (arg0.getKey()) {
 						case SNESInputEvent.SNES_SELECT :
-							showScores.doThing();
+							showScores.switchWindow(true);
 							break;
 						case SNESInputEvent.SNES_X :
-							showAnalysis.doThing();
+							showAnalysis.switchWindow(true);
 							break;
 						case SNESInputEvent.SNES_R :
 							moveSel.moveDir(1);
@@ -572,10 +597,10 @@ public class MenuPractice implements SNESControllable {
 							moveSel.moveDir(-1);
 							break;
 						case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
-							clearData.doThing();
+							clearData.switchWindow(true);
 							break;
 						case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
-							colorize.doThing();
+							colorize.switchWindow(true);
 							break;
 					}
 				});
@@ -593,6 +618,51 @@ public class MenuPractice implements SNESControllable {
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(e);
 		}
+	}
+
+	/**
+	 * Warning with instructions for failed library loading
+	 */
+	public static void showWarning() {
+		// try to set LaF
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e2) {
+				// do nothing
+		} //end System
+		JFrame x = new JFrame();
+		x.setLayout(new BorderLayout());
+		x.setTitle("Libraries missing");
+		x.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		x.add(new JLabel(
+				String.join("",
+						new String[] {
+								"<html>",
+								"<div style=\"padding: 13px; font-size: 10px;\">",
+								"Your Java Runtime Environment does not contain all necessary libraries to run JInput.",
+								"<br /><br />",
+								"To remedy this, copy the files from the folder <tt>lib</tt> in this directory ",
+								"into your JRE's <tt>bin</tt> folder.",
+								"<br /><br />",
+								"JRE bin location:",
+								"<br />",
+								"\t\t<div style=\"text-indent:20px; font-weight: bold;\"><tt>",
+								System.getProperty("java.home"),
+								System.getProperty("file.separator"),
+								"bin",
+								"</tt></div>",
+								"<br />",
+								"Alternatively, you may open <tt>JInputLibrarySetup.jar</tt> ",
+								"as an administrator in command prompt to automatically copy those files to the correct location.",
+								"<br /><br />",
+								"The application will halt when you close this window.",
+								"</div>",
+								"</html>"
+				})),
+				BorderLayout.NORTH);
+		x.setMinimumSize(new Dimension(500,300));
+		x.setLocation(200, 200);
+		x.setVisible(true);
 	}
 
 	// implement snes inputs in doTheGUI
@@ -621,6 +691,10 @@ public class MenuPractice implements SNESControllable {
 		void increment() {
 			val++;
 		}
+	}
+
+	static interface DialogTask {
+		void switchWindow(boolean cameFromController);
 	}
 
 	static interface MoveSel {

@@ -40,14 +40,18 @@ public class CountDown extends JComponent {
 	Task count;
 	static final int COUNTS = 3;
 	int curCount;
-
+	boolean running = false;
 	public CountDown() {
 		this.setPreferredSize(MENU_SIZE);
 		count = () -> {
+			if (!running) { 
+				return;
+			}
 			curCount--;
 			switch (curCount) {
 				case -1 :
 					tick.cancel();
+					running = false;
 					fireGameOverEvent();
 					break;
 				// for the count down, continue counting and make a new background
@@ -68,11 +72,13 @@ public class CountDown extends JComponent {
 	public void newGame() {
 		tick = new Timer();
 		curCount = COUNTS;
+		running = true;
 		tick.schedule(new OpTask(count), COUNT_DOWN_WAIT);
 	}
 
 	public void kill() {
 		tick.cancel();
+		running = false;
 	}
 
 	public void paint(Graphics g) {

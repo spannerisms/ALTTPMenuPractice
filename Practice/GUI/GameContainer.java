@@ -171,6 +171,7 @@ public class GameContainer extends Container {
 					GameContainer.this.repaint();
 					playing.transferFocus();
 					fireGameOverEvent(arg0);
+					playing = null;
 				});
 		targ.setText("GET READY");
 		forfeit.setEnabled(true);
