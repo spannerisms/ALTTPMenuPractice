@@ -139,7 +139,7 @@ public class ControllerHandler {
 				case SNESInputEvent.SNES_UP :
 				case SNESInputEvent.SNES_DOWN :
 				case SNESInputEvent.SNES_RIGHT :
-					case SNESInputEvent.SNES_LEFT :
+				case SNESInputEvent.SNES_LEFT :
 					if (x.pressedThisFrame) {
 						pressesFiredDPad |= id;
 					}
