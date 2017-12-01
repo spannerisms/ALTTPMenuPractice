@@ -23,15 +23,15 @@ public class MenuGame extends Container implements SNESControllable {
 	// local vars
 	private ItemSlot[] list = new ItemSlot[20];
 	private ItemSlot[] listAtTurn;
+	private ArrayList<Integer> pickFrom;
+
 	private int target;
 	private int loc;
-	private ArrayList<Integer> pickFrom;
 
 	private ScoreCard ref;
 
-	// gameplay
-	final GameMode mode; // current game mode
-	final Difficulty dif; // current difficulty
+	final GameMode mode;
+	final Difficulty dif;
 
 	int currentTurn;
 	final int maxTurn;
@@ -76,8 +76,8 @@ public class MenuGame extends Container implements SNESControllable {
 		showStartStudy = dif.showStartDuringStudy;
 
 		this.controls = controls;
-		this.whineToMommy();
 		addToController(this.controls);
+		this.whineToMommy();
 		addSNESInput();
 	}
 

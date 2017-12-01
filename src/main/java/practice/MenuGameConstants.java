@@ -41,7 +41,7 @@ public final class MenuGameConstants {
 	public static final byte MOVE_DOWN = 0b001;
 	public static final byte MOVE_RIGHT = 0b010;
 	public static final byte MOVE_LEFT = 0b011;
-	public static final byte PRESS_START = 0b100;
+	public static final byte PRESS_START = 0b100; // used for playback of user
 	public static final byte[] MOVES = { MOVE_UP, MOVE_DOWN, MOVE_RIGHT, MOVE_LEFT };
 
 	// the first 4 bits are the number of moves in this set
@@ -51,9 +51,36 @@ public final class MenuGameConstants {
 	// every 2 bits form the token for a single move
 	// the moves are counted from right to left
 
-	static {// do all move patterns
+	static { // do all move patterns
 		for (int i = 1; i < 5; i++) {
 			addToPattern(0, 1, i);
+		}
+	}
+
+	/**
+	 * @param p - pattern
+	 * @param l - current nest level
+	 * @param m - number of moves
+	 */
+	private static void addToPattern(int p, int l, int m) {
+		for (int i = 0; i < 4; i++) {
+			int pattern = p | (MOVES[i] << (2 * (l - 1)));
+			if (l > 1) { // not the first move
+				int prevMove = (p >> (2 * (l-2))) & 0b11; // get previous move
+				// uses an XOR to see if the move is the opposite of the last move
+				// because the first bit plane defines the axis
+				// and the second bit plane defines the direction
+				// only same axis different direction will produce 0b01
+				if ((MOVES[i] ^ prevMove) == 0b01) {
+					continue;
+				}
+			}
+			if (l == m) { // bottom level, just add
+				pattern |= m << COUNT_OFFSET; // add number of moves
+				ALL_POSSIBLE_MOVES.add(pattern);
+			} else { // next move
+				addToPattern(pattern, l+1, m);
+			}
 		}
 	}
 
@@ -61,11 +88,14 @@ public final class MenuGameConstants {
 	public static final int BG_WIDTH = 152;
 	public static final int BG_HEIGHT = 120;
 	public static final int ZOOM = 3;
+
 	public static final Dimension MENU_SIZE = new Dimension(BG_WIDTH * ZOOM + 5, BG_HEIGHT * ZOOM + 5);
 	public static final Dimension MENU_SIZE_X2 = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
 
 	// images
 	public static final BufferedImage BACKGROUND;
+	public static final BufferedImage CREDITS;
+
 	public static final BufferedImage CURSOR;
 	public static final BufferedImage TARGET_CURSOR;
 
@@ -74,6 +104,7 @@ public final class MenuGameConstants {
 
 	public static final BufferedImage FONT_SPRITES;
 	public static final BufferedImage FONT_SPRITES_SMALL;
+
 	public static final BufferedImage COMPASS;
 	public static final BufferedImage MAP;
 
@@ -88,8 +119,6 @@ public final class MenuGameConstants {
 	public static final BufferedImage PRETTY_BORDER_DISABLED;
 	public static final BufferedImage PRETTY_BORDER_RIGHT_DISABLED;
 	public static final BufferedImage PRETTY_BORDER_LEFT_DISABLED;
-
-	public static final BufferedImage CREDITS;
 
 	static {
 		BufferedImage temp;
@@ -157,7 +186,6 @@ public final class MenuGameConstants {
 		OPTIMAL_MOVES[PRESS_START] = TARGET_CURSOR;
 
 		// player path arrows
-		// optimal path arrows
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player up.png"));
 		} catch (Exception e) {
@@ -268,7 +296,6 @@ public final class MenuGameConstants {
 		PRETTY_BORDER_INSET_LEFT = temp;
 
 		// disabled gray border
-		// border making
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-disabled.png"));
 		} catch (Exception e) {
@@ -291,34 +318,6 @@ public final class MenuGameConstants {
 		PRETTY_BORDER_LEFT_DISABLED = temp;
 	}
 
-	/**
-	 * @param p - pattern
-	 * @param l - current nest level
-	 * @param m - number of moves
-	 */
-	private static void addToPattern(int p, int l, int m) {
-
-		for (int i = 0; i < 4; i++) {
-			int pattern = p | (MOVES[i] << (2 * (l - 1)));
-			if (l > 1) { // not the first move
-				int prevMove = (p >> (2 * (l-2))) & 0b11; // get previous move
-				// uses an XOR to see if the move is the opposite of the last move
-				// because the first bit plane defines the axis
-				// and the second bit plane defines the direction
-				// only same axis different direction will produce 0b01
-				if ((MOVES[i] ^ prevMove) == 0b01) {
-					continue;
-				}
-			}
-			if (l == m) { // bottom level, just add
-				pattern |= m << COUNT_OFFSET; // add number of moves
-				ALL_POSSIBLE_MOVES.add(pattern);
-			} else { // next move
-				addToPattern(pattern, l+1, m);
-			}
-		}
-	}
-
 	// list of items with repeats to give some items higher chance of appearing
 	// only needs to be defined once
 	public static final ArrayList<Integer> ITEM_CHOOSER = new ArrayList<Integer>();
@@ -332,12 +331,26 @@ public final class MenuGameConstants {
 		}
 	}
 
-	public static final void draw(Graphics g, BufferedImage word, int x, int y) {
-		g.drawImage(word, (x * 8), (y * 8), null);
+	/**
+	 * Draws an image onto a graphics with coordinates multiplied by 8
+	 * @param g
+	 * @param word
+	 * @param x
+	 * @param y
+	 */
+	public static final void draw(Graphics g, BufferedImage i, int x, int y) {
+		g.drawImage(i, (x * 8), (y * 8), null);
 	}
 
-	public static final void drawSmall(Graphics g, BufferedImage word, int x, int y) {
-		g.drawImage(word, (x * 6), (y * 6), null);
+	/**
+	 * Draws an image onto a graphics with coordinates multiplied by 6
+	 * @param g
+	 * @param word
+	 * @param x
+	 * @param y
+	 */
+	public static final void drawSmall(Graphics g, BufferedImage i, int x, int y) {
+		g.drawImage(i, (x * 6), (y * 6), null);
 	}
 
 	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-:<>!=/";
