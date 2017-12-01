@@ -148,7 +148,7 @@ public class MenuGame extends Container implements SNESControllable {
 				int key = arg0.getKey();
 
 				// forfeit controls need to operate outside of the game controls
-				if (key == (SNESInputEvent.SNES_L | SNESInputEvent.SNES_R)) { // logical or
+				if (key == (SNESInputEvent.SNES_L | SNESInputEvent.SNES_R)) { // bitwise or
 						forfeit();
 				}
 
