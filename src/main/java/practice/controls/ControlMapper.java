@@ -71,13 +71,13 @@ public class ControlMapper extends JDialog {
 		defaultMappings :
 		for (SNESButton s : SNESButton.values()) {
 			for (Component c : comp) {
-				if (c.getIdentifier() == s.defaultKeyboardKey) {
+				if (c.getIdentifier() == s.getDefaultButton(ControllerType.KEYBOARD)) {
 					use[i++] = c;
 					continue defaultMappings;
 				}
 			}
 		}
-		defaultController = new ControllerHandler(keyboard, use);
+		defaultController = null;
 	}
 
 	JPanel comboArea = new JPanel();

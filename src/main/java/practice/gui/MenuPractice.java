@@ -363,6 +363,17 @@ public class MenuPractice implements SNESControllable {
 		}
 
 		pos++;
+		drawSmall(credits, makeWordImageSmall("CONTROLLER RESEARCH:"), 2, pos++);
+		testers = new String[] {
+				"Fish",
+				"Harb",
+		};
+
+		for (int i = 0; i < testers.length; i++) {
+			drawSmall(credits, makeWordImageSmall(testers[i]), 4, pos++);
+		}
+
+		pos++;
 		drawSmall(credits, makeWordImageSmall("LISTED FOR TRADITION:"), 2, pos++);
 		drawSmall(credits, makeWordImageSmall("MIKETRETHEWEY"), 4, pos++);
 
