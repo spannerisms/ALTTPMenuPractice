@@ -199,6 +199,7 @@ public class ControlMapper extends JDialog {
 
 	private ItemListener boxRead = arg0 -> {
 		activeController = (ContWrapper) curBox.getSelectedItem();
+		setControlWrapper(activeController);
 	};
 
 	private void newComboBox() {
