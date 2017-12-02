@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
-import net.java.games.input.*;
-
 public final class MenuGameConstants {
 	private MenuGameConstants() {};
 

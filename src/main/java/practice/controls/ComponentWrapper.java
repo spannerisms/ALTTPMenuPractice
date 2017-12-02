@@ -29,7 +29,7 @@ public class ComponentWrapper {
 				if (ms > 0) { // if still held from last poll and that last poll was not the last millisecond of a frame
 					heldDuringFrame = true;
 				}
-			} else if (held(d)) { // if it's polled as not pressed
+			} else { // if it's polled as not pressed
 				beingHeld = false;
 			}
 		} else { // if the button wasn't down last poll
@@ -37,7 +37,7 @@ public class ComponentWrapper {
 				beingHeld = true;
 				heldDuringFrame = true;
 				pressedThisFrame = true; // fire only for new presses
-			} else if (held(d)) {
+			} else {
 				// do nothing
 			}
 		}

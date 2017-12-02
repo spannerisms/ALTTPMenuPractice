@@ -3,6 +3,8 @@ package practice.controls;
 import static net.java.games.input.Component.*;
 import static net.java.games.input.Component.Identifier.Button.*;
 
+import net.java.games.input.Controller;
+
 public enum ControllerType {
 	KEYBOARD ( DirectionType.DPAD,
 			Key.UP, Key.DOWN, Key.RIGHT, Key.LEFT,
@@ -18,6 +20,8 @@ public enum ControllerType {
 			"XBOX 360 For Windows (Controller)");
 
 	private final String[] names;
+
+	public final DirectionType dType;
 
 	public final Identifier hatSwitch;
 
@@ -37,7 +41,8 @@ public enum ControllerType {
 	public final Identifier defaultStart;
 	public final Identifier defaultSelect;
 
-	public final Class<?> buttonType;
+	public final Class<? extends Identifier> buttonType;
+	public final Class<? extends Identifier> moveType;
 
 	private ControllerType(
 			DirectionType d,
@@ -46,6 +51,8 @@ public enum ControllerType {
 			Identifier defaultR, Identifier defaultL,
 			Identifier defaultStart, Identifier defaultSelect,
 			String... names) {
+
+		dType = d;
 
 		if (defaultUp instanceof Identifier.Axis) {
 			this.hatSwitch = defaultUp;
@@ -72,9 +79,10 @@ public enum ControllerType {
 		this.names = names;
 
 		buttonType = defaultStart.getClass();
+		moveType = defaultUp.getClass();
 	}
 
-	public ControllerType getTypeFromName(String n) {
+	private static ControllerType getTypeFromName(String n) {
 		ControllerType ret = null;
 		typeSearch :
 		for (ControllerType t : values()) {
@@ -86,6 +94,13 @@ public enum ControllerType {
 			}
 		}
 		return ret;
+	}
+
+	public static ControllerType inferType(Controller c) {
+		if (c.getType() == Controller.Type.KEYBOARD) {
+			return KEYBOARD;
+		}
+		return getTypeFromName(c.getName());
 	}
 
 	public Identifier getDefaultButton(SNESButton b) {

@@ -28,4 +28,19 @@ public class HatSwitchHandler extends ControllerHandler {
 			new ComponentWrapper(select, SNESInputEvent.SNES_SELECT, ON)
 		);
 	}
+
+	public HatSwitchHandler(Controller c, Component[] list) {
+		this(
+			c,
+			list[0],
+			list[4],
+			list[5],
+			list[6],
+			list[7],
+			list[8],
+			list[9],
+			list[10],
+			list[11]
+		);
+	}
 }

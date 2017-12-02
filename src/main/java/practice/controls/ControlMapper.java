@@ -6,8 +6,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ItemListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,24 +31,38 @@ public class ControlMapper extends JDialog {
 	private static final Dimension PREF_D = new Dimension(200, 400);
 	private static final Dimension TEXT_D = new Dimension(100, 17);
 
-	private KeyWrapper[] list = new KeyWrapper[SNESButton.values().length];
+	private static ContWrapper[] controllerList = refreshList();
+	private CompWrapper[] list = new CompWrapper[SNESButton.values().length];
 
-	private Controller[] controllerList = refreshList();
-
-	static final Controller[] refreshList() {
+	static final ContWrapper[] refreshList() {
 		ControllerEnvironment env = ControllerEnvironment.getDefaultEnvironment();
-		ArrayList<Controller> ret = new ArrayList<Controller>();
+		ArrayList<ContWrapper> ret = new ArrayList<ContWrapper>();
 		for (Controller c : env.getControllers()) {
 			Controller.Type t = c.getType();
+
 			if (t.equals(Controller.Type.GAMEPAD) ||
 					t.equals(Controller.Type.KEYBOARD)) {
-				ret.add(c);
-			}
-		}
+				Component[] comp = c.getComponents();
+				CompWrapper[] use = new CompWrapper[12];
+				int i = 0;
+				ControllerType type = ControllerType.inferType(c);
 
-		Controller[] r = new Controller[ret.size()];
+				defaultMappings :
+				for (SNESButton s : SNESButton.values()) {
+					for (Component x : comp) {
+						if (x.getIdentifier() == s.getDefaultButton(type)) {
+							use[i++] = new CompWrapper(x);
+							continue defaultMappings;
+						}
+					} // end components
+				} // end buttons
+				ret.add(new ContWrapper(c, use));
+			} // end valid type if
+		} // end controller loop
+
+		ContWrapper[] r = new ContWrapper[ret.size()];
 		int i = 0;
-		for (Controller a : ret) {
+		for (ContWrapper a : ret) {
 			r[i++] = a;
 		}
 		return r;
@@ -55,39 +70,28 @@ public class ControlMapper extends JDialog {
 
 	// default controller
 	public static final ControllerHandler defaultController;
+	private static ContWrapper keyboard;
 
 	static {
-		Controller[] list = refreshList();
-		Controller keyboard = null;
-		for (Controller c : list) {
-			if (c.getType().equals(Controller.Type.KEYBOARD)) {
+		for (ContWrapper c : controllerList) {
+			if (c.c.getType().equals(Controller.Type.KEYBOARD)) {
 				keyboard = c;
 				break;
 			}
 		}
-		Component[] comp = keyboard.getComponents();
-		Component[] use = new Component[12];
-		int i = 0;
-		defaultMappings :
-		for (SNESButton s : SNESButton.values()) {
-			for (Component c : comp) {
-				if (c.getIdentifier() == s.getDefaultButton(ControllerType.KEYBOARD)) {
-					use[i++] = c;
-					continue defaultMappings;
-				}
-			}
-		}
-		defaultController = new DPadHandler(keyboard,
-				use[0], use[1], use[2], use[3],
-				use[4], use[5], use[6], use[7],
-				use[8], use[9], use[10], use[11]
-				);
+
+		defaultController = makeControllerHandler(keyboard);
 	}
 
+	JComboBox<ContWrapper> curBox;
 	JPanel comboArea = new JPanel();
+	JPanel compArea = new JPanel();
+	ControlCustomizer customizer = new ControlCustomizer();
+	ContWrapper activeController;
 
 	public ControlMapper(JFrame frame) {
 		super(frame, "Configure");
+		activeController = controllerList[0];
 		initialize();
 	}
 
@@ -107,25 +111,16 @@ public class ControlMapper extends JDialog {
 		newComboBox();
 		c.gridy++;
 		c.gridx = 0;
-		c.gridwidth = 2;
 		this.add(comboArea, c);
-		c.gridwidth = 1;
 
-		int i = 0;
-		for (SNESButton b : SNESButton.values()) {
-			JLabel lbl = new JLabel(b.name);
-			KeyWrapper k = new KeyWrapper(0);
-			list[i++] = k;
-			c.gridy++;
-			c.gridx = 0;
-			this.add(lbl, c);
-			c.gridx = 1;
-			this.add(k.text, c);
-		}
+		compArea.setLayout(new GridBagLayout());
+		setComponentArea();
+		c.gridy++;
+		c.gridx = 0;
+		this.add(compArea, c);
 
 		// apply
 		JButton confirm = new JButton("Apply");
-		c.gridwidth = 2;
 		c.gridy++;
 		c.gridx = 0;
 		this.add(confirm, c);
@@ -138,7 +133,6 @@ public class ControlMapper extends JDialog {
 		no.setBorder(null);
 		no.setHorizontalAlignment(SwingConstants.CENTER);
 		no.setSize(TEXT_D);
-		c.gridwidth = 2;
 		c.gridy++;
 		this.add(no, c);
 
@@ -146,13 +140,13 @@ public class ControlMapper extends JDialog {
 			arg0 -> {
 				boolean okToGo = true;
 				dupeSearch :
-				for (KeyWrapper e : list) {
+				for (CompWrapper e : list) {
 					dupeMatch :
-					for (KeyWrapper k : list) {
+					for (CompWrapper k : list) {
 						if (e == k) {
 							continue dupeMatch;
 						}
-						if (e.i == k.i) {
+						if (e.c == k.c) {
 							okToGo = false;
 							break dupeSearch;
 						}
@@ -164,73 +158,96 @@ public class ControlMapper extends JDialog {
 					no.setBackground(null);
 					fireRemapEvent();
 				} else {
-					System.out.println("A");
 					no.setText("DUPLICATE KEYS");
 					no.setForeground(Color.WHITE);
 					no.setBackground(Color.RED);
 				}
 			});
+
+		customizer.addComponentPollListener(
+			arg0 -> {
+				CompWrapper f = focusedDude();
+				if (f != null) {
+					f.setComp(arg0.comp);
+					repaint();
+				}
+			});
+		customizer.setController(activeController.c);
 	}
 
+	private void setComponentArea() {
+		compArea.removeAll();
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipadx = 4;
+		c.ipady = 2;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.gridy = -1;
+
+		int i = 0;
+		for (SNESButton b : SNESButton.values()) {
+			JLabel lbl = new JLabel(b.name);
+			CompWrapper k = activeController.list[i];
+			list[i++] = k;
+			c.gridy++;
+			c.gridx = 0;
+			compArea.add(lbl, c);
+			c.gridx = 1;
+			compArea.add(k.text, c);
+		}
+	}
+
+	private ItemListener boxRead = arg0 -> {
+		activeController = (ContWrapper) curBox.getSelectedItem();
+	};
+
 	private void newComboBox() {
-		controllerList = refreshList();
+		if (curBox != null) {
+			curBox.removeItemListener(boxRead);
+		}
 		comboArea.removeAll();
-		JComboBox<Controller> add = new JComboBox<Controller>(controllerList);
-		comboArea.add(add);
+		curBox = new JComboBox<ContWrapper>(controllerList);
+		comboArea.add(curBox);
+		setControlWrapper(curBox.getItemAt(0));
+		curBox.addItemListener(boxRead);
 		revalidate();
 	}
 
-	private ControllerHandler makeController() {
-		return null;
+	private static ControllerHandler makeControllerHandler(ContWrapper w) {
+		ControllerHandler ret = null;
+		Class<? extends ControllerHandler> hClass = w.t.dType.handler;
+		try {
+			Constructor<? extends ControllerHandler> ctor = hClass.getDeclaredConstructor(Controller.class, Component[].class);
+			ret = ctor.newInstance((Controller) w.c, (Component[]) w.getList());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
-	static class KeyWrapper {
-		int i;
-		final JTextField text;
+	private void setControlWrapper(ContWrapper c) {
+		activeController = c;
+		customizer.setController(activeController.c);
+		repaint();
+	}
 
-		KeyWrapper(int i) {
-			this.i = i;
-			text = new JTextField();
-			text.setPreferredSize(TEXT_D);
-			text.setMinimumSize(TEXT_D);
-			text.setHorizontalAlignment(SwingConstants.CENTER);
-			setKey(i);
-			text.setEditable(false);
-			text.addFocusListener(new FocusListener() {
-				public void focusGained(FocusEvent arg0) {
-					text.setBackground(Color.YELLOW);
-				}
-				public void focusLost(FocusEvent arg0) {
-					text.setBackground(null);
-				}});
-			text.addKeyListener(new KeyListener() {
-				public void keyPressed(KeyEvent arg0) {
-					int p = arg0.getKeyCode();
-					switch (p) { // switch statement to just cancel invalid keys
-						case KeyEvent.VK_CAPS_LOCK :
-						case KeyEvent.VK_NUM_LOCK :
-						case KeyEvent.VK_SCROLL_LOCK :
-						case KeyEvent.VK_WINDOWS :
-						case KeyEvent.VK_SHIFT :
-						case KeyEvent.VK_CONTROL :
-						case KeyEvent.VK_ALT :
-						case KeyEvent.VK_ESCAPE :
-						case KeyEvent.VK_KANA_LOCK :
-							return; // TODO : better catch?
-					}
-					setKey(p);
-				}
-
-				public void keyReleased(KeyEvent arg0) {}
-				public void keyTyped(KeyEvent arg0) {}
-			});
+	private CompWrapper focusedDude() {
+		if (activeController == null) {
+			return null;
 		}
-
-		public void setKey(int p) {
-			String n = KeyEvent.getKeyText(p);
-			text.setText(n.toUpperCase());
-			i = p;
+		CompWrapper ret = null;
+		for (CompWrapper c : activeController.list) {
+			if (c.active) {
+				ret = c;
+				break;
+			}
 		}
+		return ret;
+	}
+
+	public void setRunning(boolean r) {
+		customizer.setRunning(r);
 	}
 
 	/*
@@ -242,10 +259,67 @@ public class ControlMapper extends JDialog {
 	}
 
 	private synchronized void fireRemapEvent() {
-		RemapEvent te = new RemapEvent(this, makeController());
+		RemapEvent te = new RemapEvent(this, makeControllerHandler(activeController));
 		Iterator<RemapListener> listening = doneListen.iterator();
 		while(listening.hasNext()) {
 			(listening.next()).eventReceived(te);
+		}
+	}
+
+	static class ContWrapper {
+		final Controller c;
+		final CompWrapper[] list;
+		final ControllerType t;
+
+		ContWrapper(Controller c, CompWrapper[] list) {
+			this.c = c;
+			this.list = list;
+			t = ControllerType.inferType(c);
+		}
+
+		public String toString() {
+			return c.getName();
+		}
+
+		Component[] getList() {
+			Component[] ret = new Component[12];
+			for (int i = 0; i < 12; i++) {
+				ret[i] = list[i].c;
+			}
+			return ret;
+		}
+	}
+
+	static class CompWrapper {
+		Component c;
+		final JTextField text;
+		boolean active;
+
+		CompWrapper(Component c) {
+			this.c = c;
+			text = new JTextField();
+			text.setPreferredSize(TEXT_D);
+			text.setMinimumSize(TEXT_D);
+			text.setHorizontalAlignment(SwingConstants.CENTER);
+
+			setComp(c);
+
+			text.setEditable(false);
+			text.addFocusListener(new FocusListener() {
+				public void focusGained(FocusEvent arg0) {
+					text.setBackground(Color.YELLOW);
+					active = true;
+				}
+
+				public void focusLost(FocusEvent arg0) {
+					text.setBackground(null);
+					active = false;
+				}});
+		}
+
+		public void setComp(Component c) {
+			this.c = c;
+			text.setText(c.getName());
 		}
 	}
 }

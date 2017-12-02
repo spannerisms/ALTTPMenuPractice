@@ -8,8 +8,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -139,11 +139,11 @@ public class MenuPractice implements SNESControllable {
 		wrap.add(hooker);
 
 		// controller
-		ControllerHandler controls = ControlMapper.defaultController;
+		ControllerHandler[] controls =  { ControlMapper.defaultController };
 
 		// game
 		GameContainer gamePlayer = new GameContainer();
-		gamePlayer.setController(controls);
+		gamePlayer.setController(controls[0]);
 
 		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
 				SpringLayout.WEST, wrap);
@@ -331,24 +331,7 @@ public class MenuPractice implements SNESControllable {
 		// input config
 		ControlMapper remap = new ControlMapper(frame);
 		remap.setModal(true);
-		remap.addWindowListener(new WindowListener() {
-				public void windowOpened(WindowEvent e) {
-					controls.setRunning(false);
-				}
-	
-				public void windowClosed(WindowEvent e) {
-					controls.setRunning(true);
-				}
-	
-				public void windowClosing(WindowEvent e) {}
-	
-	
-				public void windowIconified(WindowEvent e) {}
-	
-				public void windowDeiconified(WindowEvent e) {}
-				public void windowActivated(WindowEvent e) {}
-				public void windowDeactivated(WindowEvent e) {}
-			});
+
 		// credits
 		Dimension creditsD = new Dimension((CREDITS.getWidth() + 2) * ZOOM, (CREDITS.getHeight() + 15) * ZOOM);
 		final JDialog aboutFrame = new JDialog(frame, "About");
@@ -437,11 +420,28 @@ public class MenuPractice implements SNESControllable {
 
 		remap.addRemapListener(
 			arg0 -> {
-				controls.kill();
+				controls[0].kill();
 				gamePlayer.setController(arg0.map);
 				addToController(arg0.map);
 				remap.setVisible(false);
+				controls[0] = arg0.map;
 			});
+
+		remap.addComponentListener(new ComponentListener() {
+
+			public void componentResized(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
+
+			public void componentShown(ComponentEvent e) {
+				controls[0].setRunning(false);
+				remap.setRunning(true);
+			}
+
+			public void componentHidden(ComponentEvent e) {
+				controls[0].setRunning(true);
+				remap.setRunning(false);
+			}
+		});
 
 		fileMenu.addSeparator();
 
@@ -611,7 +611,7 @@ public class MenuPractice implements SNESControllable {
 				scores.setRowSelectionInterval(newSel, newSel);
 			};
 
-		addToController(controls);
+		addToController(controls[0]);
 		this.addSNESInputListener(
 			arg0 -> {
 					if (arg0.getSource() == this) {

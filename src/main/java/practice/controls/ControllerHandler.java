@@ -9,6 +9,7 @@ import practice.listeners.SNESInputListener;
 import net.java.games.input.*;
 
 import static practice.listeners.SNESInputEvent.*;
+
 /*
  * TODO:
  * menu cursor move time = 2 frames after input is read ?
@@ -45,6 +46,46 @@ public abstract class ControllerHandler {
 	protected final ComponentWrapper SELECT;
 
 	protected int ms; // counts to 16 then resets, to simulate doing an action once every frame
+	protected boolean dead = false;
+
+	public ControllerHandler(Controller c, Component[] list) {
+		this(
+			c,
+			list[0],
+			list[1],
+			list[2],
+			list[3],
+			list[4],
+			list[5],
+			list[6],
+			list[7],
+			list[8],
+			list[9],
+			list[10],
+			list[11]
+		);
+	}
+
+	public ControllerHandler(Controller c,
+			Component up, Component down, Component right, Component left,
+			Component a, Component b, Component x, Component y,
+			Component r, Component l, Component start, Component select) {
+		this(
+			c,
+			new ComponentWrapper(up, SNESInputEvent.SNES_UP, ON),
+			new ComponentWrapper(down, SNESInputEvent.SNES_DOWN, ON),
+			new ComponentWrapper(right, SNESInputEvent.SNES_RIGHT, ON),
+			new ComponentWrapper(left, SNESInputEvent.SNES_LEFT, ON),
+			new ComponentWrapper(a, SNESInputEvent.SNES_A, ON),
+			new ComponentWrapper(b, SNESInputEvent.SNES_B, ON),
+			new ComponentWrapper(x, SNESInputEvent.SNES_X, ON),
+			new ComponentWrapper(y, SNESInputEvent.SNES_Y, ON),
+			new ComponentWrapper(r, SNESInputEvent.SNES_R, ON),
+			new ComponentWrapper(l, SNESInputEvent.SNES_L, ON),
+			new ComponentWrapper(start, SNESInputEvent.SNES_START, ON),
+			new ComponentWrapper(select, SNESInputEvent.SNES_SELECT, ON)
+		);
+	}
 
 	protected ControllerHandler(Controller c,
 			ComponentWrapper up, ComponentWrapper down, ComponentWrapper right, ComponentWrapper left,
@@ -84,23 +125,29 @@ public abstract class ControllerHandler {
 		snes = null;
 
 		ticker = new Thread(new Runnable() {
-				public void run(){
+			public void run(){
+				while (true) {
 					try {
-						Thread.sleep(TICK);
-						synchronized(this) {
-							while(!running) {
-								wait();
+						if (running) {
+							Thread.sleep(TICK);
+							pollAll();
+							ms++;
+							if (ms == 17) {
+								ms = 0;
+								setUpAndFireEvents();
+							}
+						} else {
+							synchronized (ticker) {
+								ticker.wait();
 							}
 						}
-					} catch (Exception e) {}
-					pollAll();
-					ms++;
-					if (ms == 17) {
-						ms = 0;
-						setUpAndFireEvents();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
-			});
+			}
+		});
+
 		ticker.start();
 	}
 
@@ -152,6 +199,7 @@ public abstract class ControllerHandler {
 			} else if ((pressesFiredDPad & SNES_RIGHT) > 0) {
 				fire = SNES_RIGHT;
 			}
+			System.out.println(fire);
 			fireEvents(new SNESInputEvent(this, fire));
 		}
 		if (pressesFiredAll != 0) {
@@ -159,16 +207,16 @@ public abstract class ControllerHandler {
 		}
 	}
 
-	public void kill() {
+	public synchronized void kill() {
+		dead = true;
 		running = false;
 		ticker = null;
 		children.clear();
 	}
 
 	public synchronized void addChild(SNESControllable kid) {
-		if (children.contains(kid)) {
-			return;
-		}
+		if (dead) { return; }
+		if (children.contains(kid)) { return; }
 		children.add(kid);
 	}
 
@@ -178,22 +226,25 @@ public abstract class ControllerHandler {
 	}
 
 	// requests full focus of the controller
-	public void kidWhined(SNESControllable kid) {
+	public synchronized void kidWhined(SNESControllable kid) {
 		if (children.contains(kid)) {
 			brat = kid;
 		}
 	}
 
-	public void kidCalmed(SNESControllable kid) {
+	public synchronized void kidCalmed(SNESControllable kid) {
 		if (brat == kid) { // can't let some other brat steal this kid's spotlight
 			brat = null;
 		}
 	}
 
-	public void setRunning(boolean r) {
+	public synchronized void setRunning(boolean r) {
+		if (dead) { return; }
 		running = r;
 		if (running) {
-			ticker.notify();
+			synchronized (ticker) {
+				ticker.notify();
+			}
 		}
 	}
 
@@ -205,6 +256,7 @@ public abstract class ControllerHandler {
 
 		ArrayList<SNESControllable> firing = new ArrayList<SNESControllable>();
 		firing.addAll(children);
+
 		Iterator<SNESControllable> i = firing.iterator();
 		while (i.hasNext()) {
 			(i.next()).fireSNESInputEvent(e);
