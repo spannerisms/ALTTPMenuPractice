@@ -11,10 +11,6 @@ import net.java.games.input.*;
 public final class MenuGameConstants {
 	private MenuGameConstants() {};
 
-	// controllers
-	public static final ControllerEnvironment CONTROLS_ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
-	public static final Controller[] CONTROLLER_LIST = CONTROLS_ENVIRONMENT.getControllers();
-
 	// location within the menu image to start for calculating
 	public static final int ITEM_ORIGIN_X = 24;
 	public static final int ITEM_ORIGIN_Y = 16;

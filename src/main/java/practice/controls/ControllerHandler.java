@@ -11,7 +11,7 @@ import net.java.games.input.*;
 import static practice.listeners.SNESInputEvent.*;
 /*
  * TODO:
- * menu cursor move time = 2 frames after input is read
+ * menu cursor move time = 2 frames after input is read ?
  */
 public abstract class ControllerHandler {
 	protected static final long TICK = 1;
@@ -86,17 +86,18 @@ public abstract class ControllerHandler {
 		ticker = new Thread(new Runnable() {
 				public void run(){
 					try {
-						while(running) {
-							pollAll();
-							ms++;
-							if (ms == 17) {
-								ms = 0;
-								setUpAndFireEvents();
+						Thread.sleep(TICK);
+						synchronized(this) {
+							while(!running) {
+								wait();
 							}
-							Thread.sleep(TICK);
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (Exception e) {}
+					pollAll();
+					ms++;
+					if (ms == 17) {
+						ms = 0;
+						setUpAndFireEvents();
 					}
 				}
 			});
@@ -186,6 +187,13 @@ public abstract class ControllerHandler {
 	public void kidCalmed(SNESControllable kid) {
 		if (brat == kid) { // can't let some other brat steal this kid's spotlight
 			brat = null;
+		}
+	}
+
+	public void setRunning(boolean r) {
+		running = r;
+		if (running) {
+			ticker.notify();
 		}
 	}
 

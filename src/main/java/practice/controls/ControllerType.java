@@ -5,19 +5,17 @@ import static net.java.games.input.Component.Identifier.Button.*;
 
 public enum ControllerType {
 	KEYBOARD ( DirectionType.DPAD,
-			null,
 			Key.UP, Key.DOWN, Key.RIGHT, Key.LEFT,
 			Key.Q, Key.W, Key.R, Key.E, Key.S, Key.A, Key.D, Key.F,
 			"Keyboard"),
 	MAYFLASH_GAMECUBE ( DirectionType.DPAD,
-			null,
 			_12, _14, _13, _15,
 			_1, _2, _0, _3, _5, _4, _9, _7,
 			"Mayflash GameCube Controller Adapter"),
 	WINDOWS_XBOW ( DirectionType.HAT,
-			Identifier.Axis.POV,
-			null, null, null, null,
-			_1, _0, _3, _2, _4, _5, _9, _6);
+			Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
+			_1, _0, _3, _2, _4, _5, _9, _6,
+			"XBOX 360 For Windows (Controller)");
 
 	private final String[] names;
 
@@ -43,14 +41,18 @@ public enum ControllerType {
 
 	private ControllerType(
 			DirectionType d,
-			Identifier hatSwitch,
 			Identifier defaultUp, Identifier defaultDown, Identifier defaultRight, Identifier defaultLeft,
 			Identifier defaultA, Identifier defaultB, Identifier defaultX, Identifier defaultY,
 			Identifier defaultR, Identifier defaultL,
 			Identifier defaultStart, Identifier defaultSelect,
 			String... names) {
 
-		this.hatSwitch = hatSwitch;
+		if (defaultUp instanceof Identifier.Axis) {
+			this.hatSwitch = defaultUp;
+		} else {
+			this.hatSwitch = null;
+		}
+
 		this.defaultUp = defaultUp;
 		this.defaultDown = defaultDown;
 		this.defaultRight = defaultRight;
@@ -69,7 +71,7 @@ public enum ControllerType {
 
 		this.names = names;
 
-		buttonType = defaultUp.getClass();
+		buttonType = defaultStart.getClass();
 	}
 
 	public ControllerType getTypeFromName(String n) {

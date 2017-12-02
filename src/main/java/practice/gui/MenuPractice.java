@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -78,6 +80,7 @@ public class MenuPractice implements SNESControllable {
 		HOW_TO_PLAY = ret.toString();
 	}
 
+	// main
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -88,6 +91,7 @@ public class MenuPractice implements SNESControllable {
 					@SuppressWarnings("unused")
 					Object o = ControlMapper.defaultController;
 				} catch (ExceptionInInitializerError e) {
+					e.printStackTrace();
 					MenuPractice.showWarning();
 					return;
 				}
@@ -136,6 +140,7 @@ public class MenuPractice implements SNESControllable {
 
 		// controller
 		ControllerHandler controls = ControlMapper.defaultController;
+
 		// game
 		GameContainer gamePlayer = new GameContainer();
 		gamePlayer.setController(controls);
@@ -325,7 +330,25 @@ public class MenuPractice implements SNESControllable {
 
 		// input config
 		ControlMapper remap = new ControlMapper(frame);
-
+		remap.setModal(true);
+		remap.addWindowListener(new WindowListener() {
+				public void windowOpened(WindowEvent e) {
+					controls.setRunning(false);
+				}
+	
+				public void windowClosed(WindowEvent e) {
+					controls.setRunning(true);
+				}
+	
+				public void windowClosing(WindowEvent e) {}
+	
+	
+				public void windowIconified(WindowEvent e) {}
+	
+				public void windowDeiconified(WindowEvent e) {}
+				public void windowActivated(WindowEvent e) {}
+				public void windowDeactivated(WindowEvent e) {}
+			});
 		// credits
 		Dimension creditsD = new Dimension((CREDITS.getWidth() + 2) * ZOOM, (CREDITS.getHeight() + 15) * ZOOM);
 		final JDialog aboutFrame = new JDialog(frame, "About");

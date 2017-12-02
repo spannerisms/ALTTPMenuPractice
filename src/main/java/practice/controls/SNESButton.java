@@ -22,50 +22,47 @@ public enum SNESButton {
 
 	private SNESButton(String name) {
 		this.name = name;
-		ID = getKey();
-	}
-
-	private final int getKey() {
-		int ret = -1;
-		switch(this) {
-			case UP :
-				ret = SNESInputEvent.SNES_UP;
+		switch(this.name()) {
+			case "UP" :
+				ID = SNESInputEvent.SNES_UP;
 				break;
-			case DOWN :
-				ret = SNESInputEvent.SNES_DOWN;
+			case "DOWN" :
+				ID = SNESInputEvent.SNES_DOWN;
 				break;
-			case RIGHT :
-				ret = SNESInputEvent.SNES_RIGHT;
+			case "RIGHT" :
+				ID = SNESInputEvent.SNES_RIGHT;
 				break;
-			case LEFT :
-				ret = SNESInputEvent.SNES_LEFT;
+			case "LEFT" :
+				ID = SNESInputEvent.SNES_LEFT;
 				break;
-			case A :
-				ret = SNESInputEvent.SNES_A;
+			case "A" :
+				ID = SNESInputEvent.SNES_A;
 				break;
-			case B :
-				ret = SNESInputEvent.SNES_B;
+			case "B" :
+				ID = SNESInputEvent.SNES_B;
 				break;
-			case X :
-				ret = SNESInputEvent.SNES_X;
+			case "X" :
+				ID = SNESInputEvent.SNES_X;
 				break;
-			case Y :
-				ret = SNESInputEvent.SNES_Y;
+			case "Y" :
+				ID = SNESInputEvent.SNES_Y;
 				break;
-			case R :
-				ret = SNESInputEvent.SNES_R;
+			case "R" :
+				ID = SNESInputEvent.SNES_R;
 				break;
-			case L :
-				ret = SNESInputEvent.SNES_L;
+			case "L" :
+				ID = SNESInputEvent.SNES_L;
 				break;
-			case START :
-				ret = SNESInputEvent.SNES_START;
+			case "START" :
+				ID = SNESInputEvent.SNES_START;
 				break;
-			case SELECT :
-				ret = SNESInputEvent.SNES_SELECT;
+			case "SELECT" :
+				ID = SNESInputEvent.SNES_SELECT;
+				break;
+			default :
+				ID = 0;
 				break;
 		}
-		return ret;
 	}
 
 	public Identifier getDefaultButton(ControllerType t) {
