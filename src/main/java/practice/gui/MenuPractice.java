@@ -59,7 +59,7 @@ public class MenuPractice implements SNESControllable {
 	static final ScoreTableRenderer SCORE_TABLE = new ScoreTableRenderer(true);
 
 	static final String HOW_TO_PLAY;
-	static final String DATA_PATH = "/Practice/GUI/howtoplay.html";
+	static final String DATA_PATH = "howtoplay.html";
 
 	static {
 		StringBuilder ret = new StringBuilder();
