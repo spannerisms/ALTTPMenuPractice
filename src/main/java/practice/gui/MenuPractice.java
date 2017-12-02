@@ -49,7 +49,7 @@ import practice.listeners.SNESInputListener;
 import static practice.MenuGameConstants.*;
 
 public class MenuPractice implements SNESControllable {
-	static final String VERSION = "v0.9-beta";
+	static final String VERSION = "v0.11-beta";
 
 	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
@@ -95,7 +95,12 @@ public class MenuPractice implements SNESControllable {
 					MenuPractice.showWarning();
 					return;
 				}
-				new MenuPractice().doTheGUI();
+				try {
+					new MenuPractice().doTheGUI();
+				} catch (ExceptionInInitializerError e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
 				//MenuPractice.showWarning();
 			}
 		});
@@ -404,7 +409,7 @@ public class MenuPractice implements SNESControllable {
 
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure keybinds");
-		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/images/Meta/Mitts.png"));
+		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/images/meta/Mitts.png"));
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
 
@@ -447,7 +452,7 @@ public class MenuPractice implements SNESControllable {
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
-		ImageIcon mirror = new ImageIcon(MenuPractice.class.getResource("/images/Meta/Mirror.png"));
+		ImageIcon mirror = new ImageIcon(MenuPractice.class.getResource("/images/meta/Mirror.png"));
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
@@ -458,7 +463,7 @@ public class MenuPractice implements SNESControllable {
 
 		// show scores
 		final JMenuItem scoreShow = new JMenuItem("Performance chart");
-		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/images/Meta/Boots.png"));
+		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/images/meta/Boots.png"));
 		scoreShow.setIcon(boots);
 
 		DialogTask showScores = (b) -> {
@@ -480,8 +485,8 @@ public class MenuPractice implements SNESControllable {
 		// colors
 		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
 		final JMenuItem colorful = new JMenuItem("Performance highlighting");
-		ImageIcon lampOn = new ImageIcon(MenuPractice.class.getResource("/images/Meta/Lamp.png"));
-		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/images/Meta/Lamp dark.png"));
+		ImageIcon lampOn = new ImageIcon(MenuPractice.class.getResource("/images/meta/Lamp.png"));
+		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/images/meta/Lamp dark.png"));
 		colorful.setIcon(lampOn);
 
 		DialogTask colorize = (b) -> {
@@ -509,7 +514,7 @@ public class MenuPractice implements SNESControllable {
 		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
 		ImageIcon compass = new ImageIcon(
-				MenuPractice.class.getResource("/images/Meta/Compass.png")
+				MenuPractice.class.getResource("/images/meta/Compass.png")
 			);
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
@@ -526,7 +531,7 @@ public class MenuPractice implements SNESControllable {
 		// about
 		final JMenuItem about = new JMenuItem("About");
 		ImageIcon map = new ImageIcon(
-				MenuPractice.class.getResource("/images/Meta/Map.png")
+				MenuPractice.class.getResource("/images/meta/Map.png")
 			);
 		about.setIcon(map);
 		helpMenu.add(about);

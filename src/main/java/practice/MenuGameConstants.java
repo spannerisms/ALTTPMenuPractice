@@ -78,6 +78,10 @@ public final class MenuGameConstants {
 		}
 	}
 
+	// safety
+	public static final int WORD_WIDTH = 400;
+	public static final int WORD_HEIGHT = 100;
+
 	// display
 	public static final int BG_WIDTH = 152;
 	public static final int BG_HEIGHT = 120;
@@ -219,14 +223,14 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/font sheet.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		FONT_SPRITES = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/font sheet small.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		FONT_SPRITES_SMALL = temp;
 
@@ -249,21 +253,21 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-right.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_RIGHT = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-left.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_LEFT = temp;
 
@@ -271,21 +275,21 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_INSET = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset-right.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_INSET_RIGHT = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset-left.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_INSET_LEFT = temp;
 
@@ -293,21 +297,21 @@ public final class MenuGameConstants {
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-disabled.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_DISABLED = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-right-disabled.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_RIGHT_DISABLED = temp;
 
 		try {
 			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-left-disabled.png"));
 		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 		}
 		PRETTY_BORDER_LEFT_DISABLED = temp;
 	}
