@@ -14,9 +14,9 @@ public enum ControllerType {
 			_12, _14, _13, _15,
 			_1, _2, _0, _3, _5, _4, _9, _7,
 			"Mayflash GameCube Controller Adapter"),
-	WINDOWS_XBOW ( DirectionType.HAT,
+	WINDOWS_XBOX ( DirectionType.HAT,
 			Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
-			_1, _0, _3, _2, _4, _5, _9, _6,
+			_1, _0, _3, _2, _5, _4, _7, _6,
 			"XBOX 360 For Windows (Controller)");
 
 	private final String[] names;
