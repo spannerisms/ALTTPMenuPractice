@@ -53,9 +53,7 @@ public class ControlCustomizer {
 	}
 
 	private synchronized void pollAll() {
-		if (cur == null) {
-			return;
-		}
+		if (cur == null) { return; }
 
 		cur.poll();
 

@@ -360,6 +360,7 @@ public class MenuPractice implements SNESControllable {
 		pos++;
 		drawSmall(credits, makeWordImageSmall("RESOURCES:"), 2, pos++);
 		drawSmall(credits, makeWordImageSmall("ZARBY89"), 4, pos++);
+		drawSmall(credits, makeWordImageSmall("HYPHEN-ATED"), 4, pos++);
 
 		pos++;
 		drawSmall(credits, makeWordImageSmall("TESTING = FEEDBACK:"), 2, pos++);

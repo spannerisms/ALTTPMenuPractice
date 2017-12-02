@@ -54,6 +54,7 @@ public class MenuGame extends Container implements SNESControllable {
 	ItemLister chosen;
 	final Timer waiter = new Timer();
 	boolean studying = false;
+	boolean dead = false;
 
 	// constructor
 	public MenuGame(ControllerHandler controls, GameMode gameMode, Difficulty difficulty, int games) {
@@ -141,9 +142,7 @@ public class MenuGame extends Container implements SNESControllable {
 	public final void addSNESInput() {
 		this.addSNESInputListener(
 			arg0 -> {
-				if (arg0.getSource() == this) {
-					return;
-				}
+				if (arg0.getSource() == this) { return; }
 
 				int key = arg0.getKey();
 
@@ -152,9 +151,7 @@ public class MenuGame extends Container implements SNESControllable {
 						forfeit();
 				}
 
-				if (ref == null) { // don't do anything related to playing unless we have a scoring object
-					return;
-				}
+				if (ref == null) { return; } // don't do anything related to playing unless we have a scoring object
 
 				switch(key) {
 					case SNESInputEvent.SNES_UP :
@@ -193,9 +190,11 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	public void forfeit() {
+		if (dead) { return; }
 		waiter.cancel();
 		removeFromController(controls);
 		fireGameOverEvent();
+		dead = true;
 	}
 
 	private void nextTurn() {
@@ -208,6 +207,7 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	private void newTurn() {
+		if (dead) { return; }
 		randomizeGoal();
 		ref.setPlayerPath(movesMade.toArray(new PlayerMovement[movesMade.size()]));
 		movesMade.clear();
@@ -245,6 +245,7 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	private void nextGame() {
+		if (dead) { return; }
 		currentGame--;
 		currentRound = maxRound;
 		if (currentGame == 0) {
