@@ -47,6 +47,7 @@ import practice.listeners.SNESInputEvent;
 import practice.listeners.SNESInputListener;
 
 import static practice.MenuGameConstants.*;
+import static javax.swing.SpringLayout.*;
 
 public class MenuPractice implements SNESControllable {
 	static final String VERSION = "v0.11-beta";
@@ -133,14 +134,10 @@ public class MenuPractice implements SNESControllable {
 		JPanel hooker = new JPanel();
 		hooker.setBackground(null);
 
-		l.putConstraint(SpringLayout.EAST, hooker, 0,
-				SpringLayout.EAST, wrap);
-		l.putConstraint(SpringLayout.NORTH, hooker, 0,
-				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.WEST, hooker, 0,
-				SpringLayout.EAST, wrap);
-		l.putConstraint(SpringLayout.SOUTH, hooker, 0,
-				SpringLayout.NORTH, wrap);
+		l.putConstraint(EAST, hooker, 0, EAST, wrap);
+		l.putConstraint(NORTH, hooker, 0, NORTH, wrap);
+		l.putConstraint(WEST, hooker, 0, EAST, wrap);
+		l.putConstraint(SOUTH, hooker, 0, NORTH, wrap);
 		wrap.add(hooker);
 
 		// controller
@@ -150,14 +147,10 @@ public class MenuPractice implements SNESControllable {
 		GameContainer gamePlayer = new GameContainer();
 		gamePlayer.setController(controls[0]);
 
-		l.putConstraint(SpringLayout.WEST, gamePlayer, 5,
-				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.EAST, gamePlayer, -5,
-				SpringLayout.EAST, wrap);
-		l.putConstraint(SpringLayout.NORTH, gamePlayer, 5,
-				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.SOUTH, gamePlayer, 0,
-				SpringLayout.SOUTH, wrap);
+		l.putConstraint(WEST, gamePlayer, 5, WEST, wrap);
+		l.putConstraint(EAST, gamePlayer, -5, EAST, wrap);
+		l.putConstraint(NORTH, gamePlayer, 5, NORTH, wrap);
+		l.putConstraint(SOUTH, gamePlayer, 0, SOUTH, wrap);
 		wrap.add(gamePlayer);
 
 		// scores
@@ -197,16 +190,12 @@ public class MenuPractice implements SNESControllable {
 		hiscore.setFont(CONSOLAS);
 		scoreTotal.setFont(CONSOLAS);
 
-		l.putConstraint(SpringLayout.WEST, scoreTotal, 0,
-				SpringLayout.HORIZONTAL_CENTER, scoreScroll);
-		l.putConstraint(SpringLayout.SOUTH, scoreTotal, -5,
-				SpringLayout.SOUTH, wrap);
+		l.putConstraint(WEST, scoreTotal, 0, HORIZONTAL_CENTER, scoreScroll);
+		l.putConstraint(SOUTH, scoreTotal, -5, SOUTH, wrap);
 		wrap.add(scoreTotal);
 
-		l.putConstraint(SpringLayout.EAST, hiscore, -10,
-				SpringLayout.EAST, scoreScroll);
-		l.putConstraint(SpringLayout.VERTICAL_CENTER, hiscore, 0,
-				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		l.putConstraint(EAST, hiscore, -10, EAST, scoreScroll);
+		l.putConstraint(VERTICAL_CENTER, hiscore, 0, VERTICAL_CENTER, scoreTotal);
 		wrap.add(hiscore);
 
 		// clear data
@@ -222,10 +211,8 @@ public class MenuPractice implements SNESControllable {
 
 		clear.addActionListener(arg0 -> clearData.switchWindow(false));
 
-		l.putConstraint(SpringLayout.EAST, clear, -10,
-				SpringLayout.WEST, scoreTotal);
-		l.putConstraint(SpringLayout.VERTICAL_CENTER, clear, 0,
-				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		l.putConstraint(EAST, clear, -10, WEST, scoreTotal);
+		l.putConstraint(VERTICAL_CENTER, clear, 0, VERTICAL_CENTER, scoreTotal);
 		wrap.add(clear);
 
 		// analysis
@@ -273,21 +260,17 @@ public class MenuPractice implements SNESControllable {
 				}
 			});
 
-		l.putConstraint(SpringLayout.EAST, analyze, -10,
-				SpringLayout.WEST, clear);
-		l.putConstraint(SpringLayout.VERTICAL_CENTER, analyze, 0,
-				SpringLayout.VERTICAL_CENTER, scoreTotal);
+		l.putConstraint(EAST, analyze, -10,
+				WEST, clear);
+		l.putConstraint(VERTICAL_CENTER, analyze, 0,
+				VERTICAL_CENTER, scoreTotal);
 		wrap.add(analyze);
 
 		// scores in wrap
-		l.putConstraint(SpringLayout.WEST, scoreScroll, 10,
-				SpringLayout.WEST, wrap);
-		l.putConstraint(SpringLayout.EAST, scoreScroll, -5,
-				SpringLayout.EAST, wrap);
-		l.putConstraint(SpringLayout.NORTH, scoreScroll, 5,
-				SpringLayout.NORTH, wrap);
-		l.putConstraint(SpringLayout.SOUTH, scoreScroll, -5,
-				SpringLayout.NORTH, scoreTotal);
+		l.putConstraint(WEST, scoreScroll, 10, WEST, wrap);
+		l.putConstraint(EAST, scoreScroll, -5, EAST, wrap);
+		l.putConstraint(NORTH, scoreScroll, 5, NORTH, wrap);
+		l.putConstraint(SOUTH, scoreScroll, -5, NORTH, scoreTotal);
 		wrap.add(scoreScroll);
 
 		// how to play
@@ -323,14 +306,10 @@ public class MenuPractice implements SNESControllable {
 		JScrollPane helpScroll = new JScrollPane(helpPane,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		hhh.putConstraint(SpringLayout.WEST, helpScroll, 0,
-				SpringLayout.WEST, howWrap);
-		hhh.putConstraint(SpringLayout.EAST, helpScroll, 0,
-				SpringLayout.EAST, howWrap);
-		hhh.putConstraint(SpringLayout.NORTH, helpScroll, 0,
-				SpringLayout.NORTH, howWrap);
-		hhh.putConstraint(SpringLayout.SOUTH, helpScroll, 0,
-				SpringLayout.SOUTH, howWrap);
+		hhh.putConstraint(WEST, helpScroll, 0, WEST, howWrap);
+		hhh.putConstraint(EAST, helpScroll, 0, EAST, howWrap);
+		hhh.putConstraint(NORTH, helpScroll, 0, NORTH, howWrap);
+		hhh.putConstraint(SOUTH, helpScroll, 0, SOUTH, howWrap);
 		howWrap.add(helpScroll);
 
 		// input config

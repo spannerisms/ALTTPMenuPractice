@@ -13,6 +13,7 @@ import practice.controls.ControllerHandler;
 import practice.listeners.*;
 
 import static practice.MenuGameConstants.*;
+import static javax.swing.SpringLayout.*;
 
 public class GameContainer extends Container {
 	private static final long serialVersionUID = -2890787797874712957L;
@@ -55,39 +56,31 @@ public class GameContainer extends Container {
 		holder.setSize(MENU_SIZE);
 		holder.setBackground(null);
 
-		l.putConstraint(SpringLayout.NORTH, holder, 0,
-				SpringLayout.NORTH, this);
-		l.putConstraint(SpringLayout.SOUTH, holder, BG_HEIGHT * ZOOM,
-				SpringLayout.NORTH, this);
+		l.putConstraint(NORTH, holder, 0, NORTH, this);
+		l.putConstraint(SOUTH, holder, BG_HEIGHT * ZOOM, NORTH, this);
 		this.add(holder);
 
 		// status text
 		targ.setText(WAIT);
 		targ.setIcon(COMPASS);
 
-		l.putConstraint(SpringLayout.WEST, targ, 0,
-				SpringLayout.WEST, holder);
-		l.putConstraint(SpringLayout.NORTH, targ, 0,
-				SpringLayout.SOUTH, holder);
+		l.putConstraint(WEST, targ, 0, WEST, holder);
+		l.putConstraint(NORTH, targ, 0, SOUTH, holder);
 		this.add(targ);
 
 		// game count
 		gameCount.setText("GAME :");
 		gameCount.setRightText("--");
 
-		l.putConstraint(SpringLayout.WEST, gameCount, 0,
-				SpringLayout.WEST, targ);
-		l.putConstraint(SpringLayout.NORTH, gameCount, 0,
-				SpringLayout.SOUTH, targ);
+		l.putConstraint(WEST, gameCount, 0, WEST, targ);
+		l.putConstraint(NORTH, gameCount, 0, SOUTH, targ);
 		this.add(gameCount);
 
 		// forfeit button
 		forfeit.setText("END");
 
-		l.putConstraint(SpringLayout.EAST, forfeit, 0,
-				SpringLayout.EAST, targ);
-		l.putConstraint(SpringLayout.NORTH, forfeit, 0,
-				SpringLayout.SOUTH, targ);
+		l.putConstraint(EAST, forfeit, 0, EAST, targ);
+		l.putConstraint(NORTH, forfeit, 0, SOUTH, targ);
 		this.add(forfeit);
 		forfeit.setEnabled(false);
 		forfeit.addActionListener(
@@ -99,20 +92,16 @@ public class GameContainer extends Container {
 		roundCount.setText("ROUND:");
 		roundCount.setRightText("--");
 
-		l.putConstraint(SpringLayout.WEST, roundCount, 0,
-				SpringLayout.WEST, targ);
-		l.putConstraint(SpringLayout.NORTH, roundCount, 0,
-				SpringLayout.SOUTH, gameCount);
+		l.putConstraint(WEST, roundCount, 0, WEST, targ);
+		l.putConstraint(NORTH, roundCount, 0, SOUTH, gameCount);
 		this.add(roundCount);
 
 		// turn count
 		turnCount.setText("TURN :");
 		turnCount.setRightText("--");
 
-		l.putConstraint(SpringLayout.WEST, turnCount, 0,
-				SpringLayout.WEST, targ);
-		l.putConstraint(SpringLayout.NORTH, turnCount, 0,
-				SpringLayout.SOUTH, roundCount);
+		l.putConstraint(WEST, turnCount, 0, WEST, targ);
+		l.putConstraint(NORTH, turnCount, 0, SOUTH, roundCount);
 		this.add(turnCount);
 
 		// splash
@@ -130,14 +119,10 @@ public class GameContainer extends Container {
 	void setHolder(Component c) {
 		holder.removeAll();
 		SpringLayout l = (SpringLayout) holder.getLayout();
-		l.putConstraint(SpringLayout.EAST, c, 0,
-				SpringLayout.EAST, holder);
-		l.putConstraint(SpringLayout.WEST, c, 0,
-				SpringLayout.WEST, holder);
-		l.putConstraint(SpringLayout.NORTH, c, 0,
-				SpringLayout.NORTH, holder);
-		l.putConstraint(SpringLayout.SOUTH, c, 0,
-				SpringLayout.SOUTH, holder);
+		l.putConstraint(EAST, c, 0, EAST, holder);
+		l.putConstraint(WEST, c, 0, WEST, holder);
+		l.putConstraint(NORTH, c, 0, NORTH, holder);
+		l.putConstraint(SOUTH, c, 0, SOUTH, holder);
 		holder.add(c);
 		revalidate();
 	}
