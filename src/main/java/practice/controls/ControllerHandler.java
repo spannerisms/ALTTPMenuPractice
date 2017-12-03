@@ -198,7 +198,6 @@ public abstract class ControllerHandler {
 			} else if ((pressesFiredDPad & SNES_RIGHT) > 0) {
 				fire = SNES_RIGHT;
 			}
-			System.out.println(fire);
 			fireEvents(new SNESInputEvent(this, fire));
 		}
 		if (pressesFiredAll != 0) {

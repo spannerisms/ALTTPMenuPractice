@@ -64,12 +64,13 @@ public class MenuPractice implements SNESControllable {
 
 	static {
 		StringBuilder ret = new StringBuilder();
-		try {
+		try (
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(
 							MenuPractice.class.getResourceAsStream(DATA_PATH),
 							StandardCharsets.UTF_8)
 					);
+			) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				ret.append(line);

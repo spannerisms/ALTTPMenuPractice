@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import practice.errors.ControllerNameException;
 import practice.listeners.*;
 import net.java.games.input.*;
 
@@ -31,10 +32,11 @@ public class ControlMapper extends JDialog {
 	private static final Dimension PREF_D = new Dimension(200, 400);
 	private static final Dimension TEXT_D = new Dimension(100, 17);
 
-	private static ContWrapper[] controllerList = refreshList();
+	private static ContWrapper[] controllerList;
+
 	private CompWrapper[] list = new CompWrapper[SNESButton.values().length];
 
-	static final ContWrapper[] refreshList() {
+	static final ContWrapper[] refreshList() throws ControllerNameException {
 		ControllerEnvironment env = ControllerEnvironment.getDefaultEnvironment();
 		ArrayList<ContWrapper> ret = new ArrayList<ContWrapper>();
 		for (Controller c : env.getControllers()) {
@@ -73,6 +75,11 @@ public class ControlMapper extends JDialog {
 	private static ContWrapper keyboard;
 
 	static {
+		try {
+			controllerList = refreshList();
+		} catch (ControllerNameException e) {
+			e.printStackTrace();
+		}
 		for (ContWrapper c : controllerList) {
 			if (c.c.getType().equals(Controller.Type.KEYBOARD)) {
 				keyboard = c;
@@ -141,6 +148,9 @@ public class ControlMapper extends JDialog {
 				boolean okToGo = true;
 				dupeSearch :
 				for (CompWrapper e : list) {
+					if (e.isHatSwitch) { // hat switch has to be the same
+						continue dupeSearch;
+					}
 					dupeMatch :
 					for (CompWrapper k : list) {
 						if (e == k) {
@@ -167,9 +177,10 @@ public class ControlMapper extends JDialog {
 		customizer.addComponentPollListener(
 			arg0 -> {
 				CompWrapper f = focusedDude();
-				if (f != null) {
+				if (f != null &&
+						!f.isHatSwitch &&
+						(arg0.comp.getIdentifier() instanceof Component.Identifier.Button) ) {
 					f.setComp(arg0.comp);
-
 				}
 			});
 		customizer.setController(activeController.c);
@@ -274,7 +285,7 @@ public class ControlMapper extends JDialog {
 		final CompWrapper[] list;
 		final ControllerType t;
 
-		ContWrapper(Controller c, CompWrapper[] list) {
+		ContWrapper(Controller c, CompWrapper[] list) throws ControllerNameException {
 			this.c = c;
 			this.list = list;
 			t = ControllerType.inferType(c);
@@ -297,9 +308,11 @@ public class ControlMapper extends JDialog {
 		Component c;
 		final JTextField text;
 		boolean active;
+		final boolean isHatSwitch;
 
 		CompWrapper(Component c) {
 			this.c = c;
+			isHatSwitch = c.getIdentifier() instanceof Component.Identifier.Axis;
 			text = new JTextField();
 			text.setPreferredSize(TEXT_D);
 			text.setMinimumSize(TEXT_D);
@@ -307,10 +320,11 @@ public class ControlMapper extends JDialog {
 
 			setComp(c);
 
+			Color focusColor = isHatSwitch ? Color.RED : Color.YELLOW;
 			text.setEditable(false);
 			text.addFocusListener(new FocusListener() {
 				public void focusGained(FocusEvent arg0) {
-					text.setBackground(Color.YELLOW);
+					text.setBackground(focusColor);
 					active = true;
 				}
 
