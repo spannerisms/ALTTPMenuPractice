@@ -6,19 +6,27 @@ import static net.java.games.input.Component.Identifier.Button.*;
 import net.java.games.input.Controller;
 
 public enum ControllerType {
-	KEYBOARD ( DirectionType.DPAD,
+	KEYBOARD (DirectionType.DPAD,
 			Key.UP, Key.DOWN, Key.RIGHT, Key.LEFT,
-			Key.Q, Key.W, Key.R, Key.E, Key.S, Key.A, Key.D, Key.F,
+			Key.Q, Key.W, Key.R, Key.E,
+			Key.S, Key.A, Key.D, Key.F,
 			"Keyboard"),
-	MAYFLASH_GAMECUBE ( DirectionType.DPAD,
+	MAYFLASH_GAMECUBE (DirectionType.DPAD,
 			_12, _14, _13, _15,
-			_1, _2, _0, _3, _5, _4, _9, _7,
+			_1, _2, _0, _3,
+			_5, _4, _9, _7,
 			"Mayflash GameCube Controller Adapter"),
-	WINDOWS_XBOX ( DirectionType.HAT,
+	WINDOWS_XBOX (DirectionType.HAT,
 			Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
-			_1, _0, _3, _2, _5, _4, _7, _6,
-			"XBOX 360 For Windows (Controller)");
-
+			_1, _0, _3, _2,
+			_5, _4, _7, _6,
+			"XBOX 360 For Windows (Controller)"),
+	PS3 (DirectionType.DPAD,
+			_4, _6, _5, _7,
+			_13, _14, _15, _12,
+			_11, _10, _3, _0,
+			"PLAYSTATION(R)3 Controller");
+			
 	private final String[] names;
 
 	public final DirectionType dType;
