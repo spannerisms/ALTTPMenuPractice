@@ -576,12 +576,13 @@ public class MenuPractice implements SNESControllable {
 					scores.setRowSelectionInterval(0, 0);
 					return;
 				}
-				int newSel = a + b;
+				int newSel = scoresRow + b;
 				if (newSel < 0) {
 					newSel = 0;
 				} else if (newSel == maxRow) {
 					newSel = maxRow - 1;
 				}
+				System.out.println(newSel);
 				scores.setRowSelectionInterval(newSel, newSel);
 			};
 
@@ -591,25 +592,37 @@ public class MenuPractice implements SNESControllable {
 					if (arg0.getSource() == this) {
 						return;
 					}
-					switch (arg0.getKey()) {
-						case SNESInputEvent.SNES_SELECT :
-							showScores.switchWindow(true);
+					switch (arg0.ID) {
+						case 0 :
 							break;
-						case SNESInputEvent.SNES_X :
-							showAnalysis.switchWindow(true);
-							break;
-						case SNESInputEvent.SNES_R :
-							moveSel.moveDir(1);
-							break;
-						case SNESInputEvent.SNES_L :
-							moveSel.moveDir(-1);
-							break;
-						case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
-							clearData.switchWindow(true);
-							break;
-						case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
-							colorize.switchWindow(true);
-							break;
+						case 1 : {
+								switch (arg0.getKey()) {
+									case SNESInputEvent.SNES_SELECT :
+										showScores.switchWindow(true);
+										break;
+									case SNESInputEvent.SNES_X :
+										showAnalysis.switchWindow(true);
+										break;
+									case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
+										clearData.switchWindow(true);
+										break;
+									case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
+										colorize.switchWindow(true);
+										break;
+								}
+								break;
+							}
+						case 2 : {
+								switch (arg0.getKey()) {
+									case SNESInputEvent.SNES_R :
+										moveSel.moveDir(1);
+										break;
+									case SNESInputEvent.SNES_L :
+										moveSel.moveDir(-1);
+										break;
+								}
+								break;
+							}
 					}
 				});
 

@@ -250,7 +250,7 @@ public class MenuGame extends Container implements SNESControllable {
 		currentRound = maxRound;
 		if (currentGame == 0) {
 			newTurn();
-			fireGameOverEvent();
+			forfeit();
 			return;
 		}
 		currentRound = maxRound;

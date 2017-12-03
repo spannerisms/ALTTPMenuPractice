@@ -33,9 +33,11 @@ public class SNESInputEvent extends EventObject {
 			0b1000_0000_0000;
 
 	private final int key_pressed;
+	public final int ID;
 
-	public SNESInputEvent(Object o, int key) {
+	public SNESInputEvent(Object o, int id, int key) {
 		super(o);
+		ID = id;
 		key_pressed = key;
 	}
 

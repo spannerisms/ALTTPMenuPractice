@@ -34,7 +34,7 @@ class ScoreTableModel extends AbstractTableModel {
 	public void clear() {
 		int oldLength = data.size();
 		data.clear();
-		this.fireTableRowsDeleted(0, oldLength);
+		this.fireTableRowsDeleted(0, oldLength-1);
 	}
 
 	public int getColumnCount() {

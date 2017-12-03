@@ -160,6 +160,7 @@ public abstract class ControllerHandler {
 
 	private synchronized void setUpAndFireEvents() {
 		int pressesFiredAll = 0;
+		int pressesFiredFrameAll = 0;
 		int pressesFiredDPad = 0;
 		for (ComponentWrapper x : axes) {
 			int id = x.SNES_ID;
@@ -174,12 +175,15 @@ public abstract class ControllerHandler {
 					break;
 				case SNES_R :
 				case SNES_L :
-					if (x.heldDuringFrame) {
+					if (x.pressedThisFrame) {
+						pressesFiredFrameAll |= id;
+					} else if (x.heldDuringFrame) {
 						pressesFiredAll |= id;
 					}
 					break;
 				default :
 					if (x.pressedThisFrame) {
+						pressesFiredFrameAll |= id;
 						pressesFiredAll |= id;
 					}
 					break;
@@ -198,10 +202,15 @@ public abstract class ControllerHandler {
 			} else if ((pressesFiredDPad & SNES_RIGHT) > 0) {
 				fire = SNES_RIGHT;
 			}
-			fireEvents(new SNESInputEvent(this, fire));
+			fireEvents(new SNESInputEvent(this, 0, fire));
 		}
+
 		if (pressesFiredAll != 0) {
-			fireEvents(new SNESInputEvent(this, pressesFiredAll));
+			fireEvents(new SNESInputEvent(this, 1, pressesFiredAll));
+		}
+
+		if (pressesFiredFrameAll != 0) {
+			fireEvents(new SNESInputEvent(this, 2, pressesFiredFrameAll));
 		}
 	}
 
@@ -267,13 +276,5 @@ public abstract class ControllerHandler {
 	protected List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
 	public synchronized void addInputListener(SNESInputListener s) {
 		snesListen.add(s);
-	}
-
-	public synchronized void fireInputEvent(int button) {
-		SNESInputEvent te = new SNESInputEvent(this, button);
-		Iterator<SNESInputListener> listening = snesListen.iterator();
-		while(listening.hasNext()) {
-			(listening.next()).eventReceived(te);
-		}
 	}
 }
