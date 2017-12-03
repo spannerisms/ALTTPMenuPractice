@@ -124,8 +124,8 @@ public abstract class ControllerHandler {
 		brat = null;
 		snes = null;
 
-		ticker = new Thread(new Runnable() {
-			public void run(){
+		ticker = new Thread(
+			() -> {
 				while (true) {
 					try {
 						if (running) {
@@ -145,8 +145,7 @@ public abstract class ControllerHandler {
 						e.printStackTrace();
 					}
 				}
-			}
-		});
+			});
 
 		ticker.start();
 	}

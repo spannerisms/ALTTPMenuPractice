@@ -17,9 +17,8 @@ public class ControlCustomizer {
 	private Controller cur = null;
 
 	public ControlCustomizer() {
-
-		ticker = new Thread(new Runnable() {
-			public void run(){
+		ticker = new Thread(
+			() -> {
 				while (true) {
 					try {
 						if (running) {
@@ -34,8 +33,7 @@ public class ControlCustomizer {
 						e.printStackTrace();
 					}
 				}
-			}
-		});
+			});
 		ticker.start();
 	}
 

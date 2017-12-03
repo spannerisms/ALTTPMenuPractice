@@ -169,7 +169,7 @@ public class ControlMapper extends JDialog {
 				CompWrapper f = focusedDude();
 				if (f != null) {
 					f.setComp(arg0.comp);
-					repaint();
+
 				}
 			});
 		customizer.setController(activeController.c);
@@ -195,11 +195,12 @@ public class ControlMapper extends JDialog {
 			c.gridx = 1;
 			compArea.add(k.text, c);
 		}
+		revalidate();
+		repaint();
 	}
 
 	private ItemListener boxRead = arg0 -> {
-		activeController = (ContWrapper) curBox.getSelectedItem();
-		setControlWrapper(activeController);
+		setControlWrapper((ContWrapper) curBox.getSelectedItem());
 	};
 
 	private void newComboBox() {
@@ -230,6 +231,7 @@ public class ControlMapper extends JDialog {
 	private void setControlWrapper(ContWrapper c) {
 		activeController = c;
 		customizer.setController(activeController.c);
+		setComponentArea();
 		repaint();
 	}
 

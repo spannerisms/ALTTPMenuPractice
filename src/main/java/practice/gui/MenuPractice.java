@@ -96,13 +96,7 @@ public class MenuPractice implements SNESControllable {
 					MenuPractice.showWarning();
 					return;
 				}
-				try {
-					new MenuPractice().doTheGUI();
-				} catch (ExceptionInInitializerError e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-				//MenuPractice.showWarning();
+				new MenuPractice().doTheGUI();
 			}
 		});
 	}
@@ -129,7 +123,7 @@ public class MenuPractice implements SNESControllable {
 		wrap.setBackground(Color.BLACK);
 		frame.setBackground(Color.BLACK);
 
-		// a little thing for dialogs to hook onto for display
+		// a little thing for dialogs to hook onto for positioning
 		// intentionally constrained to be 0px in size
 		JPanel hooker = new JPanel();
 		hooker.setBackground(null);
@@ -260,10 +254,8 @@ public class MenuPractice implements SNESControllable {
 				}
 			});
 
-		l.putConstraint(EAST, analyze, -10,
-				WEST, clear);
-		l.putConstraint(VERTICAL_CENTER, analyze, 0,
-				VERTICAL_CENTER, scoreTotal);
+		l.putConstraint(EAST, analyze, -10, WEST, clear);
+		l.putConstraint(VERTICAL_CENTER, analyze, 0, VERTICAL_CENTER, scoreTotal);
 		wrap.add(analyze);
 
 		// scores in wrap
@@ -345,7 +337,6 @@ public class MenuPractice implements SNESControllable {
 		drawSmall(credits, makeWordImageSmall("TESTING = FEEDBACK:"), 2, pos++);
 		String[] testers = new String[] {
 				"Candide",
-				"Harb",
 				"IHNN"
 		};
 
@@ -413,10 +404,6 @@ public class MenuPractice implements SNESControllable {
 			});
 
 		remap.addComponentListener(new ComponentListener() {
-
-			public void componentResized(ComponentEvent e) {}
-			public void componentMoved(ComponentEvent e) {}
-
 			public void componentShown(ComponentEvent e) {
 				controls[0].setRunning(false);
 				remap.setRunning(true);
@@ -426,6 +413,9 @@ public class MenuPractice implements SNESControllable {
 				controls[0].setRunning(true);
 				remap.setRunning(false);
 			}
+
+			public void componentResized(ComponentEvent e) {}
+			public void componentMoved(ComponentEvent e) {}
 		});
 
 		fileMenu.addSeparator();
@@ -493,11 +483,10 @@ public class MenuPractice implements SNESControllable {
 
 		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
-		ImageIcon compass = new ImageIcon(
-				MenuPractice.class.getResource("/images/meta/Compass.png")
-			);
+		ImageIcon compass = new ImageIcon(MenuPractice.class.getResource("/images/meta/Compass.png") );
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
+
 		howToPlay.addActionListener(
 			arg0 -> {
 				if (howPlayFrame.isVisible()) {
@@ -510,11 +499,10 @@ public class MenuPractice implements SNESControllable {
 
 		// about
 		final JMenuItem about = new JMenuItem("About");
-		ImageIcon map = new ImageIcon(
-				MenuPractice.class.getResource("/images/meta/Map.png")
-			);
+		ImageIcon map = new ImageIcon(MenuPractice.class.getResource("/images/meta/Map.png"));
 		about.setIcon(map);
 		helpMenu.add(about);
+
 		about.addActionListener(
 			arg0 -> {
 				if (aboutFrame.isVisible()) {
