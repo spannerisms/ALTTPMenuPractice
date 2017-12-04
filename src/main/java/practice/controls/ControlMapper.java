@@ -8,7 +8,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemListener;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import practice.errors.ControllerNameException;
 import practice.listeners.*;
 import net.java.games.input.*;
 
@@ -39,6 +37,8 @@ public class ControlMapper extends JDialog {
 	static final ContWrapper[] refreshList() {
 		ControllerEnvironment env = ControllerEnvironment.getDefaultEnvironment();
 		ArrayList<ContWrapper> ret = new ArrayList<ContWrapper>();
+
+		// keep track of gamepads that don't don't have default configs
 		ArrayList<String> badControllers = new ArrayList<>();
 		boolean badStuffHappened = false;
 
@@ -56,10 +56,10 @@ public class ControlMapper extends JDialog {
 
 				try {
 					type = ControllerType.inferType(c);
-				} catch (ControllerNameException e) {
+				} catch (ControllerException e) {
 					badControllers.add(c.getName());
 					badStuffHappened = true;
-					continue controllerReading;
+					continue controllerReading; // skip this controller
 				}
 
 				defaultMappings :
@@ -83,21 +83,15 @@ public class ControlMapper extends JDialog {
 		}
 
 		if (badStuffHappened) {
-			JFrame warn = new JFrame("Bad stuff happened");
-			JLabel warnText = new JLabel(String.join("\n",
-					new String[] {
-							"<html><div>",
-							"The following controllers were not recognized as having default configurations:",
-							"<br />",
-							String.join("<br />", badControllers),
-							"</div></html>"
-					}));
-			warnText.setVerticalAlignment(SwingConstants.NORTH);
-			warn.add(warnText);
-			warn.setMinimumSize(new Dimension(400, 200));
-			warn.setLocation(500, 500);
-			warn.setVisible(true);
+			WarningFrame oops =
+				new WarningFrame("Unrecognized controllers",
+					"The following controllers were not recognized as having default configurations:",
+					"<br />",
+					String.join("<br />", badControllers)
+				);
+			oops.setVisible(true);
 		}
+
 		return r;
 	}
 
@@ -112,7 +106,17 @@ public class ControlMapper extends JDialog {
 				break;
 			}
 		}
-		defaultController = makeControllerHandler(keyboard);
+
+		ControllerHandler temp = null;
+
+		try {
+			temp = makeControllerHandler(keyboard);
+		} catch (ControllerException e) {
+			temp = null;
+			e.printStackTrace();
+		}
+
+		defaultController = temp;
 	}
 
 	JComboBox<ContWrapper> curBox;
@@ -191,7 +195,12 @@ public class ControlMapper extends JDialog {
 					no.setText("");
 					no.setForeground(null);
 					no.setBackground(null);
-					fireRemapEvent();
+					try {
+						fireRemapEvent();
+					} catch (ControllerException e1) {
+						WarningFrame oops = new WarningFrame("Oops");
+						e1.printStackTrace();
+					}
 				} else {
 					no.setText("DUPLICATE KEYS");
 					no.setForeground(Color.WHITE);
@@ -251,15 +260,15 @@ public class ControlMapper extends JDialog {
 		revalidate();
 	}
 
-	private static ControllerHandler makeControllerHandler(ContWrapper w) {
+	private static ControllerHandler makeControllerHandler(ContWrapper w) throws ControllerException {
 		ControllerHandler ret = null;
 		Class<? extends ControllerHandler> hClass = w.t.dType.handler;
 		try {
 			Constructor<? extends ControllerHandler> ctor = hClass.getDeclaredConstructor(Controller.class, Component[].class);
 			ret = ctor.newInstance((Controller) w.c, (Component[]) w.getList());
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			throw new ControllerException("There was a problem finalizing the controller configuration: " + e.getMessage());
 		}
 		return ret;
 	}
@@ -271,6 +280,7 @@ public class ControlMapper extends JDialog {
 		repaint();
 	}
 
+	// get the focused component wrapper, only need to look at current controller
 	private CompWrapper focusedDude() {
 		if (activeController == null) {
 			return null;
@@ -297,7 +307,7 @@ public class ControlMapper extends JDialog {
 		doneListen.add(s);
 	}
 
-	private synchronized void fireRemapEvent() {
+	private synchronized void fireRemapEvent() throws ControllerException {
 		RemapEvent te = new RemapEvent(this, makeControllerHandler(activeController));
 		Iterator<RemapListener> listening = doneListen.iterator();
 		while(listening.hasNext()) {
@@ -305,6 +315,7 @@ public class ControlMapper extends JDialog {
 		}
 	}
 
+	// wrap a controller and the components that we care about
 	static class ContWrapper {
 		final Controller c;
 		final CompWrapper[] list;
@@ -329,6 +340,7 @@ public class ControlMapper extends JDialog {
 		}
 	}
 
+	// wrap a component and a text box for easy pairing
 	static class CompWrapper {
 		Component c;
 		final JTextField text;
@@ -337,7 +349,9 @@ public class ControlMapper extends JDialog {
 
 		CompWrapper(Component c) {
 			this.c = c;
-			isHatSwitch = c.getIdentifier() instanceof Component.Identifier.Axis;
+
+			isHatSwitch = c.getIdentifier() instanceof Component.Identifier.Axis; // need to keep track of hat switch components
+
 			text = new JTextField();
 			text.setPreferredSize(TEXT_D);
 			text.setMinimumSize(TEXT_D);
@@ -345,7 +359,8 @@ public class ControlMapper extends JDialog {
 
 			setComp(c);
 
-			Color focusColor = isHatSwitch ? Color.RED : Color.YELLOW;
+			Color focusColor = isHatSwitch ? Color.RED : Color.YELLOW; // ban editing on hat switch
+
 			text.setEditable(false);
 			text.addFocusListener(new FocusListener() {
 				public void focusGained(FocusEvent arg0) {

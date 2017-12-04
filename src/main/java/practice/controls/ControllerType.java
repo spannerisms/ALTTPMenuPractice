@@ -4,7 +4,6 @@ import static net.java.games.input.Component.*;
 import static net.java.games.input.Component.Identifier.Button.*;
 
 import net.java.games.input.Controller;
-import practice.errors.ControllerNameException;
 
 public enum ControllerType {
 	KEYBOARD (DirectionType.DPAD,
@@ -92,7 +91,7 @@ public enum ControllerType {
 		moveType = defaultUp.getClass();
 	}
 
-	private static ControllerType getTypeFromName(String n) throws ControllerNameException {
+	private static ControllerType getTypeFromName(String n) throws ControllerException {
 		ControllerType ret = null;
 		typeSearch :
 		for (ControllerType t : values()) {
@@ -104,13 +103,13 @@ public enum ControllerType {
 			}
 		}
 		if (ret == null) {
-			throw new ControllerNameException(
+			throw new ControllerException(
 					String.format("Unable to match your controller's name (%s) to a valid type.", n));
 		}
 		return ret;
 	}
 
-	public static ControllerType inferType(Controller c) throws ControllerNameException {
+	public static ControllerType inferType(Controller c) throws ControllerException {
 		if (c.getType() == Controller.Type.KEYBOARD) {
 			return KEYBOARD;
 		}

@@ -60,14 +60,16 @@ public class MenuPractice implements SNESControllable {
 	static final ScoreTableRenderer SCORE_TABLE = new ScoreTableRenderer(true);
 
 	static final String HOW_TO_PLAY;
-	static final String DATA_PATH = "/howtoplay.html";
+	static final String HOW_TO_PLAY_STYLE;
+	static final String HELP_PATH = "/howtoplay.html";
+	static final String STYLE_PATH = "/howplaystyle.css";
 
 	static {
 		StringBuilder ret = new StringBuilder();
 		try (
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(
-							MenuPractice.class.getResourceAsStream(DATA_PATH),
+							MenuPractice.class.getResourceAsStream(HELP_PATH),
 							StandardCharsets.UTF_8)
 					);
 			) {
@@ -80,6 +82,24 @@ public class MenuPractice implements SNESControllable {
 			ret.append("OOPS");
 		}
 		HOW_TO_PLAY = ret.toString();
+
+		ret = new StringBuilder();
+		try (
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(
+							MenuPractice.class.getResourceAsStream(STYLE_PATH),
+							StandardCharsets.UTF_8)
+					);
+			) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				ret.append(line);
+			}
+			br.close();
+		} catch (Exception e) {
+			ret.append("");
+		}
+		HOW_TO_PLAY_STYLE = ret.toString();
 	}
 
 	// main
@@ -216,18 +236,18 @@ public class MenuPractice implements SNESControllable {
 
 		DialogTask showAnalysis = (b) -> {
 				int selectedRow = scores.getSelectedRow();
-				if (selectedRow != -1) {
+				if (selectedRow != -1) { // if a row is selected, set it in the box
 					analysis.setRef(model.getRow(selectedRow));
 				}
-				if (analysis.isVisible()) {
-					if (b) {
+				if (analysis.isVisible()) { // if visible
+					if (b) { // if function called from a controller input
 						analysis.setVisible(false);
 					}
 				} else {
-					if (scoreFrame.isVisible()) {
+					if (scoreFrame.isVisible()) { // set location based on score screen
 						analysis.setLocation(hiscore.getLocationOnScreen().x,
 								scoreScroll.getLocationOnScreen().y);
-					} else {
+					} else { // if it's not visible, set it to hooker
 						analysis.setLocation(hooker.getLocationOnScreen());
 					}
 					analysis.setVisible(true);
@@ -242,12 +262,12 @@ public class MenuPractice implements SNESControllable {
 
 		scoreSel.addListSelectionListener(
 			arg0 -> {
-				if (!scoreFrame.isVisible()) {
+				if (!scoreFrame.isVisible()) { // don't do anything if hidden
 					return;
 				}
 				int selectedRow = scores.getSelectedRow();
 				if (analysis.isVisible()) {
-					if (selectedRow == -1) {
+					if (selectedRow == -1) { // hide analysis if no row selected
 						analysis.setVisible(false);
 					} else {
 						analysis.setRef(model.getRow(selectedRow));
@@ -280,7 +300,7 @@ public class MenuPractice implements SNESControllable {
 		StyleSheet styleSheet = new StyleSheet();
 		HTMLDocument htmlDocument;
 		HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
-		styleSheet.addRule(HOW_TO_PLAY);
+		styleSheet.addRule(HOW_TO_PLAY_STYLE);
 
 		htmlEditorKit.setStyleSheet(styleSheet);
 		htmlDocument = (HTMLDocument) htmlEditorKit.createDefaultDocument();
