@@ -198,7 +198,9 @@ public class ControlMapper extends JDialog {
 					try {
 						fireRemapEvent();
 					} catch (ControllerException e1) {
-						WarningFrame oops = new WarningFrame("Oops");
+						WarningFrame oops = new WarningFrame("Configuration failure",
+								"Failed to configure controller");
+						oops.setVisible(true);
 						e1.printStackTrace();
 					}
 				} else {
