@@ -70,7 +70,6 @@ public class ControlScreen extends JPanel implements SNESControllable {
 		SCORE_SPLASH = temp;
 	}
 
-	
 	static enum Focus { MODE, DIFFICULTY, GAME, START };
 	private Focus selection = Focus.DIFFICULTY;
 
@@ -82,6 +81,7 @@ public class ControlScreen extends JPanel implements SNESControllable {
 	private BufferedImage score;
 
 	private ControllerHandler controls;
+	private boolean playingGame;
 
 	public ControlScreen() {
 		setPreferredSize(MENU_SIZE);
@@ -114,7 +114,7 @@ public class ControlScreen extends JPanel implements SNESControllable {
 	public final void addSNESInput() {
 		this.addSNESInputListener(
 			arg0 -> {
-				if (arg0.getSource() == this) {
+				if (arg0.getSource() == this || playingGame) {
 					return;
 				}
 				switch (arg0.getKey()) {
@@ -165,12 +165,17 @@ public class ControlScreen extends JPanel implements SNESControllable {
 					case SNESInputEvent.SNES_START :
 					case SNESInputEvent.SNES_A :
 						if (selection == Focus.START) {
+							playingGame = false;
 							fireGameOverEvent();
 							selection = Focus.MODE; // safety against starting a new game when done
 						}
 						break;
 				}
 		});
+	}
+
+	public void comeBack() {
+		playingGame = true;
 	}
 
 	private void selectionChange(int change) {

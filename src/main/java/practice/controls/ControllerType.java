@@ -28,7 +28,7 @@ public enum ControllerType {
 			_13, _14, _15, _12,
 			_11, _10, _3, _0,
 			"PLAYSTATION(R)3 Controller");
-			
+
 	private final String[] names;
 
 	public final DirectionType dType;

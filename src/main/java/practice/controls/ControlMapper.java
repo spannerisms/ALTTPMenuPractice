@@ -29,16 +29,20 @@ import net.java.games.input.*;
 public class ControlMapper extends JDialog {
 	private static final long serialVersionUID = -3293305934784136424L;
 
-	private static final Dimension PREF_D = new Dimension(200, 400);
+	private static final Dimension PREF_D = new Dimension(300, 400);
 	private static final Dimension TEXT_D = new Dimension(100, 17);
 
-	private static ContWrapper[] controllerList;
+	private static ContWrapper[] controllerList = refreshList();
 
 	private CompWrapper[] list = new CompWrapper[SNESButton.values().length];
 
-	static final ContWrapper[] refreshList() throws ControllerNameException {
+	static final ContWrapper[] refreshList() {
 		ControllerEnvironment env = ControllerEnvironment.getDefaultEnvironment();
 		ArrayList<ContWrapper> ret = new ArrayList<ContWrapper>();
+		ArrayList<String> badControllers = new ArrayList<>();
+		boolean badStuffHappened = false;
+
+		controllerReading :
 		for (Controller c : env.getControllers()) {
 			Controller.Type t = c.getType();
 
@@ -47,7 +51,16 @@ public class ControlMapper extends JDialog {
 				Component[] comp = c.getComponents();
 				CompWrapper[] use = new CompWrapper[12];
 				int i = 0;
-				ControllerType type = ControllerType.inferType(c);
+
+				ControllerType type;
+
+				try {
+					type = ControllerType.inferType(c);
+				} catch (ControllerNameException e) {
+					badControllers.add(c.getName());
+					badStuffHappened = true;
+					continue controllerReading;
+				}
 
 				defaultMappings :
 				for (SNESButton s : SNESButton.values()) {
@@ -58,14 +71,32 @@ public class ControlMapper extends JDialog {
 						}
 					} // end components
 				} // end buttons
-				ret.add(new ContWrapper(c, use));
+				ret.add(new ContWrapper(c, use, type));
 			} // end valid type if
 		} // end controller loop
 
 		ContWrapper[] r = new ContWrapper[ret.size()];
+
 		int i = 0;
 		for (ContWrapper a : ret) {
 			r[i++] = a;
+		}
+
+		if (badStuffHappened) {
+			JFrame warn = new JFrame("Bad stuff happened");
+			JLabel warnText = new JLabel(String.join("\n",
+					new String[] {
+							"<html><div>",
+							"The following controllers were not recognized as having default configurations:",
+							"<br />",
+							String.join("<br />", badControllers),
+							"</div></html>"
+					}));
+			warnText.setVerticalAlignment(SwingConstants.NORTH);
+			warn.add(warnText);
+			warn.setMinimumSize(new Dimension(400, 200));
+			warn.setLocation(500, 500);
+			warn.setVisible(true);
 		}
 		return r;
 	}
@@ -75,18 +106,12 @@ public class ControlMapper extends JDialog {
 	private static ContWrapper keyboard;
 
 	static {
-		try {
-			controllerList = refreshList();
-		} catch (ControllerNameException e) {
-			e.printStackTrace();
-		}
 		for (ContWrapper c : controllerList) {
 			if (c.c.getType().equals(Controller.Type.KEYBOARD)) {
 				keyboard = c;
 				break;
 			}
 		}
-
 		defaultController = makeControllerHandler(keyboard);
 	}
 
@@ -285,10 +310,10 @@ public class ControlMapper extends JDialog {
 		final CompWrapper[] list;
 		final ControllerType t;
 
-		ContWrapper(Controller c, CompWrapper[] list) throws ControllerNameException {
+		ContWrapper(Controller c, CompWrapper[] list, ControllerType t) {
 			this.c = c;
 			this.list = list;
-			t = ControllerType.inferType(c);
+			this.t = t;
 		}
 
 		public String toString() {

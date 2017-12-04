@@ -23,6 +23,7 @@ public class GameContainer extends Container {
 
 	CountDown counter = new CountDown();
 	MenuGame playing;
+
 	final JPanel holder = new JPanel(new SpringLayout());
 
 	final PrettyLabel targ = new PrettyLabel(BOARD_SIZE_NO_BORDER);
@@ -157,6 +158,7 @@ public class GameContainer extends Container {
 					playing.transferFocus();
 					fireGameOverEvent(arg0);
 					playing = null;
+					splash.comeBack();
 				});
 		targ.setText("GET READY");
 		forfeit.setEnabled(true);

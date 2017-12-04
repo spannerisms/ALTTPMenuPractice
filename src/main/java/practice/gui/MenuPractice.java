@@ -582,7 +582,6 @@ public class MenuPractice implements SNESControllable {
 				} else if (newSel == maxRow) {
 					newSel = maxRow - 1;
 				}
-				System.out.println(newSel);
 				scores.setRowSelectionInterval(newSel, newSel);
 			};
 

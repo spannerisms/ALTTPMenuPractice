@@ -143,7 +143,6 @@ public class MenuGame extends Container implements SNESControllable {
 		this.addSNESInputListener(
 			arg0 -> {
 				if (arg0.getSource() == this) { return; }
-
 				int key = arg0.getKey();
 
 				// forfeit controls need to operate outside of the game controls
@@ -151,7 +150,8 @@ public class MenuGame extends Container implements SNESControllable {
 						forfeit();
 				}
 
-				if (ref == null) { return; } // don't do anything related to playing unless we have a scoring object
+				if (ref == null // don't do anything related to playing unless we have a scoring object
+						|| arg0.ID == 2) {return; } // only look for buttons fired on this frame
 
 				switch(key) {
 					case SNESInputEvent.SNES_UP :
