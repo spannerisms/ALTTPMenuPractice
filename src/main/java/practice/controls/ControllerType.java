@@ -46,7 +46,6 @@ public enum ControllerType {
 
 	public final Identifier defaultR;
 	public final Identifier defaultL;
-
 	public final Identifier defaultStart;
 	public final Identifier defaultSelect;
 
@@ -57,8 +56,7 @@ public enum ControllerType {
 			DirectionType d,
 			Identifier defaultUp, Identifier defaultDown, Identifier defaultRight, Identifier defaultLeft,
 			Identifier defaultA, Identifier defaultB, Identifier defaultX, Identifier defaultY,
-			Identifier defaultR, Identifier defaultL,
-			Identifier defaultStart, Identifier defaultSelect,
+			Identifier defaultR, Identifier defaultL, Identifier defaultStart, Identifier defaultSelect,
 			String... names) {
 
 		dType = d;

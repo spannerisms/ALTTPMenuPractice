@@ -19,8 +19,6 @@ public abstract class ControllerHandler {
 
 	protected static final float ON = 1.0F;
 
-	protected final SNESInputListener snes;
-
 	protected final ArrayList<SNESControllable> children;
 	protected SNESControllable brat; // has full control and only one who receives events
 
@@ -92,37 +90,26 @@ public abstract class ControllerHandler {
 			ComponentWrapper a, ComponentWrapper b, ComponentWrapper x, ComponentWrapper y,
 			ComponentWrapper r, ComponentWrapper l, ComponentWrapper start, ComponentWrapper select) {
 		controller = c;
-		UP = up;
-		DOWN = down;
-		RIGHT = right;
-		LEFT = left;
-		A = a;
-		B = b;
-		X = x;
-		Y = y;
-		R = r;
-		L = l;
-		START = start;
-		SELECT = select;
 
 		int i = 0;
-		axes[i++] = UP;
-		axes[i++] = DOWN;
-		axes[i++] = RIGHT;
-		axes[i++] = LEFT;
-		axes[i++] = A;
-		axes[i++] = B;
-		axes[i++] = X;
-		axes[i++] = Y;
-		axes[i++] = R;
-		axes[i++] = L;
-		axes[i++] = START;
-		axes[i++] = SELECT;
+		axes[i++] = UP = up;
+		axes[i++] = DOWN = down;
+		axes[i++] = RIGHT = right;
+		axes[i++] = LEFT = left;
+
+		axes[i++] = A = a;
+		axes[i++] = B = b;
+		axes[i++] = X = x;
+		axes[i++] = Y = y;
+
+		axes[i++] = R = r;
+		axes[i++] = L = l;
+		axes[i++] = START = start;
+		axes[i++] = SELECT = select;
 
 		children = new ArrayList<SNESControllable>();
 
 		brat = null;
-		snes = null;
 
 		ticker = new Thread(
 			() -> {
