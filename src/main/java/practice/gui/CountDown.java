@@ -41,10 +41,11 @@ public class CountDown extends JComponent {
 	static final int COUNTS = 3;
 	int curCount;
 	boolean running = false;
+
 	public CountDown() {
 		this.setPreferredSize(MENU_SIZE);
 		count = () -> {
-			if (!running) { 
+			if (!running) {
 				return;
 			}
 			curCount--;

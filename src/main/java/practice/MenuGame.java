@@ -147,7 +147,8 @@ public class MenuGame extends Container implements SNESControllable {
 
 				// forfeit controls need to operate outside of the game controls
 				if (key == (SNESInputEvent.SNES_L | SNESInputEvent.SNES_R)) { // bitwise or
-						forfeit();
+					fireForfeitEvent();
+					return;
 				}
 
 				if (ref == null // don't do anything related to playing unless we have a scoring object
@@ -192,6 +193,7 @@ public class MenuGame extends Container implements SNESControllable {
 	public void forfeit() {
 		if (dead) { return; }
 		waiter.cancel();
+		controls.kidCalmed(this);
 		removeFromController(controls);
 		fireGameOverEvent();
 		dead = true;
@@ -575,6 +577,25 @@ public class MenuGame extends Container implements SNESControllable {
 		}
 	}
 
+	/*
+	 * Events for forfeit
+	 */
+	private List<GameOverListener> quitListen = new ArrayList<GameOverListener>();
+	public synchronized void addForfeitListener(GameOverListener s) {
+		quitListen.add(s);
+	}
+
+	private synchronized void fireForfeitEvent() {
+		GameOverEvent te = new GameOverEvent(this);
+		Iterator<GameOverListener> listening = quitListen.iterator();
+		while(listening.hasNext()) {
+			(listening.next()).eventReceived(te);
+		}
+	}
+
+	/*
+	 * Subclasses
+	 */
 	static class ItemLister {
 		final boolean[] list = new boolean[20];
 		int count = 0;

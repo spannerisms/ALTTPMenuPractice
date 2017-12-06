@@ -144,22 +144,27 @@ public class GameContainer extends Container {
 		setHolder(counter);
 		repaint();
 		playing.addGameOverListener(
-				arg0 -> {
-					forfeit.setEnabled(false);
-					targ.setText(WAIT);
-					targ.setIcon(COMPASS);
-					gameCount.setRightText("--");
-					roundCount.setRightText("--");
-					turnCount.setRightText("--");
-					splash.setScore(playing.getScore());
-					setHolder(splash);
-					splash.requestFocus();
-					GameContainer.this.repaint();
-					playing.transferFocus();
-					fireGameOverEvent(arg0);
-					playing = null;
-					splash.comeBack();
-				});
+			arg0 -> {
+				forfeit.setEnabled(false);
+				targ.setText(WAIT);
+				targ.setIcon(COMPASS);
+				gameCount.setRightText("--");
+				roundCount.setRightText("--");
+				turnCount.setRightText("--");
+				splash.setScore(playing.getScore());
+				setHolder(splash);
+				splash.requestFocus();
+				GameContainer.this.repaint();
+				playing.transferFocus();
+				fireGameOverEvent(arg0);
+				playing = null;
+				splash.comeBack();
+			});
+		playing.addForfeitListener(
+			arg0 -> {
+				GameContainer.this.forfeit();
+			});
+
 		targ.setText("GET READY");
 		forfeit.setEnabled(true);
 		fireGameStartEvent();
@@ -167,8 +172,8 @@ public class GameContainer extends Container {
 	}
 
 	public void forfeit() {
-		playing.forfeit();
 		counter.kill();
+		playing.forfeit();		
 	}
 
 	public void setController(ControllerHandler c) {

@@ -215,8 +215,8 @@ public abstract class ControllerHandler {
 	}
 
 	public synchronized void removeChild(SNESControllable kid) {
-		children.remove(kid);
 		kidCalmed(kid);
+		children.remove(kid);
 	}
 
 	// requests full focus of the controller

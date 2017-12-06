@@ -175,7 +175,7 @@ public class ControlScreen extends JPanel implements SNESControllable {
 	}
 
 	public void comeBack() {
-		playingGame = true;
+		playingGame = false;
 	}
 
 	private void selectionChange(int change) {
