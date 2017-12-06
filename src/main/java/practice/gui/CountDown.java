@@ -45,9 +45,7 @@ public class CountDown extends JComponent {
 	public CountDown() {
 		this.setPreferredSize(MENU_SIZE);
 		count = () -> {
-			if (!running) {
-				return;
-			}
+			if (!running) { return; }
 			curCount--;
 			switch (curCount) {
 				case -1 :
@@ -83,9 +81,7 @@ public class CountDown extends JComponent {
 	}
 
 	public void paint(Graphics g) {
-		if (curCount == -1) {
-			return;
-		}
+		if (curCount == -1) { return; }
 		Graphics2D g2 = (Graphics2D) g;
 		g2.scale(ZOOM, ZOOM);
 		g2.drawImage(BACKGROUND, 0, 0, null);

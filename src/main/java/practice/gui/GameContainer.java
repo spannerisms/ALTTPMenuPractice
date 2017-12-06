@@ -20,7 +20,6 @@ public class GameContainer extends Container {
 
 	private static final String WAIT = "CHOOSE SETTINGS";
 
-
 	CountDown counter = new CountDown();
 	MenuGame playing;
 
@@ -160,10 +159,7 @@ public class GameContainer extends Container {
 				playing = null;
 				splash.comeBack();
 			});
-		playing.addForfeitListener(
-			arg0 -> {
-				GameContainer.this.forfeit();
-			});
+		playing.addForfeitListener(arg0 -> GameContainer.this.forfeit());
 
 		targ.setText("GET READY");
 		forfeit.setEnabled(true);

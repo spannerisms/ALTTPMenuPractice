@@ -370,6 +370,7 @@ public class MenuPractice implements SNESControllable {
 		testers = new String[] {
 				"Fish",
 				"Harb",
+				"Noraystra"
 		};
 
 		for (int i = 0; i < testers.length; i++) {
@@ -400,7 +401,7 @@ public class MenuPractice implements SNESControllable {
 		menu.add(fileMenu);
 
 		// remap keys
-		final JMenuItem mapper = new JMenuItem("Configure keybinds");
+		final JMenuItem mapper = new JMenuItem("Configure inputs");
 		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/images/meta/Mitts.png"));
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
@@ -589,13 +590,13 @@ public class MenuPractice implements SNESControllable {
 				int b = a < 0 ? -1 : 1;
 				int scoresRow = scores.getSelectedRow();
 				int maxRow = scores.getRowCount();
-				if (maxRow == 0) {
-					return;
-				}
+
+				if (maxRow == 0) { return; }
 				if (scoresRow == -1) {
 					scores.setRowSelectionInterval(0, 0);
 					return;
 				}
+
 				int newSel = scoresRow + b;
 				if (newSel < 0) {
 					newSel = 0;
@@ -608,42 +609,40 @@ public class MenuPractice implements SNESControllable {
 		addToController(controls[0]);
 		this.addSNESInputListener(
 			arg0 -> {
-					if (arg0.getSource() == this) {
-						return;
-					}
-					switch (arg0.ID) {
-						case 0 :
-							break;
-						case 1 : {
-								switch (arg0.getKey()) {
-									case SNESInputEvent.SNES_SELECT :
-										showScores.switchWindow(true);
-										break;
-									case SNESInputEvent.SNES_X :
-										showAnalysis.switchWindow(true);
-										break;
-									case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
-										clearData.switchWindow(true);
-										break;
-									case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
-										colorize.switchWindow(true);
-										break;
-								}
+				if (arg0.getSource() == this) { return; }
+				switch (arg0.ID) {
+					case 0 :
+						break;
+					case 1 : {
+						switch (arg0.getKey()) {
+							case SNESInputEvent.SNES_SELECT :
+								showScores.switchWindow(true);
 								break;
-							}
-						case 2 : {
-								switch (arg0.getKey()) {
-									case SNESInputEvent.SNES_R :
-										moveSel.moveDir(1);
-										break;
-									case SNESInputEvent.SNES_L :
-										moveSel.moveDir(-1);
-										break;
-								}
+							case SNESInputEvent.SNES_X :
+								showAnalysis.switchWindow(true);
 								break;
-							}
+							case SNESInputEvent.SNES_Y | SNESInputEvent.SNES_L :
+								clearData.switchWindow(true);
+								break;
+							case SNESInputEvent.SNES_X | SNESInputEvent.SNES_L :
+								colorize.switchWindow(true);
+								break;
+						}
+						break;
 					}
-				});
+					case 2 : {
+						switch (arg0.getKey()) {
+							case SNESInputEvent.SNES_R :
+								moveSel.moveDir(1);
+								break;
+							case SNESInputEvent.SNES_L :
+								moveSel.moveDir(-1);
+								break;
+						}
+						break;
+					}
+				}
+			});
 
 		frame.setVisible(true);
 	}

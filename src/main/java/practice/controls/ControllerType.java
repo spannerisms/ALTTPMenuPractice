@@ -21,12 +21,23 @@ public enum ControllerType {
 			_1, _0, _3, _2,
 			_5, _4, _7, _6,
 			"XBOX 360 For Windows (Controller)",
-			"Controller (XBOX 360 For Windows)"),
+			"Controller (XBOX 360 For Windows)",
+			" Controller (MadCatz GamePad)"),
 	PS3 (DirectionType.DPAD,
 			_4, _6, _5, _7,
 			_13, _14, _15, _12,
 			_11, _10, _3, _0,
-			"PLAYSTATION(R)3 Controller");
+			"PLAYSTATION(R)3 Controller"),
+	N64 (DirectionType.HAT,
+		Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
+		_6, _8, _0, _3,
+		_5, _4, _9, _7),
+	IBUFFALO (DirectionType.AXIS,
+			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
+			_0, _1, _2, _3,
+			_5, _4, _7, _6,
+			"USB,2-axis 8-button gamepad"
+			);
 
 	private final String[] names;
 

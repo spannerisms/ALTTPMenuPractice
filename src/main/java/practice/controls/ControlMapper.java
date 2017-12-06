@@ -177,7 +177,7 @@ public class ControlMapper extends JDialog {
 				boolean okToGo = true;
 				dupeSearch :
 				for (CompWrapper e : list) {
-					if (e.isHatSwitch) { // hat switch has to be the same
+					if (e.isSwitch) { // hat switch has to be the same
 						continue dupeSearch;
 					}
 					dupeMatch :
@@ -214,7 +214,7 @@ public class ControlMapper extends JDialog {
 			arg0 -> {
 				CompWrapper f = focusedDude();
 				if (f != null &&
-						!f.isHatSwitch &&
+						!f.isSwitch &&
 						(arg0.comp.getIdentifier() instanceof Component.Identifier.Button) ) {
 					f.setComp(arg0.comp);
 				}
@@ -347,12 +347,12 @@ public class ControlMapper extends JDialog {
 		Component c;
 		final JTextField text;
 		boolean active;
-		final boolean isHatSwitch;
+		final boolean isSwitch;
 
 		CompWrapper(Component c) {
 			this.c = c;
 
-			isHatSwitch = c.getIdentifier() instanceof Component.Identifier.Axis; // need to keep track of hat switch components
+			isSwitch = c.getIdentifier() instanceof Component.Identifier.Axis; // need to keep track of hat switch components
 
 			text = new JTextField();
 			text.setPreferredSize(TEXT_D);
@@ -361,7 +361,7 @@ public class ControlMapper extends JDialog {
 
 			setComp(c);
 
-			Color focusColor = isHatSwitch ? Color.RED : Color.YELLOW; // ban editing on hat switch
+			Color focusColor = isSwitch ? Color.RED : Color.YELLOW; // ban editing on hat switch
 
 			text.setEditable(false);
 			text.addFocusListener(new FocusListener() {
