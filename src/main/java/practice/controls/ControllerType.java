@@ -22,7 +22,7 @@ public enum ControllerType {
 			_5, _4, _7, _6,
 			"XBOX 360 For Windows (Controller)",
 			"Controller (XBOX 360 For Windows)",
-			" Controller (MadCatz GamePad)"),
+			"Controller (MadCatz GamePad)"),
 	PS3 (DirectionType.DPAD,
 			_4, _6, _5, _7,
 			_13, _14, _15, _12,
@@ -31,7 +31,7 @@ public enum ControllerType {
 	N64 (DirectionType.HAT,
 		Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
 		_6, _8, _0, _3,
-		_5, _4, _9, _7),
+		_5, _4, _9, _7), // does this need support?
 	IBUFFALO (DirectionType.AXIS,
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
 			_0, _1, _2, _3,
@@ -105,7 +105,7 @@ public enum ControllerType {
 		typeSearch :
 		for (ControllerType t : values()) {
 			for (String s : t.names) {
-				if (n.equalsIgnoreCase(s)) {
+				if (n.replaceAll("\\s","").equalsIgnoreCase(s.replaceAll("\\s",""))) {
 					ret = t;
 					break typeSearch;
 				}

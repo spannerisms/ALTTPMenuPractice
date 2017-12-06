@@ -13,7 +13,7 @@ public class WarningFrame extends JFrame {
 		super(title);
 		JLabel warnText = new JLabel(String.join("\n",
 				new String[] {
-						"<html><div>",
+						"<html><div style=\"padding: 4px;\">",
 						String.join("\n", message),
 						"</div></html>"
 				}));

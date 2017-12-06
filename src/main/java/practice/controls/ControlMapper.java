@@ -47,7 +47,8 @@ public class ControlMapper extends JDialog {
 			Controller.Type t = c.getType();
 
 			if (t.equals(Controller.Type.GAMEPAD) ||
-					t.equals(Controller.Type.KEYBOARD)) {
+					t.equals(Controller.Type.KEYBOARD) ||
+					t.equals(Controller.Type.STICK)) {
 				Component[] comp = c.getComponents();
 				CompWrapper[] use = new CompWrapper[12];
 				int i = 0;

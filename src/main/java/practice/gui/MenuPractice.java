@@ -50,7 +50,7 @@ import static practice.MenuGameConstants.*;
 import static javax.swing.SpringLayout.*;
 
 public class MenuPractice implements SNESControllable {
-	static final String VERSION = "v0.11-beta";
+	static final String VERSION = "v0.12-beta";
 
 	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
@@ -128,7 +128,7 @@ public class MenuPractice implements SNESControllable {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e2) {
-				// do nothing
+			// do nothing
 		} //end System
 
 		final IntHolder turn = new IntHolder();
@@ -667,7 +667,7 @@ public class MenuPractice implements SNESControllable {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e2) {
-				// do nothing
+			// do nothing
 		} //end System
 		JFrame x = new JFrame();
 		x.setLayout(new BorderLayout());
