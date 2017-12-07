@@ -370,7 +370,8 @@ public class MenuPractice implements SNESControllable {
 		testers = new String[] {
 				"Fish",
 				"Harb",
-				"Noraystra"
+				"Noraystra",
+				"Venoxs93"
 		};
 
 		for (int i = 0; i < testers.length; i++) {

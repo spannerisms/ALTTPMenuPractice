@@ -37,7 +37,12 @@ public enum ControllerType {
 			_0, _1, _2, _3,
 			_5, _4, _7, _6,
 			"USB,2-axis 8-button gamepad"
-			);
+			),
+	BASIC_PAD (DirectionType.AXIS,
+			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
+			_1, _2, _0, _3,
+			_6, _4, _9, _8,
+			"usb gamepad");
 
 	private final String[] names;
 
