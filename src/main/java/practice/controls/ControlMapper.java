@@ -120,7 +120,7 @@ public class ControlMapper extends JDialog {
 		defaultController = temp;
 	}
 
-	JComboBox<ContWrapper> curBox;
+	ControllerComboBox curBox;
 	JPanel comboArea = new JPanel();
 	JPanel compArea = new JPanel();
 	ControlCustomizer customizer = new ControlCustomizer();
@@ -253,10 +253,11 @@ public class ControlMapper extends JDialog {
 
 	private void newComboBox() {
 		if (curBox != null) {
+			curBox.kill();
 			curBox.removeItemListener(boxRead);
 		}
 		comboArea.removeAll();
-		curBox = new JComboBox<ContWrapper>(controllerList);
+		curBox = new ControllerComboBox(controllerList);
 		comboArea.add(curBox);
 		setControlWrapper(curBox.getItemAt(0));
 		curBox.addItemListener(boxRead);
@@ -300,6 +301,9 @@ public class ControlMapper extends JDialog {
 
 	public void setRunning(boolean r) {
 		customizer.setRunning(r);
+		if (curBox != null) {
+			curBox.setRunning(r);
+		}
 	}
 
 	/*
@@ -382,4 +386,66 @@ public class ControlMapper extends JDialog {
 			text.setText(c.getName());
 		}
 	}
+
+	@SuppressWarnings("serial")
+	static class ControllerComboBox extends JComboBox<ContWrapper>{
+		final ContWrapper[] items;
+		private Thread ticker;
+		private boolean running = false;
+
+		public ControllerComboBox(ContWrapper[] items) {
+			super(items);
+			this.items = items;
+			ticker = new Thread(
+				() -> {
+					while (true) {
+						try {
+							if (running) {
+								Thread.sleep(10);
+								pollAll();
+							} else {
+								synchronized (ticker) {
+									ticker.wait();
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			ticker.start();
+		}
+
+		private void pollAll() {
+			Controller cont;
+			float d;
+			controllerMatch :
+			for (ContWrapper c : items) {
+				cont = c.c;
+				cont.poll();
+
+				for (Component x : cont.getComponents()) {
+					d = x.getPollData();
+					if (d > 0.1F || d < -0.1F) {
+						setSelectedItem(c);
+						break controllerMatch;
+					}
+				} // end component loop
+			} // end controller loop
+		}
+
+		public synchronized void setRunning(boolean r) {
+			running = r;
+			if (running) {
+				synchronized (ticker) {
+					ticker.notify();
+				}
+			}
+		}
+
+		public synchronized void kill() {
+			running = false;
+			ticker = null;
+		}
+	} // end ControllerComboBox class
 }

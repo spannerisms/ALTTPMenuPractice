@@ -50,6 +50,11 @@ public class ControlCustomizer {
 		}
 	}
 
+	public synchronized void kill() {
+		running = false;
+		ticker = null;
+	}
+
 	private synchronized void pollAll() {
 		if (cur == null) { return; }
 
