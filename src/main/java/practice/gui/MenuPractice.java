@@ -12,8 +12,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -101,9 +103,33 @@ public class MenuPractice implements SNESControllable {
 		}
 		HOW_TO_PLAY_STYLE = ret.toString();
 	}
+	
+	//code from stackoverflow to do the equivalent of setting java.library.path
+	//see: https://stackoverflow.com/a/15984514
+	public static void addLibraryPath(String pathToAdd) throws Exception {
+		Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+		usrPathsField.setAccessible(true);
 
+		String[] paths = (String[]) usrPathsField.get(null);
+
+		for (String path : paths)
+			if (path.equals(pathToAdd))
+				return;
+
+		String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
+		newPaths[newPaths.length - 1] = pathToAdd;
+		usrPathsField.set(null, newPaths);
+	}
+	
 	// main
 	public static void main(String[] args) {
+		try {
+			//jinput demands these dlls be on your java.library.path
+			addLibraryPath("./libs/");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
