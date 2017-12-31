@@ -50,6 +50,7 @@ public class ScoreCard {
 		int perfectBonus = (1000 * d.multiplier) / 100;
 		int moveBonus = (moves == minMoves) ? perfectBonus : 0; // bonus for being optimal
 
+//		System.out.println("--------------------");
 //		System.out.println("Time: " + timeScore);
 //		System.out.println("Moves: " + moveScore);
 //		System.out.println("Bonus: " + moveBonus);

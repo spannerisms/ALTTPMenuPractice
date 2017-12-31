@@ -53,13 +53,13 @@ tr.oddrow td {
 
 th {
 	font-weight: bold;
-	background: #C0C0C0;
+	background: #A0A0A0;
 	border-bottom: 2px solid;
 }
 
 th.caption {
-	background: #A0A0A0;
-	border-bottom: 3px solid;
+	background: #C0C0C0;
+	border-bottom: 1px solid;
 }
 
 caption {

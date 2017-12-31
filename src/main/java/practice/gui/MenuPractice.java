@@ -104,27 +104,27 @@ public class MenuPractice implements SNESControllable {
 		HOW_TO_PLAY_STYLE = ret.toString();
 	}
 	
-	//code from stackoverflow to do the equivalent of setting java.library.path
-	//see: https://stackoverflow.com/a/15984514
-	public static void addLibraryPath(String pathToAdd) throws Exception {
+	// code from stackoverflow to do the equivalent of setting java.library.path
+	// see: https://stackoverflow.com/a/15984514
+	private static void addLibraryPath(String pathToAdd) throws Exception {
 		Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
 		usrPathsField.setAccessible(true);
 
 		String[] paths = (String[]) usrPathsField.get(null);
 
-		for (String path : paths)
-			if (path.equals(pathToAdd))
-				return;
+		for (String path : paths) {
+			if (path.equals(pathToAdd)) { return; }
+		}
 
 		String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
 		newPaths[newPaths.length - 1] = pathToAdd;
 		usrPathsField.set(null, newPaths);
 	}
-	
+
 	// main
 	public static void main(String[] args) {
 		try {
-			//jinput demands these dlls be on your java.library.path
+			// jinput demands these dlls be on your java.library.path
 			addLibraryPath("./libs/");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -705,21 +705,11 @@ public class MenuPractice implements SNESControllable {
 						new String[] {
 								"<html>",
 								"<div style=\"padding: 13px; font-size: 10px;\">",
-								"Your Java Runtime Environment does not contain all necessary libraries to run JInput.",
+								"Your /lib directory not contain all necessary libraries to run JInput.",
 								"<br /><br />",
-								"To remedy this, copy the files from the folder <tt>lib</tt> in this directory ",
-								"into your JRE's <tt>bin</tt> folder.",
-								"<br /><br />",
-								"JRE bin location:",
+								"To remedy this, download the latest release of MenuSimulator from",
 								"<br />",
-								"\t\t<div style=\"text-indent:20px; font-weight: bold;\"><tt>",
-								System.getProperty("java.home"),
-								System.getProperty("file.separator"),
-								"bin",
-								"</tt></div>",
-								"<br />",
-								"Alternatively, you may open <tt>JInputLibrarySetup.jar</tt> ",
-								"as an administrator in command prompt to automatically copy those files to the correct location.",
+								"https://github.com/fatmanspanda/ALTTPMenuPractice/releases",
 								"<br /><br />",
 								"The application will halt when you close this window.",
 								"</div>",
