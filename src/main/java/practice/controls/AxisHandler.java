@@ -29,17 +29,17 @@ public class AxisHandler extends ControllerHandler {
 
 	public AxisHandler(Controller c, Component[] list) {
 		this(
-				c,
-				list[0],
-				list[2],
-				list[4],
-				list[5],
-				list[6],
-				list[7],
-				list[8],
-				list[9],
-				list[10],
-				list[11]
-			);
-		}
+			c,
+			list[0],
+			list[2],
+			list[4],
+			list[5],
+			list[6],
+			list[7],
+			list[8],
+			list[9],
+			list[10],
+			list[11]
+		);
 	}
+}
