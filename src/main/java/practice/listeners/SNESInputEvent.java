@@ -22,7 +22,7 @@ public class SNESInputEvent extends EventObject {
 			0b0000_0100_0000;
 	public static final int SNES_Y =
 			0b0000_1000_0000;
-	
+
 	public static final int SNES_R =
 			0b0001_0000_0000;
 	public static final int SNES_L =

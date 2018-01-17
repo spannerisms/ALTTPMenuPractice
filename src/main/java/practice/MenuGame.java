@@ -636,7 +636,7 @@ public class MenuGame extends Container implements SNESControllable {
 			int toAdd;
 			do {
 				rand = (int) (Math.random() * C_SIZE);
-				toAdd = ITEM_CHOOSER.get(rand);				
+				toAdd = ITEM_CHOOSER.get(rand);
 			} while (list[toAdd] == true);
 
 			list[toAdd] = true;

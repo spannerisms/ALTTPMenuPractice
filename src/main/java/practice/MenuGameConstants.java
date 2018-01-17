@@ -353,7 +353,7 @@ public final class MenuGameConstants {
 
 	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-:<>!=/";
 	/**
-	 * 
+	 *
 	 * @param s
 	 * @param flag 0 : white | 1 : yellow | 2 : gray
 	 * @return
@@ -401,7 +401,7 @@ public final class MenuGameConstants {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param size - number of characters
 	 * @return
 	 */

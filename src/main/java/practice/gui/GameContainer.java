@@ -169,7 +169,7 @@ public class GameContainer extends Container {
 
 	public void forfeit() {
 		counter.kill();
-		playing.forfeit();		
+		playing.forfeit();
 	}
 
 	public void setController(ControllerHandler c) {

@@ -103,7 +103,7 @@ public class MenuPractice implements SNESControllable {
 		}
 		HOW_TO_PLAY_STYLE = ret.toString();
 	}
-	
+
 	// code from stackoverflow to do the equivalent of setting java.library.path
 	// see: https://stackoverflow.com/a/15984514
 	private static void addLibraryPath(String pathToAdd) throws Exception {
