@@ -25,8 +25,9 @@ public class ControlScreen extends JPanel implements SNESControllable {
 	static final BufferedImage TITLE_SPLASH;
 	static final BufferedImage SCORE_SPLASH;
 
-	public static final BufferedImage[] GAME_NUMBERS = new BufferedImage[20];
-	public static final BufferedImage[] GAME_NUMBERS_HILITE = new BufferedImage[20];
+	static final int MAX_GAMES = 20;
+	public static final BufferedImage[] GAME_NUMBERS = new BufferedImage[MAX_GAMES];
+	public static final BufferedImage[] GAME_NUMBERS_HILITE = new BufferedImage[MAX_GAMES];
 
 	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", 0);
 	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", 1);
@@ -43,7 +44,7 @@ public class ControlScreen extends JPanel implements SNESControllable {
 	public static final BufferedImage CARETS = makeWordImage("<             >", 1);
 
 	static {
-		for (int i = 0, j = 1; i < 20; i++, j++) {
+		for (int i = 0, j = 1; i < MAX_GAMES; i++, j++) {
 			String w;
 			if (j < 10) {
 				w = " " + j;
@@ -153,8 +154,8 @@ public class ControlScreen extends JPanel implements SNESControllable {
 								break;
 							case GAME :
 								games++;
-								if (games > 20) {
-									games = 20;
+								if (games > MAX_GAMES) {
+									games = MAX_GAMES;
 								}
 								repaint();
 								break;
