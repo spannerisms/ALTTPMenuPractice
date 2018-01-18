@@ -1,7 +1,7 @@
 package practice.controls;
 
 import net.java.games.input.Component.Identifier;
-import practice.listeners.SNESInputEvent;;
+import practice.listeners.SNESInputEvent;
 
 public enum SNESButton {
 	UP ("Up"),
