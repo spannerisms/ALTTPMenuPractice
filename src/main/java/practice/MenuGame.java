@@ -436,16 +436,35 @@ public class MenuGame extends Container implements SNESControllable {
 	private int calcMinMoves() {
 		int[] arrowPlacement = new int[1];
 		int moves = -1; // default to return for failure, just in case
-		int goodPattern = -1;
+		int minMoves = 9; // move count
+		int bestPattern = -1;
+		int bestScore = -1;
+		int[] bestPlacement = new int[1];
+
+		fullSearch:
 		for (int pattern : ALL_POSSIBLE_MOVES) {
 			int pos;
-			moves = pattern >> COUNT_OFFSET;
+			int newMoves = pattern >> COUNT_OFFSET;
+
+			if (newMoves > minMoves) {
+				break fullSearch;
+			}
+
+			moves = newMoves;
 			pos = loc;
 			int newPos = pos;
 			arrowPlacement = new int[moves];
 
+			int movementScore = 0;
+			int prevMove = -1;
+
 			for (int i = 0; i < moves; i++) {
 				int moveToken = (pattern >> (i * 2)) & 0b11;
+				if (moveToken == prevMove) {
+					movementScore++;
+				}
+				prevMove = moveToken;
+
 				arrowPlacement[i] = newPos; // add to list of positions
 				switch (moveToken) {
 					case MOVE_UP :
@@ -465,20 +484,29 @@ public class MenuGame extends Container implements SNESControllable {
 						break;
 				} // end switch
 				pos = newPos;
-			} // end moves for
+			} // end moves loop
 
-			if (pos == target) {
-				goodPattern = pattern;
-				break;
-			}
+			if (pos == target) { // if we're on target
+				if (minMoves == 9) { // only set minimum once
+					minMoves = moves;
+				}
+				if (movementScore > bestScore) { // compare scores to previous best pattern
+					bestScore = movementScore;
+					bestPattern = pattern;
+					bestPlacement = arrowPlacement;
+					if (movementScore == (moves-1)) { // number of moves-1 is highest possible score
+						break fullSearch;
+					}
+				} // end score compare
+			} // end on target
 		}
 
 		// make the best moves pattern
-		if (goodPattern != -1) {
+		if (bestPattern != -1) {
 			bestMoves = new PlayerMovement[moves+1];
 			for (int i = 0; i < moves; i++) {
-				int moveToken = (goodPattern >> (i * 2)) & 0b11;
-				bestMoves[i] = new PlayerMovement(arrowPlacement[i], moveToken);
+				int moveToken = (bestPattern >> (i * 2)) & 0b11;
+				bestMoves[i] = new PlayerMovement(bestPlacement[i], moveToken);
 			}
 			bestMoves[moves] = new PlayerMovement(target, PRESS_START);
 		}
@@ -487,6 +515,7 @@ public class MenuGame extends Container implements SNESControllable {
 		if (showOpt) {
 			minMoveOverlay = PlayerMovement.drawOptimalPath(bestMoves, false);
 		}
+
 		// failure, just in case
 		return moves;
 	}

@@ -330,7 +330,7 @@ public class MenuPractice implements SNESControllable {
 		wrap.add(scoreScroll);
 
 		// how to play
-		Dimension helpD = new Dimension(400, 450);
+		Dimension helpD = new Dimension(600, 650);
 		JDialog howPlayFrame = new JDialog(frame, "How to play");
 		SpringLayout hhh = new SpringLayout();
 
