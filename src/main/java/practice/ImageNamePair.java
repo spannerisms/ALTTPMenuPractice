@@ -1,8 +1,6 @@
 package practice;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 class ImageNamePair {
 	public final String name;
@@ -10,22 +8,11 @@ class ImageNamePair {
 
 	ImageNamePair(String name, String img) {
 		this.name = name;
-		BufferedImage temp;
-		try {
-			temp = readImage(img);
-		} catch (Exception e) {
-			temp = new BufferedImage(16, 16, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		this.img = temp;
+		this.img = MenuGameConstants.fetchImageResource(
+				"/images/game-icons/icon-" + img + ".png", MenuGameConstants.EMPTY_ITEM);
 	}
 
 	ImageNamePair(String name) {
 		this(name, name.toLowerCase());
-	}
-
-	private static BufferedImage readImage(String n) throws IOException {
-		String filename = "/images/icon-" + n + ".png";
-		BufferedImage img = ImageIO.read(ImageNamePair.class.getResourceAsStream(filename));
-		return img;
 	}
 }

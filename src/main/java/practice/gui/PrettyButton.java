@@ -9,12 +9,10 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import javax.swing.AbstractButton;
 
-import practice.MenuGameConstants;
+import static practice.MenuGameConstants.*;
 
 public class PrettyButton extends AbstractButton {
 	private static final long serialVersionUID = 34033459696182882L;
-
-	static final int ZOOM = MenuGameConstants.ZOOM;
 
 	private BufferedImage bgCur;
 	private BufferedImage bg;
@@ -38,9 +36,9 @@ public class PrettyButton extends AbstractButton {
 		setMinimumSize(d);
 		setMaximumSize(d);
 
-		bg = MenuGameConstants.makePrettyBorder(length);
-		bgPress = MenuGameConstants.makePrettyBorderInset(length);
-		bgDisabled = MenuGameConstants.makePrettyBorderDisabled(length);
+		bg =makePrettyBorder(length);
+		bgPress = makePrettyBorderInset(length);
+		bgDisabled = makePrettyBorderDisabled(length);
 
 		mouse = new MouseListener() {
 			public void mousePressed(MouseEvent arg0) {
@@ -75,9 +73,9 @@ public class PrettyButton extends AbstractButton {
 	}
 
 	public void setText(String text) {
-		disp = MenuGameConstants.makeWordImage(text, 0);
-		dispHover = MenuGameConstants.makeWordImage(text, 1);
-		dispAbled = MenuGameConstants.makeWordImage(text, 2);
+		disp = makeWordImage(text, WHITE);
+		dispHover = makeWordImage(text, YELLOW);
+		dispAbled = makeWordImage(text, GRAY);
 		dispCur = enabled ? disp : dispAbled;
 		repaint();
 	}

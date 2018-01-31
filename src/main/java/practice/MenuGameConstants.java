@@ -94,11 +94,17 @@ public final class MenuGameConstants {
 	public static final Dimension MENU_SIZE_X2 = new Dimension(BG_WIDTH * 2 + 5, BG_HEIGHT * 2 + 5);
 
 	// images
+	public static final BufferedImage EMPTY_BG = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	public static final BufferedImage BACKGROUND;
 	public static final BufferedImage CREDITS;
 
+	public static final BufferedImage EMPTY_CURSOR = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 	public static final BufferedImage CURSOR;
 	public static final BufferedImage TARGET_CURSOR;
+
+	public static final BufferedImage EMPTY_ITEM = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+	public static final BufferedImage COMPASS;
+	public static final BufferedImage MAP;
 
 	public static final BufferedImage[] OPTIMAL_MOVES = new BufferedImage[5];
 	public static final BufferedImage[] PLAYER_MOVES = new BufferedImage[5];
@@ -106,9 +112,7 @@ public final class MenuGameConstants {
 	public static final BufferedImage FONT_SPRITES;
 	public static final BufferedImage FONT_SPRITES_SMALL;
 
-	public static final BufferedImage COMPASS;
-	public static final BufferedImage MAP;
-
+	public static final BufferedImage EMPTY_BORDER = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 	public static final BufferedImage PRETTY_BORDER;
 	public static final BufferedImage PRETTY_BORDER_RIGHT;
 	public static final BufferedImage PRETTY_BORDER_LEFT;
@@ -122,201 +126,50 @@ public final class MenuGameConstants {
 	public static final BufferedImage PRETTY_BORDER_LEFT_DISABLED;
 
 	static {
-		BufferedImage temp;
-
 		// main background
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/menu background.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		BACKGROUND = temp;
-
-		// main background
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/About BG.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		CREDITS = temp;
+		BACKGROUND = fetchImageResource("/images/backgrounds/menu background.png", EMPTY_BG);
+		CREDITS = fetchImageResource("/images/backgrounds/about bg.png", EMPTY_BG);
 
 		// menu cursors
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/menu cursor.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		CURSOR = temp;
+		CURSOR = fetchImageResource("/images/game-icons/menu cursor.png", EMPTY_CURSOR);
+		TARGET_CURSOR = fetchImageResource("/images/game-icons/target cursor.png", EMPTY_CURSOR);
 
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/target cursor.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		TARGET_CURSOR = temp;
+		// wait icon
+		COMPASS = fetchImageResource("/images/game-icons/icon-compass.png", EMPTY_ITEM);
+		MAP = fetchImageResource("/images/game-icons/icon-map.png", EMPTY_ITEM);
 
 		// optimal path arrows
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/optimal up.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		OPTIMAL_MOVES[MOVE_UP] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/optimal down.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		OPTIMAL_MOVES[MOVE_DOWN] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/optimal right.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		OPTIMAL_MOVES[MOVE_RIGHT] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/optimal left.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		OPTIMAL_MOVES[MOVE_LEFT] = temp;
-
+		OPTIMAL_MOVES[MOVE_UP] = fetchImageResource("/images/analysis/optimal up.png", EMPTY_CURSOR);
+		OPTIMAL_MOVES[MOVE_DOWN] = fetchImageResource("/images/analysis/optimal down.png", EMPTY_CURSOR);
+		OPTIMAL_MOVES[MOVE_RIGHT] = fetchImageResource("/images/analysis/optimal right.png", EMPTY_CURSOR);
+		OPTIMAL_MOVES[MOVE_LEFT] = fetchImageResource("/images/analysis/optimal left.png", EMPTY_CURSOR);
 		OPTIMAL_MOVES[PRESS_START] = TARGET_CURSOR;
 
 		// player path arrows
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player up.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PLAYER_MOVES[MOVE_UP] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player down.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PLAYER_MOVES[MOVE_DOWN] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player right.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PLAYER_MOVES[MOVE_RIGHT] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player left.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PLAYER_MOVES[MOVE_LEFT] = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/player start.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(CURSOR_SIZE, CURSOR_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PLAYER_MOVES[PRESS_START] = temp;
+		PLAYER_MOVES[MOVE_UP] = fetchImageResource("/images/analysis/player up.png", EMPTY_CURSOR);
+		PLAYER_MOVES[MOVE_DOWN] = fetchImageResource("/images/analysis/player down.png", EMPTY_CURSOR);
+		PLAYER_MOVES[MOVE_RIGHT] = fetchImageResource("/images/analysis/player right.png", EMPTY_CURSOR);
+		PLAYER_MOVES[MOVE_LEFT] = fetchImageResource("/images/analysis/player left.png", EMPTY_CURSOR);
+		PLAYER_MOVES[PRESS_START] = fetchImageResource("/images/analysis/player start.png", EMPTY_CURSOR);
 
 		// sprite sheet for fonts
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/font sheet.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		FONT_SPRITES = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/font sheet small.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		FONT_SPRITES_SMALL = temp;
-
-		// wait icon
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/Compass menu.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		COMPASS = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/Map menu.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(ITEM_SIZE, ITEM_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		MAP = temp;
+		FONT_SPRITES = fetchImageResource("/images/meta/font sheet.png", EMPTY_BG);
+		FONT_SPRITES_SMALL = fetchImageResource("/images/meta/font sheet small.png", EMPTY_BG);
 
 		// normal border
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-right.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_RIGHT = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-left.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_LEFT = temp;
+		PRETTY_BORDER = fetchImageResource("/images/meta/pretty-border.png", EMPTY_BORDER);
+		PRETTY_BORDER_RIGHT = fetchImageResource("/images/meta/pretty-border-right.png", EMPTY_BORDER);
+		PRETTY_BORDER_LEFT = fetchImageResource("/images/meta/pretty-border-left.png", EMPTY_BORDER);
 
 		// inset border
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_INSET = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset-right.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_INSET_RIGHT = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-inset-left.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_INSET_LEFT = temp;
+		PRETTY_BORDER_INSET = fetchImageResource("/images/meta/pretty-border-inset.png", EMPTY_BORDER);
+		PRETTY_BORDER_INSET_RIGHT = fetchImageResource("/images/meta/pretty-border-inset-right.png", EMPTY_BORDER);
+		PRETTY_BORDER_INSET_LEFT = fetchImageResource("/images/meta/pretty-border-inset-left.png", EMPTY_BORDER);
 
 		// disabled gray border
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-disabled.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_DISABLED = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-right-disabled.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_RIGHT_DISABLED = temp;
-
-		try {
-			temp = ImageIO.read(MenuGameConstants.class.getResourceAsStream("/images/meta/pretty-border-left-disabled.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(WORD_WIDTH, WORD_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		PRETTY_BORDER_LEFT_DISABLED = temp;
+		PRETTY_BORDER_DISABLED = fetchImageResource("/images/meta/pretty-border-disabled.png", EMPTY_BORDER);
+		PRETTY_BORDER_RIGHT_DISABLED = fetchImageResource("/images/meta/pretty-border-right-disabled.png", EMPTY_BORDER);
+		PRETTY_BORDER_LEFT_DISABLED = fetchImageResource("/images/meta/pretty-border-left-disabled.png", EMPTY_BORDER);
 	}
 
 	// list of items with repeats to give some items higher chance of appearing
@@ -355,17 +208,32 @@ public final class MenuGameConstants {
 	}
 
 	public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,-:<>!=/";
+	public enum WordColor {
+		C_WHITE (0),
+		C_YELLOW (1),
+		C_GRAY (2);
+
+		private final int v;
+		private WordColor(int v) {
+			this.v = v;
+		}
+	};
+
+	public static final WordColor WHITE = WordColor.C_WHITE;
+	public static final WordColor YELLOW = WordColor.C_YELLOW;
+	public static final WordColor GRAY = WordColor.C_GRAY;
+
 	/**
 	 *
 	 * @param s
-	 * @param flag 0 : white | 1 : yellow | 2 : gray
+	 * @param flag: white | yellow | gray
 	 * @return
 	 */
-	public static BufferedImage makeWordImage(String s, int flag) {
+	public static BufferedImage makeWordImage(String s, WordColor flag) {
 		BufferedImage ret = new BufferedImage(s.length() * 8, 8, BufferedImage.TYPE_INT_ARGB);
 		char[] temp = s.toUpperCase().toCharArray();
 		Graphics g = ret.getGraphics();
-		int y = 8 * flag;
+		int y = 8 * flag.v;
 		for (int i = 0; i < temp.length; i++) {
 			int loc = CHARS.indexOf(temp[i]);
 			BufferedImage t = FONT_SPRITES.getSubimage(loc * 8, y, 8, 8);
@@ -374,7 +242,7 @@ public final class MenuGameConstants {
 		return ret;
 	}
 
-	public static BufferedImage makeNumberImage(int i, int flag) {
+	public static BufferedImage makeNumberImage(int i, WordColor flag) {
 		String w = "";
 		char[] temp = Integer.toString(i).toCharArray();
 		int pos = 1;
@@ -451,6 +319,17 @@ public final class MenuGameConstants {
 
 		g.drawImage(PRETTY_BORDER_RIGHT_DISABLED, i++ * 8, 0, null);
 
+		return ret;
+	}
+
+	public static BufferedImage fetchImageResource(String path, BufferedImage defaultImage) {
+		BufferedImage ret;
+		try {
+			ret = ImageIO.read(MenuGameConstants.class.getResourceAsStream(path));
+		} catch (Exception e) {
+			ret = defaultImage;
+			System.out.println("Unable to find resource: " + path);
+		}
 		return ret;
 	}
 }

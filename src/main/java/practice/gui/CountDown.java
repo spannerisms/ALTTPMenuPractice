@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import practice.listeners.*;
@@ -20,15 +19,9 @@ public class CountDown extends JComponent {
 	static final BufferedImage[] COUNT_DOWN_BG = new BufferedImage[4];
 
 	static {
-		BufferedImage temp;
 		for (int i = 0; i < COUNT_DOWN_BG.length; i++) {
-			try {
-				temp = ImageIO.read(CountDown.class.getResourceAsStream(
-						"/images/game countdown " + i + ".png"));
-			} catch (Exception e) {
-				temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-			}
-			COUNT_DOWN_BG[i] = temp;
+			COUNT_DOWN_BG[i] =
+				fetchImageResource("/images/backgrounds/game countdown " + i + ".png", EMPTY_BG);
 		}
 	}
 

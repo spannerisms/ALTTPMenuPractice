@@ -10,10 +10,6 @@ import net.java.games.input.*;
 
 import static practice.listeners.SNESInputEvent.*;
 
-/*
- * TODO:
- * menu cursor move time = 2 frames after input is read ?
- */
 public abstract class ControllerHandler {
 	protected static final long TICK = 1;
 

@@ -13,7 +13,7 @@ public enum GameMode {
 
 	private GameMode (String name) {
 		modeName = name;
-		this.word = MenuGameConstants.makeWordImage(modeName, 0);
-		this.wordHilite = MenuGameConstants.makeWordImage(modeName, 1);
+		this.word = MenuGameConstants.makeWordImage(modeName, MenuGameConstants.WHITE);
+		this.wordHilite = MenuGameConstants.makeWordImage(modeName, MenuGameConstants.YELLOW);
 	}
 }

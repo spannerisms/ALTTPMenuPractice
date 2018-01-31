@@ -84,8 +84,8 @@ public enum Difficulty {
 			int collectionRoundLength,
 			byte flags) {
 		this.diffName = name;
-		this.word = MenuGameConstants.makeWordImage(diffName, 0);
-		this.wordHilite = MenuGameConstants.makeWordImage(diffName, 1);
+		this.word = MenuGameConstants.makeWordImage(diffName, MenuGameConstants.WHITE);
+		this.wordHilite = MenuGameConstants.makeWordImage(diffName, MenuGameConstants.YELLOW);
 
 		this.bonus = difficultyBonus;
 		this.multiplier = difficultyMultiplier;

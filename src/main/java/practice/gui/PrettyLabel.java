@@ -6,12 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 
-import practice.MenuGameConstants;
+import static practice.MenuGameConstants.*;
 
 public class PrettyLabel extends JComponent {
 	private static final long serialVersionUID = 8691532086942138069L;
-
-	static final int ZOOM = MenuGameConstants.ZOOM;
 
 	private BufferedImage bg;
 	private int length;
@@ -32,19 +30,19 @@ public class PrettyLabel extends JComponent {
 		setPreferredSize(d);
 		setMinimumSize(d);
 		setMaximumSize(d);
-		bg = MenuGameConstants.makePrettyBorder(length);
+		bg = makePrettyBorder(length);
 		setFocusable(false);
 	}
 
 	public void setText(String text) {
 		this.text = text;
-		disp = MenuGameConstants.makeWordImage(this.text, 0);
+		disp = makeWordImage(this.text, WHITE);
 		repaint();
 	}
 
 	public void setRightText(String text) {
 		this.textRight = text;
-		dispRight = MenuGameConstants.makeWordImage(this.textRight, 0);
+		dispRight = makeWordImage(this.textRight, WHITE);
 		repaint();
 	}
 

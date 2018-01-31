@@ -171,7 +171,7 @@ public class MenuPractice implements SNESControllable {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e2) {
-			// do nothing
+			System.out.println("Unable to set system default look-and-feel");
 		} //end System
 
 		final IntHolder turn = new IntHolder();
@@ -446,7 +446,7 @@ public class MenuPractice implements SNESControllable {
 
 		// remap keys
 		final JMenuItem mapper = new JMenuItem("Configure inputs");
-		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/images/meta/Mitts.png"));
+		ImageIcon mitts = new ImageIcon(MenuPractice.class.getResource("/images/icons/Mitts.png"));
 		mapper.setIcon(mitts);
 		fileMenu.add(mapper);
 
@@ -488,7 +488,7 @@ public class MenuPractice implements SNESControllable {
 
 		// exit
 		final JMenuItem exit = new JMenuItem("Exit");
-		ImageIcon mirror = new ImageIcon(MenuPractice.class.getResource("/images/meta/Mirror.png"));
+		ImageIcon mirror = new ImageIcon(MenuPractice.class.getResource("/images/icons/Mirror.png"));
 		exit.setIcon(mirror);
 		fileMenu.add(exit);
 		exit.addActionListener(arg0 -> System.exit(0));
@@ -499,7 +499,7 @@ public class MenuPractice implements SNESControllable {
 
 		// show scores
 		final JMenuItem scoreShow = new JMenuItem("Performance chart");
-		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/images/meta/Boots.png"));
+		ImageIcon boots = new ImageIcon(MenuPractice.class.getResource("/images/icons/Boots.png"));
 		scoreShow.setIcon(boots);
 
 		DialogTask showScores = (b) -> {
@@ -521,8 +521,8 @@ public class MenuPractice implements SNESControllable {
 		// colors
 		boolean[] colors = new boolean[] { true }; // JCheckBoxMenuItem is stupid
 		final JMenuItem colorful = new JMenuItem("Performance highlighting");
-		ImageIcon lampOn = new ImageIcon(MenuPractice.class.getResource("/images/meta/Lamp.png"));
-		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/images/meta/Lamp dark.png"));
+		ImageIcon lampOn = new ImageIcon(MenuPractice.class.getResource("/images/icons/Lamp.png"));
+		ImageIcon lampOff = new ImageIcon(MenuPractice.class.getResource("/images/icons/Lamp dark.png"));
 		colorful.setIcon(lampOn);
 
 		DialogTask colorize = (b) -> {
@@ -549,7 +549,7 @@ public class MenuPractice implements SNESControllable {
 
 		// look for updates
 		final JMenuItem updates = new JMenuItem("Check for updates");
-		ImageIcon hammer = new ImageIcon(MenuPractice.class.getResource("/images/meta/hammer.png"));
+		ImageIcon hammer = new ImageIcon(MenuPractice.class.getResource("/images/icons/hammer.png"));
 		updates.setIcon(hammer);
 		helpMenu.add(updates);
 
@@ -580,7 +580,7 @@ public class MenuPractice implements SNESControllable {
 
 		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
-		ImageIcon compass = new ImageIcon(MenuPractice.class.getResource("/images/meta/Compass.png") );
+		ImageIcon compass = new ImageIcon(MenuPractice.class.getResource("/images/icons/Compass.png") );
 		howToPlay.setIcon(compass);
 		helpMenu.add(howToPlay);
 
@@ -596,7 +596,7 @@ public class MenuPractice implements SNESControllable {
 
 		// about
 		final JMenuItem about = new JMenuItem("About");
-		ImageIcon map = new ImageIcon(MenuPractice.class.getResource("/images/meta/Map.png"));
+		ImageIcon map = new ImageIcon(MenuPractice.class.getResource("/images/icons/Map.png"));
 		about.setIcon(map);
 		helpMenu.add(about);
 

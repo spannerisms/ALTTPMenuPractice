@@ -1,6 +1,5 @@
 package practice.gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import java.awt.Graphics;
@@ -13,6 +12,7 @@ import java.util.List;
 import practice.Difficulty;
 import practice.GameMode;
 import practice.MenuGame;
+import practice.MenuGameConstants;
 import practice.controls.ControllerHandler;
 import practice.controls.SNESControllable;
 import practice.listeners.*;
@@ -22,26 +22,26 @@ import static practice.MenuGameConstants.*;
 public class ControlScreen extends JPanel implements SNESControllable {
 	private static final long serialVersionUID = -4589871913175293600L;
 
-	static final BufferedImage TITLE_SPLASH;
-	static final BufferedImage SCORE_SPLASH;
+	static final BufferedImage TITLE_SPLASH = fetchImageResource("/images/meta/title screen.png", EMPTY_BG);
+	static final BufferedImage SCORE_SPLASH = fetchImageResource("/images/meta/score screen.png", EMPTY_BG);
 
 	static final int MAX_GAMES = 20;
 	public static final BufferedImage[] GAME_NUMBERS = new BufferedImage[MAX_GAMES];
 	public static final BufferedImage[] GAME_NUMBERS_HILITE = new BufferedImage[MAX_GAMES];
 
-	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", 0);
-	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", 1);
+	public static final BufferedImage DIFFICULTY_WORD = makeWordImage("DIFFICULTY:", WHITE);
+	public static final BufferedImage DIFFICULTY_HILITE = makeWordImage("DIFFICULTY:", YELLOW);
 
-	public static final BufferedImage MODE_WORD = makeWordImage("MODE:", 0);
-	public static final BufferedImage MODE_HILITE = makeWordImage("MODE:", 1);
+	public static final BufferedImage MODE_WORD = makeWordImage("MODE:", WHITE);
+	public static final BufferedImage MODE_HILITE = makeWordImage("MODE:", YELLOW);
 
-	public static final BufferedImage GAMES_WORD = makeWordImage("GAMES:", 0);
-	public static final BufferedImage GAMES_HILITE = makeWordImage("GAMES:", 1);
+	public static final BufferedImage GAMES_WORD = makeWordImage("GAMES:", WHITE);
+	public static final BufferedImage GAMES_HILITE = makeWordImage("GAMES:", YELLOW);
 
-	public static final BufferedImage START_WORD = makeWordImage("START", 0);
-	public static final BufferedImage START_HILITE = makeWordImage("START", 1);
+	public static final BufferedImage START_WORD = makeWordImage("START", WHITE);
+	public static final BufferedImage START_HILITE = makeWordImage("START", YELLOW);
 
-	public static final BufferedImage CARETS = makeWordImage("<             >", 1);
+	public static final BufferedImage CARETS = makeWordImage("<             >", YELLOW);
 
 	static {
 		for (int i = 0, j = 1; i < MAX_GAMES; i++, j++) {
@@ -51,24 +51,14 @@ public class ControlScreen extends JPanel implements SNESControllable {
 			} else {
 				w = Integer.toString(j);
 			}
-			GAME_NUMBERS[i] = makeWordImage(w, 0);
-			GAME_NUMBERS_HILITE[i] = makeWordImage(w, 1);
+			GAME_NUMBERS[i] = makeWordImage(w, WHITE);
+			GAME_NUMBERS_HILITE[i] = makeWordImage(w, YELLOW);
 		}
 
-		BufferedImage temp;
-		try {
-			temp = ImageIO.read(ControlScreen.class.getResourceAsStream("/images/title screen.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		TITLE_SPLASH = temp;
-
-		try {
-			temp = ImageIO.read(ControlScreen.class.getResourceAsStream("/images/score screen.png"));
-		} catch (Exception e) {
-			temp = new BufferedImage(BG_WIDTH, BG_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-		}
-		SCORE_SPLASH = temp;
+		// write the year to title
+		Graphics g = TITLE_SPLASH.getGraphics();
+		BufferedImage year = makeWordImage("2K18", WHITE);
+		MenuGameConstants.draw(g, year, 0, 2);
 	}
 
 	static enum Focus { MODE, DIFFICULTY, GAME, START };
@@ -93,7 +83,7 @@ public class ControlScreen extends JPanel implements SNESControllable {
 
 	public void setScore(int s) {
 		disp = SCORE_SPLASH;
-		score = makeNumberImage(s, 0);
+		score = makeNumberImage(s, WHITE);
 	}
 
 	public final void setController(ControllerHandler c) {
