@@ -179,7 +179,7 @@ public class MenuPractice implements SNESControllable {
 		final IntHolder totalScore = new IntHolder();
 
 		// main window
-		final JFrame frame = new JFrame("Menu Simulator 2K17 " + VERSION);
+		final JFrame frame = new JFrame("Menu Simulator " + GAME_YEAR);
 
 		Container wrap = frame.getContentPane();
 		SpringLayout l = new SpringLayout();

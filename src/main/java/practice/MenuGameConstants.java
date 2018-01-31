@@ -9,6 +9,9 @@ import javax.imageio.ImageIO;
 public final class MenuGameConstants {
 	private MenuGameConstants() {};
 
+	// official name
+	public static final String GAME_YEAR = "2K18";
+
 	// location within the menu image to start for calculating
 	public static final int ITEM_ORIGIN_X = 24;
 	public static final int ITEM_ORIGIN_Y = 16;
