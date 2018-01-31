@@ -23,9 +23,14 @@
     </fileSets>
     <files>
         <file>
-            <source>${project.basedir}/readme.md</source>
+            <source>${project.basedir}/src/main/resources/howtoplay.html</source>
             <outputDirectory>/</outputDirectory>
-            <destName>readme.txt</destName>
+            <destName>howtoplay.html</destName>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/howplaystyle.css</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>howplaystyle.css</destName>
         </file>
     </files>
 </assembly>
