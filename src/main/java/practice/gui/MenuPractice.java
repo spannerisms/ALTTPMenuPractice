@@ -62,7 +62,7 @@ public class MenuPractice implements SNESControllable {
 	static final String VERSION = "v1.0";
 
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/fatmanspanda/ALTTPMenuPractice/master/version";
-	private static final String UPDATES_LINK = "https://github.com/fatmanspanda/ALTTPMenuPractice/releases";
+	private static final String UPDATES_LINK = "https://github.com/fatmanspanda/ALTTPMenuPractice/releases/latest";
 	private static final boolean VERSION_GOOD;
 
 	static {
