@@ -29,9 +29,9 @@ public enum ControllerType {
 			_11, _10, _3, _0,
 			"PLAYSTATION(R)3 Controller"),
 	N64 (DirectionType.HAT,
-		Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
-		_6, _8, _0, _3,
-		_5, _4, _9, _7), // does this need support?
+			Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV, Identifier.Axis.POV,
+			_6, _8, _0, _3,
+			_5, _4, _9, _7), // does this need support?
 	IBUFFALO (DirectionType.AXIS,
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
 			_0, _1, _2, _3,
@@ -42,7 +42,13 @@ public enum ControllerType {
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
 			_1, _2, _0, _3,
 			_6, _4, _9, _8,
-			"usb gamepad");
+			"usb gamepad"),
+	SCATTER (DirectionType.AXIS,
+			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
+			_1, _2, _0, _3, // A B X Y
+			_5, _4, _9, _8, // R L St Sl
+			"2Axes 11Keys Game Pad"),
+	;
 
 	private final String[] names;
 
