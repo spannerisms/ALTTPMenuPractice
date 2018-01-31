@@ -3,6 +3,7 @@ package practice.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -11,8 +12,13 @@ import java.awt.Image;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -52,7 +59,17 @@ import static practice.MenuGameConstants.*;
 import static javax.swing.SpringLayout.*;
 
 public class MenuPractice implements SNESControllable {
-	static final String VERSION = "v0.12-beta";
+	static final String VERSION = "v1.0";
+
+	private static final String VERSION_URL = "https://raw.githubusercontent.com/fatmanspanda/ALTTPMenuPractice/master/version";
+	private static final String UPDATES_LINK = "https://github.com/fatmanspanda/ALTTPMenuPractice/releases";
+	private static final boolean VERSION_GOOD;
+
+	static {
+		System.out.println("Current version: " + VERSION);
+		VERSION_GOOD = amIUpToDate();
+		System.out.println("Up to date: " + VERSION_GOOD);
+	}
 
 	static final Dimension D = new Dimension((BG_WIDTH + 5) * ZOOM, (BG_HEIGHT + (24 * 5)) * ZOOM);
 	static final Dimension CHART_D = new Dimension(450, 500);
@@ -530,6 +547,37 @@ public class MenuPractice implements SNESControllable {
 		final JMenu helpMenu = new JMenu("Help");
 		menu.add(helpMenu);
 
+		// look for updates
+		final JMenuItem updates = new JMenuItem("Check for updates");
+		ImageIcon hammer = new ImageIcon(MenuPractice.class.getResource("/images/meta/hammer.png"));
+		updates.setIcon(hammer);
+		helpMenu.add(updates);
+
+		updates.addActionListener(
+			arg0 -> {
+				try {
+					openLink(UPDATES_LINK);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame,
+							"uhhh...",
+							"How to internet",
+							JOptionPane.WARNING_MESSAGE);
+					e.printStackTrace();
+				}
+			});
+
+		if (!VERSION_GOOD) {
+			updates.setOpaque(true);
+			updates.setBackground(Color.RED);
+			updates.setForeground(Color.WHITE);
+			updates.setText("Updates are available.");
+
+			helpMenu.setOpaque(true);
+			helpMenu.setBackground(Color.RED);
+			helpMenu.setForeground(Color.WHITE);
+			helpMenu.setIcon(hammer);
+		}
+
 		// how to play
 		final JMenuItem howToPlay = new JMenuItem("How to play");
 		ImageIcon compass = new ImageIcon(MenuPractice.class.getResource("/images/meta/Compass.png") );
@@ -755,5 +803,40 @@ public class MenuPractice implements SNESControllable {
 
 	static interface MoveSel {
 		void moveDir(int i);
+	}
+
+	private static void openLink(String url) throws IOException, URISyntaxException {
+		URL aa;
+		aa = new URL(url);
+		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+			desktop.browse(aa.toURI());
+		}
+	}
+
+	private static boolean amIUpToDate() {
+		boolean ret = true;
+		URL vURL;
+		try {
+			vURL = new URL(VERSION_URL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		try (
+			InputStream s = vURL.openStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(s, StandardCharsets.UTF_8));
+		) {
+			String line = br.readLine();
+			System.out.println("Discovered version: " + line);
+			if (!line.equalsIgnoreCase(VERSION)) {
+				ret = false;
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }
