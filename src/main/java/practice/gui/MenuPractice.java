@@ -59,7 +59,7 @@ import static practice.MenuGameConstants.*;
 import static javax.swing.SpringLayout.*;
 
 public class MenuPractice implements SNESControllable {
-	static final String VERSION;//;
+	static final String VERSION;
 
 	private static final String VERSION_PATH = "/version";
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/fatmanspanda/ALTTPMenuPractice/master/version";
@@ -75,7 +75,6 @@ public class MenuPractice implements SNESControllable {
 				);
 			) {
 				line = br.readLine();
-				br.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -573,7 +572,7 @@ public class MenuPractice implements SNESControllable {
 			updates.setOpaque(true);
 			updates.setBackground(Color.RED);
 			updates.setForeground(Color.WHITE);
-			updates.setText("Updates available");
+			updates.setText("Update available");
 
 			helpMenu.setOpaque(true);
 			helpMenu.setBackground(Color.RED);
