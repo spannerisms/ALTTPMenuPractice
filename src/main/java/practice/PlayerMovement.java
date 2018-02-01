@@ -6,12 +6,12 @@ import java.awt.image.BufferedImage;
 import static practice.MenuGameConstants.*;
 
 public class PlayerMovement {
-	final int LOCATION;
-	final int MOVEMENT;
+	final int location;
+	final int movement;
 
 	PlayerMovement(int loc, int dir) {
-		LOCATION = loc;
-		MOVEMENT = dir;
+		location = loc;
+		movement = dir;
 	}
 
 	public static BufferedImage drawOptimalPath(PlayerMovement[] moves, boolean includeGoal) {
@@ -20,8 +20,8 @@ public class PlayerMovement {
 		int size = moves.length + (includeGoal ? 0 : -1);
 		for (int i = 0; i < size; i++) {
 			PlayerMovement p = moves[i];
-			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
-			g.drawImage(OPTIMAL_MOVES[p.MOVEMENT],
+			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.location);
+			g.drawImage(OPTIMAL_MOVES[p.movement],
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);
@@ -35,8 +35,8 @@ public class PlayerMovement {
 		int size = moves.length;
 		for (int i = 0; i < size; i++) {
 			PlayerMovement p = moves[i];
-			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.LOCATION);
-			g.drawImage(PLAYER_MOVES[p.MOVEMENT],
+			ItemPoint cursorLoc = ItemPoint.valueOf("SLOT_" + p.location);
+			g.drawImage(PLAYER_MOVES[p.movement],
 					ITEM_ORIGIN_X + cursorLoc.x - CURSOR_OFFSET,
 					ITEM_ORIGIN_Y + cursorLoc.y - CURSOR_OFFSET,
 					null);

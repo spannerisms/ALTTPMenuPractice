@@ -26,6 +26,7 @@ public final class MenuGameConstants {
 	public static final int BOARD_SIZE_NO_BORDER = BOARD_SIZE - 2;
 
 	// items
+	public static final int ITEM_COUNT = 20;
 	public static final Item[] ALL_ITEMS = Item.values(); // for easy access
 	public static final int MIN_ITEMS = 4;
 

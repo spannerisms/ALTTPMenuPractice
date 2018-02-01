@@ -82,9 +82,6 @@ enum Item {
 			new ImageNamePair("Magic mirror", "mirror")
 		);
 
-	// number of slots
-	public static final int ITEM_COUNT = 20;
-
 	// local vars
 	public final int index;
 	public final int weight;

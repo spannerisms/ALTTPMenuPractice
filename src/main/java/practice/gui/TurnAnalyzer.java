@@ -13,11 +13,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 
 import practice.ScoreCard;
 
 import static practice.MenuGameConstants.*;
+import static javax.swing.SwingConstants.RIGHT;
+import static javax.swing.SwingConstants.LEFT;
 
 public class TurnAnalyzer extends JDialog {
 	private static final long serialVersionUID = -5679165578072012375L;
@@ -28,13 +29,13 @@ public class TurnAnalyzer extends JDialog {
 	ScoreCard curRef;
 	BufferedImage refImg;
 	final JPanel menuPainter;
-	final JLabel turnVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel scoreVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel timeVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel movesVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel optVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel penaltyVal = new JLabel("-", SwingConstants.RIGHT);
-	final JLabel diffName = new JLabel("-", SwingConstants.RIGHT);
+	final JLabel turnVal = new JLabel("-", RIGHT);
+	final JLabel scoreVal = new JLabel("-", RIGHT);
+	final JLabel timeVal = new JLabel("-", RIGHT);
+	final JLabel movesVal = new JLabel("-", RIGHT);
+	final JLabel optVal = new JLabel("-", RIGHT);
+	final JLabel penaltyVal = new JLabel("-", RIGHT);
+	final JLabel diffName = new JLabel("-", RIGHT);
 	final SpringLayout l = new SpringLayout();
 
 	@SuppressWarnings("serial")
@@ -73,7 +74,7 @@ public class TurnAnalyzer extends JDialog {
 		JLabel colon;
 
 		// turn
-		JLabel turnLbl = new JLabel("Turn", SwingConstants.LEFT);
+		JLabel turnLbl = new JLabel("Turn", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -83,12 +84,13 @@ public class TurnAnalyzer extends JDialog {
 		c.gridx = 2;
 		wrap.add(turnVal, c);
 		c.gridx = 3;
+
 		c.weightx = 20;
 		wrap.add(new JLabel(""), c); // blank
 		c.weightx = 1;
 
 		// difficulty
-		JLabel diffLbl = new JLabel("Difficulty", SwingConstants.LEFT);
+		JLabel diffLbl = new JLabel("Difficulty", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -99,7 +101,7 @@ public class TurnAnalyzer extends JDialog {
 		wrap.add(diffName, c);
 
 		// score
-		JLabel scoreLbl = new JLabel("Score", SwingConstants.LEFT);
+		JLabel scoreLbl = new JLabel("Score", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -110,7 +112,7 @@ public class TurnAnalyzer extends JDialog {
 		wrap.add(scoreVal, c);
 
 		// moves
-		JLabel movesLbl = new JLabel("Moves", SwingConstants.LEFT);
+		JLabel movesLbl = new JLabel("Moves", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -121,7 +123,7 @@ public class TurnAnalyzer extends JDialog {
 		wrap.add(movesVal, c);
 
 		// optimal path
-		JLabel optLbl = new JLabel("Best path", SwingConstants.LEFT);
+		JLabel optLbl = new JLabel("Best path", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -132,7 +134,7 @@ public class TurnAnalyzer extends JDialog {
 		wrap.add(optVal, c);
 
 		// time
-		JLabel timeLbl = new JLabel("Time (ms)", SwingConstants.LEFT);
+		JLabel timeLbl = new JLabel("Time (ms)", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;
@@ -143,7 +145,7 @@ public class TurnAnalyzer extends JDialog {
 		wrap.add(timeVal, c);
 
 		// penal
-		JLabel penalLbl = new JLabel("Penalties", SwingConstants.LEFT);
+		JLabel penalLbl = new JLabel("Penalties", LEFT);
 		colon = new JLabel(":");
 		c.gridy++;
 		c.gridx = 0;

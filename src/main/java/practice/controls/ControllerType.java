@@ -36,8 +36,7 @@ public enum ControllerType {
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
 			_0, _1, _2, _3,
 			_5, _4, _7, _6,
-			"USB,2-axis 8-button gamepad"
-			),
+			"USB,2-axis 8-button gamepad"),
 	BASIC_PAD (DirectionType.AXIS,
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
 			_1, _2, _0, _3,
@@ -45,8 +44,8 @@ public enum ControllerType {
 			"usb gamepad"),
 	SCATTER (DirectionType.AXIS,
 			Identifier.Axis.Y, Identifier.Axis.Y, Identifier.Axis.X, Identifier.Axis.X,
-			_1, _2, _0, _3, // A B X Y
-			_5, _4, _9, _8, // R L St Sl
+			_1, _2, _0, _3,
+			_5, _4, _9, _8,
 			"2Axes 11Keys Game Pad"),
 	;
 

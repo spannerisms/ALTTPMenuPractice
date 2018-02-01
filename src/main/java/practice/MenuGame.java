@@ -14,14 +14,13 @@ import practice.gui.OpTask;
 import practice.controls.ControllerHandler;
 import practice.controls.SNESControllable;
 
-import static practice.Item.ITEM_COUNT;
 import static practice.MenuGameConstants.*;
 
 public class MenuGame extends Container implements SNESControllable {
 	private static final long serialVersionUID = -4474643068621537992L;
 
 	// local vars
-	private ItemSlot[] list = new ItemSlot[20];
+	private ItemSlot[] list = new ItemSlot[ITEM_COUNT];
 	private ItemSlot[] listAtTurn;
 	private ArrayList<Integer> pickFrom;
 
@@ -152,7 +151,7 @@ public class MenuGame extends Container implements SNESControllable {
 				}
 
 				if (ref == null // don't do anything related to playing unless we have a scoring object
-						|| arg0.ID == 2) {return; } // only look for buttons fired on this frame
+						|| arg0.ID == 2) { return; } // only look for buttons fired on this frame
 
 				switch(key) {
 					case SNESInputEvent.SNES_UP :
@@ -267,7 +266,7 @@ public class MenuGame extends Container implements SNESControllable {
 	 * Movement
 	 */
 	private int moveUp(int s) {
-		int newLoc = (s + 15) % 20;
+		int newLoc = (s + 15) % ITEM_COUNT;
 		if (!list[newLoc].isEnabled()) {
 			return moveUp(newLoc);
 		}
@@ -275,7 +274,7 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	private int moveDown(int s) {
-		int newLoc = (s + 5) % 20;
+		int newLoc = (s + 5) % ITEM_COUNT;
 		if (!list[newLoc].isEnabled()) {
 			return moveDown(newLoc);
 		}
@@ -283,7 +282,7 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	private int moveRight(int s) {
-		int newLoc = (s + 1) % 20;
+		int newLoc = (s + 1) % ITEM_COUNT;
 		if (!list[newLoc].isEnabled()) {
 			return moveRight(newLoc);
 		}
@@ -291,7 +290,7 @@ public class MenuGame extends Container implements SNESControllable {
 	}
 
 	private int moveLeft(int s) {
-		int newLoc = (s + 19) % 20;
+		int newLoc = (s + 19) % ITEM_COUNT;
 		if (!list[newLoc].isEnabled()) {
 			return moveLeft(newLoc);
 		}
@@ -300,7 +299,7 @@ public class MenuGame extends Container implements SNESControllable {
 
 	private void randomizeMenu() {
 		chosen = new ItemLister();
-		listAtTurn = new ItemSlot[20];
+		listAtTurn = new ItemSlot[ITEM_COUNT];
 
 		switch (mode) {
 			case STUDY :
@@ -356,8 +355,8 @@ public class MenuGame extends Container implements SNESControllable {
 		}
 		list[i].setRandomItem();
 		list[i].setEnabled(true);
-		ItemSlot[] temp = new ItemSlot[20];
-		System.arraycopy(listAtTurn, 0, temp, 0, 20);
+		ItemSlot[] temp = new ItemSlot[ITEM_COUNT];
+		System.arraycopy(listAtTurn, 0, temp, 0, ITEM_COUNT);
 		listAtTurn = temp;
 		listAtTurn[i] = list[i].clone();
 		pickFrom.add(i);
@@ -626,7 +625,7 @@ public class MenuGame extends Container implements SNESControllable {
 	 * Subclasses
 	 */
 	static class ItemLister {
-		final boolean[] list = new boolean[20];
+		final boolean[] list = new boolean[ITEM_COUNT];
 		int count = 0;
 		int itemsChosen = 0;
 		static final int C_SIZE = ITEM_CHOOSER.size();
@@ -643,7 +642,7 @@ public class MenuGame extends Container implements SNESControllable {
 			int itemsWanted = itemsChosen + x;
 			int i = 0;
 			while (itemsChosen != itemsWanted) {
-				if (itemsChosen == 20) {
+				if (itemsChosen == ITEM_COUNT) {
 					break;
 				}
 				addOneItem();
@@ -657,7 +656,7 @@ public class MenuGame extends Container implements SNESControllable {
 		 * @return Index of item added
 		 */
 		public int addOneItem() {
-			if (itemsChosen == 20) {
+			if (itemsChosen == ITEM_COUNT) {
 				return -1;
 			}
 

@@ -1,6 +1,5 @@
 package practice.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -11,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,13 +59,27 @@ import static practice.MenuGameConstants.*;
 import static javax.swing.SpringLayout.*;
 
 public class MenuPractice implements SNESControllable {
-	static final String VERSION = "v1.0";
+	static final String VERSION;//;
 
+	private static final String VERSION_PATH = "/version";
 	private static final String VERSION_URL = "https://raw.githubusercontent.com/fatmanspanda/ALTTPMenuPractice/master/version";
 	private static final String UPDATES_LINK = "https://github.com/fatmanspanda/ALTTPMenuPractice/releases/latest";
 	private static final boolean VERSION_GOOD;
 
 	static {
+		String line = "v0.0";
+		try (
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						MenuPractice.class.getResourceAsStream(VERSION_PATH),
+						StandardCharsets.UTF_8)
+				);
+			) {
+				line = br.readLine();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		VERSION = line;
 		System.out.println("Current version: " + VERSION);
 		VERSION_GOOD = amIUpToDate();
 		System.out.println("Up to date: " + VERSION_GOOD);
@@ -548,8 +562,8 @@ public class MenuPractice implements SNESControllable {
 					openLink(UPDATES_LINK);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(frame,
-							"uhhh...",
-							"How to internet",
+							String.format("uhhh...:\n%s", e.getMessage()),
+							"How to internet?",
 							JOptionPane.WARNING_MESSAGE);
 					e.printStackTrace();
 				}
@@ -559,7 +573,7 @@ public class MenuPractice implements SNESControllable {
 			updates.setOpaque(true);
 			updates.setBackground(Color.RED);
 			updates.setForeground(Color.WHITE);
-			updates.setText("Updates are available.");
+			updates.setText("Updates available");
 
 			helpMenu.setOpaque(true);
 			helpMenu.setBackground(Color.RED);
@@ -711,6 +725,7 @@ public class MenuPractice implements SNESControllable {
 		frame.setVisible(true);
 	}
 
+	// input listeners
 	private List<SNESInputListener> snesListen = new ArrayList<SNESInputListener>();
 	public synchronized void addSNESInputListener(SNESInputListener s) {
 		snesListen.add(s);
@@ -726,7 +741,7 @@ public class MenuPractice implements SNESControllable {
 	/**
 	 * Warning with instructions for failed library loading
 	 */
-	public static void showWarning() {
+	private static void showWarning() {
 		// try to set LaF
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -734,25 +749,52 @@ public class MenuPractice implements SNESControllable {
 			// do nothing
 		} //end System
 		JFrame x = new JFrame();
-		x.setLayout(new BorderLayout());
+		SpringLayout s = new SpringLayout();
+		x.setLayout(s);
 		x.setTitle("Libraries missing");
 		x.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		x.add(new JLabel(
-				String.join("",
-						new String[] {
-								"<html>",
-								"<div style=\"padding: 13px; font-size: 10px;\">",
-								"Your /lib directory not contain all necessary libraries to run JInput.",
-								"<br /><br />",
-								"To remedy this, download the latest release of MenuSimulator from",
-								"<br />",
-								"https://github.com/fatmanspanda/ALTTPMenuPractice/releases",
-								"<br /><br />",
-								"The application will halt when you close this window.",
-								"</div>",
-								"</html>"
-				})),
-				BorderLayout.NORTH);
+
+		JPanel w = (JPanel) x.getContentPane();
+		JLabel warnText = new JLabel(
+			String.join("",
+					new String[] {
+							"<html>",
+							"<div style=\"padding: 13px; font-size: 10px;\">",
+							"Your <tt>/lib</tt> directory not contain all necessary libraries to run JInput.",
+							"<br /><br />",
+							"To remedy this, download the latest release of MenuSimulator from",
+							"<br />",
+							UPDATES_LINK,
+							"<br /><br />",
+							"The application will halt when you close this window or successfully open the link.",
+							"</div>",
+							"</html>"
+					}
+			));
+		s.putConstraint(NORTH, warnText, 2, NORTH, w);
+		s.putConstraint(EAST, warnText, -2, EAST, w);
+		s.putConstraint(WEST, warnText, 2, WEST, w);
+		x.add(warnText);
+
+		JButton goToUpdate = new JButton("Go to releases");
+		goToUpdate.addActionListener(
+			arg0 -> {
+				try {
+					openLink(UPDATES_LINK);
+					x.dispatchEvent(new WindowEvent(x, WindowEvent.WINDOW_CLOSING));
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(x,
+							String.format("uhhh...:\n%s", e.getMessage()),
+							"How to internet?",
+							JOptionPane.WARNING_MESSAGE);
+					e.printStackTrace();
+				}
+			});
+		s.putConstraint(NORTH, goToUpdate, 2, SOUTH, warnText);
+		s.putConstraint(EAST, goToUpdate, -2, EAST, warnText);
+		s.putConstraint(WEST, goToUpdate, 2, WEST, warnText);
+		x.add(goToUpdate);
+
 		x.setMinimumSize(new Dimension(500,300));
 		x.setLocation(200, 200);
 		x.setVisible(true);
@@ -761,7 +803,7 @@ public class MenuPractice implements SNESControllable {
 	// implement snes inputs in doTheGUI
 	public void addSNESInput() {}
 
-	// this class should never actually have exclusive focus of its controller
+	// this class should never actually have exclusive focus of its handler
 	public void whineToMommy() {}
 	public void shutUp() {}
 
@@ -784,14 +826,6 @@ public class MenuPractice implements SNESControllable {
 		void increment() {
 			val++;
 		}
-	}
-
-	static interface DialogTask {
-		void switchWindow(boolean cameFromController);
-	}
-
-	static interface MoveSel {
-		void moveDir(int i);
 	}
 
 	private static void openLink(String url) throws IOException, URISyntaxException {
@@ -827,5 +861,13 @@ public class MenuPractice implements SNESControllable {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	static interface DialogTask {
+		void switchWindow(boolean cameFromController);
+	}
+
+	static interface MoveSel {
+		void moveDir(int i);
 	}
 }
